@@ -1,0 +1,1396 @@
+
+# Day planner
+
+- [ ] ***Morning SLEEEEEEEEEEEEEEEEEEEEP...*** 00:00 - 04:00 
+## IT ALL STARTS FROM YESTERDAY NIGHT
+
+- [ ] ***Night SLEEEEEEEEEEEEEEEEEEEEP***  20:30 - 23:59
+	- [ ] Did you do gym yesterday Morning and were you sleepy early night?
+	- [ ] Did you eat 3 times a day yesterday ?
+	- [ ] Did you hydrate well and gave good guy health ?
+	- [ ] Did you do Night FS yesterday and prayed to wake me up early ?
+	- [ ] **Slept by 8 yesterday?         #Task/NameAndType/ADITYA_TASK\_TASK/21DayChallenge**
+	- [ ] High morning energy already ?
+	- [ ] Are you scrolling in the morning ? 😂😂😂😂😂😂
+	- [ ] didn't feel like scrolling??
+
+> [!warning]
+> **You have a lot of works to do.**
+> **1000 things can be done in a day when you wake up early**
+
+> [!success] JUST 1 SITTING AFTER MANY MONTHS CAN ALSO FIX THE VIBRATI0NS STATE
+
+> [!failure] IF NOT NOW SHE WILL TAKE ROOM FROM 5:30 AM. SO USE THE TIME NOW
+
+- [ ] \*\* 4 AM to 5 AM ROCK SOLID 1 HOUR SURRENDER MEDITATION #Task/NameAndType/ADITYA_TASK\_TASK/21DayChallenge\*\* 04:00 - 05:30
+	- [ ] \*\* WOKE UP AT 4 AM ?     #Task/NameAndType/ADITYA_TASK\_TASK/21DayChallenge
+		- [ ] sleep questions
+			- [ ] Automatic wake up without alarm ? 🔁 every day
+			- [ ] Good Sleep quality
+			- [ ] Woke up free with less gravity acting on you
+			- [ ] Did alarm gone wrong and not as per slept time ?
+			- [ ] Didnt feel like getting up >?
+			- [ ] Bad Sleep Quality
+			- [ ] Sleeplessness
+			- [ ] Going back to sleep after waking up ??
+		- [ ]  On bed tasks
+			- [ ] Morning wakeup bed replies
+				- [ ] Tell krupa you can't sleep anymore at all.
+				- [ ] one hold and get up
+				- [ ] keep timer of 15 min and then sleep if needed.
+			- [ ] Twist all muscles
+				- [ ] felt better?
+			- [ ] TURN ON ALL LIGHTS. Turn off OLA charging.
+			- [ ] Are you scrolling in the morning ? 😂😂😂😂😂😂
+			- [ ] Use this mental awakening in early morning to open the obsidian notes and read them.
+	- [ ] Perquisites for Meditation
+		- [ ] JUST DRINK WATER,
+		- [ ] homeo tablets morning
+		- [ ] SIMPLE BINDI, 
+		- [ ] ==KEEP FSD (FootSoak Dish) READY FOR IMMEDIATE FS AFTER THIS CYCLE.==
+		- [ ] PRAY AND ASK FOR FORGIVENESS FOR DOING KNOWINGLY/UN AND THANK. 
+		- [ ] PRAY TO SHRI GANESHA THAT DESIRE IS TO ASCENT AND NIRVIKALPA 
+		- [ ] REQUEST AND ASK OR THE PURE DESIRE TO GROW AND ASCEND FOR BOTH OF US. 
+		- [ ] ASK PERMISSION FOR PUJA, MEDITATION.
+	- [ ] Meditation types:
+		- [ ] ## Sahaja Yoga Meditation Technique (Phase - **DO NOTHING** except light breathing and mantra recitation. **"I'm a Pure Spirit. I'm not body, mind, ego, superego, chakras."** Ask: **"What is Shri Mataji doing on the top of my head?" "What is Shri Mataji doing on the Spirit's head?" "What is Shri Mataji doing to the Spirit's Sahasrara?"** Any action other than breathing stops Her work. Sit straight with no support, looking forward. **Breathe in**, visualizing a black cloud rising through the spine (expanding the chest), pushing it from the Sushumna into a black obstruction at the top of the skull within the "brain bubble." Find a path through the obstruction's center. The cloud will find fibers to pass through. Visualize more fibers emerging with a tingling sensation. **Observe what Shri Mataji is doing on top of your head**. Maintain continuous attention, gradually increasing the pushing duration.
+			- [ ] Breathing doesn't mean you breathe continuously. you see what see is doing when you breathe top. Essence is you allow her and see what is doing.
+			- [ ] Lift your legs when you have pain
+		- [ ] Sit on salt, continuously watch Shri Mataji's Lotus feet (eyes open until they close naturally), and cool chakras in meditation with hands, starting with Swadhishthan and back Agnya daily, then moving slowly to upper chakras for extended periods.
+		- [ ] **Daily Swadhishthana Meditation** - Hands on Swadhishthana
+		- [ ] **Daily Back Agnya Meditation** - Hands on Swadhishthana
+	- [ ] Do all the same process with very slow happening. Let it happen slow and on its own and not push it forcefully by breathing.
+	- [ ] Post Meditation
+		- [ ] Actual duration for ROCK SOLID meditation?
+		- [ ] Not finished
+		- [ ] Cycle Finished, Pain relieved
+		- [ ] Morning FS 05:30 - 06:00
+
+> [!quote]
+> If you didnt cool yourself during meditation then you didnt meditate yet.
+
+## Break the lethargy "completely " after you wake up from sleep or meditation
+
+- [ ] Break Lethargy, Bath in the morning itself 06:00 - 06:30
+	- [ ] **Break the lethargy "completely " after you wake up from sleep or meditation**
+		- [ ] ![[MASTER DAY ROUTINES - fixed blocks for recalling#^b3b370]]
+		- [ ] ![[MASTER DAY ROUTINES - fixed blocks for recalling#^9b2075]]
+			- [ ] Twist all muscles
+			- [ ] **Hydrate** with vibrated Water
+				- [ ] Minimum 1L
+			- [ ] Break the sleep painfully (**exercise**) as there are ***no one to help you and this pain is better** than the failure pain.*
+				- [ ] ==IT ALL STARTS WITH PUSHUPS.==
+				- [ ] Pull Ups 50x .
+				- [ ] Decline pushups on sofa 50x
+				- [ ] Push-ups 100X
+				- [ ] planks 1 min 3X
+				- [ ] Squats 50X
+				- [ ] Burpees 50x
+				- [ ] p. floor
+			- [ ] **Sweat more** in the morning itself and do things at same time
+			- [ ] **Hydrate** with vibrated Water or normal water 1-2L by now
+			- [ ] clean your ambience - - [ ] bed 🛏️ fold and tidy up the area
+			- [ ] Freshup
+				- [ ] Wash eyes Eye Cups and keep cool,
+				- [ ] Early morning Coconut oil brushing
+				- [ ] Do Natural calls and wash hands
+				- [ ] Potty
+					- [ ] all good ?
+					- [ ] constipated
+					- [ ] pain the very first
+			- [ ] Around the house tasks:
+				- [ ] Open all windows (refreshes mood) and LIGHTS and FANS (changes mood) except colourful curtian
+				- [ ] Kachara OUT (along with any boxes) and hand wash
+				- [ ] Turn off OLA charging
+				- [ ] both Bikes OUT
+				- [ ] Sids Farm Milk products IN
+				- [ ] Pump ON?
+				- [ ] **Laundry bag**: Run washing machine for Daily gym/home clothes
+			- [ ] Kitchen tasks before bath (pre requisites kitchen tasks)
+				- [ ] **SOAK**: dal and rice,
+				- [ ] **COOK**: Boil sprouts, eggs, make rice if needed in the morning.
+			- [ ] **Sweat more** in the morning itself and do things at same time
+				- [ ] **Hydrate** with vibrated Water or normal water 1-2L by now
+			- [ ] Shri Mataji Altar tasks
+				- [ ] **Clean**: Remove flowers from Shri Mataji, Coconut oil brushing
+				- [ ] **Keep**: FSD for morning FS for both of us for morning. Half mug water for krupa.
+				- [ ] **Eat "Vibrations"**
+					- [ ] VIBRATED SALT Water 1L min. Max A LOTTTT
+					- [ ] Garlic, chilli
+					- [ ] Sprinkle VIBRATED water
+					- [ ] Take vibrations inside.
+	- [ ] \*\*Fresh up earl in the morning itself \*\*
+		- [ ] Pre bath routines
+			- [ ] Charge Phone
+			- [ ] Bring clothes to bathroom area. Change in curtinas zone only
+		- [ ] Bath
+			- [ ] COLD WATER BATH
+			- [ ] HEAD BATH under TAP with Skakaki and Long full bath and REVERSE COMB
+			- [ ] two X COLD WATER BATH on all hair wash days.
+			- [ ] HOT WATER BATH last option
+			- [ ] Tingling in swadisthans ?
+		- [ ] Morning **Grooming**
+			- [ ] Very well groomed and good looking in morning itself
+			- [ ] TUCK SHIRT IN MORNING ITSELF
+			- [ ] get ready very nicely and really be fresh even at home. You're meeting Shri Mataji daily.
+			- [ ] Comb? Bindi?
+			- [ ] Fresh up and get ready for Puja and meditation and sucking vibrations.
+
+> [!warning]
+>
+> - This is a saint House. DONT BE A BACHELOR  with bad clothes
+> - SAINT HOUSE and SAINT CLOTHES with good smell. you're attending Shri Mataji for Puja
+> - Morning filled with auspiciousness, fragrance, Speech/GAS, Aarthi, Puja, Meditation
+
+## **Cook2X, Eat, Pack and Get ready to leave out of house as quick as possible**
+
+- [ ] **Cook2X, Plan, Eat, Pack and Get ready to leave out of house as quick as possible** 06:00 - 06:30
+	- [ ] **COOK**
+		- [ ] ![[MASTER DAY ROUTINES - fixed blocks for recalling#^b3b370]]
+		- [ ] ![[MASTER DAY ROUTINES - fixed blocks for recalling#^9b2075]]
+		- [ ] > [!bug] Enter Kitchen only after fresh up.
+		- [ ] Kitchen Routines
+			- [ ] **Check** Sprouts morning
+			- [ ] **Make/cook** Early morning Sprouts/ eggs + curd rice with lemon+ pickle
+		- [ ] > [!tldr] ***Taken daily detox drink, preworkout and Getting ready for Gym,*** ***Pumped up Right ?***
+		- [ ] HEADPHONES OFF and TASK - **TALK for first time**
+	- [ ] **EAT**
+		- [ ] **Early Morning DETOX Drink**: Make juice (Ginger and Lemon as well) and drink from precut items in box
+			- [ ] Clean the plastic juicer immediately.
+			- [ ] Other Drinks:
+				- [ ] GHEE HOT WATER, 
+				- [ ] Plain Hot water, 
+				- [ ] Ajwain tea,
+				- [ ] Ginger tea,
+				- [ ] lemon water? MIX
+		- [ ] Get ready for gym: 
+			- [ ] **Eat** pre-workout:
+				- [ ] ORGANIC Bananas min 5 in the morning itself,
+				- [ ] Red juice,
+				- [ ] Pomegranate,
+				- [ ] Pineapple,
+				- [ ] Watermelon,
+				- [ ] ayurvedic
+	- [ ] **PLAN**
+		- [ ] ***TALK AGENDA FOR DAY OR TOMORROW (WORK, MOVIE TICKETS, DAILY OFFICE CALENDAR, DAY PLAN, PLAN WEEKEND)***
+			- [ ]> [!attention] ..::SUPER CONSCIOUS ATTENTION MODE::.. <br><br> DISCUSS AGENDA WITH HIGH ATTENTION.<br><br>  TELL HER THAT YOU WILL LEAVE AT 7 30 AM AND COME BACK BY 8 PM <br><br>  HER WORK, GYM, MAID TIMINGS ARE DIFFERENT FROM YOUR 8 AM TO 8 PM. BOTH ARE DIFFERENT. <br><br>  CONFIGURE THE DAY PROPERLY THAT WORKS FOR BOTH OF US <br><br>  Dont ever waste WFH time.
+			- [ ] Check office calendar and plan day
+			- [ ] Announce the times like leave home and back home times.
+			- [ ] Planned leave home time ?
+			- [ ] Planned back home time ?
+			- [ ] Plan as per Rain as well and then Leave early for Work/SYcenter.
+		- > Clear the day's Agenda
+			- >
+				- > - office/
+				- > - institute/
+				- > - SYCenter,
+				- > - work/
+				- > - Fun/
+				- > - Movie/
+				- > - Dinner
+				- > - Lunch/
+				- > - OutsideVisits)
+				- >
+				- > get a clarity.
+				- - [ ] **PACK:**
+		- [ ] **Breakfast**:
+			- [ ] *Protein*
+				- [ ] Sprouts
+				- [ ] Soaked Dry fruits, seeds, nuts Smoothie with organic bananas
+				- [ ] Chis seed pudding for krupa
+				- [ ] three Eggs
+				- [ ] any protein dosa on new Pan?
+					- [ ] Pesarattu
+			- [ ] *Fats*
+				- [ ] Paneer
+				- [ ] Ghee
+				- [ ] Olive saute veg
+			- [ ] *Carbs*
+				- [ ] Curd Rice + Pickle + Salt
+				- [ ] any protein dosa on new Pan?
+					- [ ] Pesarattu
+			- [ ] *Fiber/ Pre /Pro Biotics:*
+				- [ ] Curd + Pickle + Salt
+				- [ ] Sprouts
+				- [ ] Fruit box
+				- [ ] Olive saute Veg salad
+			- [ ] *Micronutrients*
+				- [ ] Fruit box
+			- [ ] *Vibrations*:
+				- [ ] Pack Garlic, Vibrated water, Salt water into boxes
+		- [ ] **Post workout:**
+			- [ ] *Protein*
+				- [ ] Dry fruits seeds smoothie + ORGANIC bananas + Big Spoon
+				- [ ] Chia seeds+ soaked dry fruits+ dry fruits Smoothie with HOT MILK, BANANA/CHEEKU and also REMAINING MILK INSIDE.
+		- [ ] **Lunch**:
+			- [ ] *Card*
+				- [ ] Rice
+				- [ ] Brown Rice
+			- [ ] *Protein*
+				- [ ] Dal
+			- [ ] ***Fiber/ Pre /Pro Biotics:***
+				- [ ] Veg Salad with Fork
+				- [ ] Veg Curry
+				- [ ] Butter Milk
+			- [ ] *Fats:*
+				- [ ] Ghee
+				- [ ] Paneer
+		- [ ] **Evening Snacks**
+			- [ ] *Fiber*
+				- [ ] Fruits:
+			- [ ] *Carbs*:
+				- [ ] Finger Food
+					- [ ] kurkur
+			- [ ] *Protein*:
+				- [ ] Eggs
+				- [ ] Dry Fruits balls
+		- [ ] Post Packing Tasks
+			- [ ] REMAINING MILK INSIDE
+			- [ ] Check all caps for boxes
+
+> [!warning]
+>
+> - ***Any additives like Moms specail prawns, chutneys, ghee, pickles etc***
+>
+> - ***Any other items for Krupa ?***
+>
+> - ***Hope VitD3, C, B12, Omega 3, Mg, Zn, Creatine, Ayurvedic are covered.***
+
+> [!bug] Finish all tasks for the morning and jump in SY
+
+## DAILY Morning SY Routines - Connect to the Primordial Mother
+
+- [ ] \*\* DAILY Morning SY Routines - Puja, GAS, FS DK  TOGETHER \*\* 06:30 - 07:00
+	- [ ] > [!bug] Ask krupa first then start SY Routines and turn off alarms accordingly.
+	- [ ] >[!attention] Come to conscious that you are a Sahaja Yogi
+	- [ ] Shri Mataji
+		- [ ] PRAY AND ASK FOR FORGIVENESS FOR DOING KNOWINGLY/UN AND THANK. 
+		- [ ] PRAY TO SHRI GANESHA THAT DESIRE IS TO ASCENT AND NIRVIKALPA 
+		- [ ] REQUEST AND ASK OR THE PURE DESIRE TO GROW AND ASCEND FOR BOTH OF US. 
+		- [ ] ASK PERMISSION FOR PUJA, MEDITATION
+		- [ ] Already Cleaned old flowers ? Right?
+		- [ ] Come to conscious that you are a Sahaja Yogi
+	- [ ] Shri Mataji Puja:
+		- [ ] GAS FIRST and Speech parallel
+		- [ ]  Ajwain home with GAS
+		- [ ] Clean SY items, Flowers AND Shri Mataji Table in room
+		- [ ] Put kunkam, flowers, Diya
+		- [ ] Jal Abhishek with GAS together #Task/NameAndType/ADITYA_TASK\_TASK/21DayChallenge
+		- [ ] Do Aarthi with 3 Maha Mantra
+	- [ ] >[!attention] Come to conscious that you are a Sahaja Yogi     Remember the great event happened due to SY and feel the emergency.
+	- [ ] **Both TOGETHER**
+		- [ ] sit  and take Shri Ganehsa Atharva Sheersham TOGETHER ALOUD.
+		- [ ] Take Devi kavacham daily
+	- [ ] Pre requisites for Meditation
+		- [ ] Check alarms and sit
+		- [ ] CLOSE DOOR PROTOCOL
+	- [ ] The Morning FS :
+	- [ ] > [!question] **NIGHT FS WORKS TILL NEXT MONRING 4 AM**   <br> <br>   Sit in FS Before sitting for meditation<br> <br>  - COOL SAHASTRARA AND BREATH THE KUNDALINI UP LIKE AIR LIKE OLD DAYS. <br> - RECLAIM THE WHOLE 3 NADIS WITH COOLNESS AND FILLING THE BODY WITH COOLNESS IS MUST. <br> - WATER THE SEED DAILY MORNING AND EVENING.   Water enter channel mornings by sitting on floor and meditation <br> <br>  **MORNING FS WORKS TILL AFTERNOON.**   <br> <br>  Hope you sat for meditation in Early morning mediation before this (any) FS
+	- [ ] > [!success] One major SY Routine to be completed by Krupa leaves by krupa leaves
+	- [ ] [[SY clearance Plan Canvas.canvas]]
+		- [ ] CLEAR RIGHT SIDE BEFORE GOING TO GYM.
+	- [ ] **One hour Meditation**  - Meditate for one hour Rock SOLID #Task/NameAndType/ADITYA_TASK\_TASK/21DayChallenge
+		- [ ] Rock SOLID one hour Meditation. Eyes/attention up and CONSTANT pressure ontop.
+		- [ ] Rock SOLID meditation - Fullly effortless
+		- [ ] Hands on swadhisthans sitting on salt
+		- [ ] Use Laptop and watch in series frm amruta.
+		- [ ] RAM BHAIYA'S HAND ON TOP
+		- [ ] sitting on salt watching Shri Mataji Shri Charan WITH VERY BIG EYES 👀,
+		- [ ] breathing+ sucking into sahastrara. Pressure, blessing hand towards sahastrara from top.
+		- [ ] Meditation with earth and hands Both up, Both Down, Left , Right.
+		- [ ] A normal FS with hot cold and Red bindi infront of Shri Mataji photograph with candle in front of it (CLOSE DOOR)  <br>with hands pressed Hard on Swadhistans. MUST DO STD FS OF THE DAY >>>   Eyes rolled up and observing the palm on your head. 
+			- [ ] You're forgetting to do RS hand
+		- [ ] Flow Template method   <br> Make eyes blur small and half closed and let the vibrations inject themselves into your eyes.   <br> Just observe what those vibrations are doing to you inside skull and let things fgo out through thands.   <br>Make sure not to close and Keep eyes open and let it go inside. OPEN EYES WHOLE TIME.   <br>Try to do gentle breathe and push it to top and fall infto the incomng rays into open eyes.   <br>Horizontal rays are important.   <br>Don't close eyes   <br>It's agnya point which is wrong   <br>Find it inside head and send vibrations into and then connect the link between agnya and sahastrara point.   <br>How to find SAHASTARA through rounding the both agnyas |
+		- [ ] EFFORTLESS - The good old Surrender FS. Close eyes and go inside and see micro fibers inside.   <br>There just see the ATA the play of her during the FS. DO NOTHING. SHE KNOWS WHAT TO DO.
+		- [ ] I think you have forgot the breathing technique and breath until you push your into the top head and make it cool  <br>All FS you are successful are actually using the breathing technique.
+		- [ ] Dieties Names
+		- [ ] Mooladhar 4 Petal meditation
+			- [ ] names both sides
+			- [ ] Four petals on floor
+		- [ ] Wjsn you put attention botton ans then you can feel tingling in mooladhar like earlier days.   <br>Do such mooladhara meditation
+		- [ ] Simple Shri Ganesha Meditation
+		- [ ] .... VIRAT ? 3C 3FS ?
+		- [ ] CLEAR RIGHT SIDE BEFORE GOING TO GYM.
+	- [ ] Post one hour Meditation Questions:
+		- [ ] relaxing? relieving ? cooling? How much ?
+		- [ ] which chakras got cooled ?
+		- [ ] duration for 1 numbness cycle
+		- [ ] how many numbness cycles morning ?
+		- [ ] Scalp movement and numbness levels ?
+		- [ ] Did you struggle to make kundalini go up ?
+		- [ ] Felt free and relieved and relaxed after meditation?
+		- [ ] Did the numbness leave you at the end of the sitting ?
+		- [ ] Legs numbness ?
+		- [ ] Level ?
+		- [ ] where ?
+		- [ ] Hands Numbness ?
+		- [ ] level ?
+		- [ ] where ?
+		- [ ] Actual duration of any of above Puja and meditation ?
+	- [ ] Post one hour Meditation tasks:
+		- [ ] Keep FSD for post gym FS with names and then go to gym. Half mug water for krupa
+		- [ ] Get up and you both leave at once.
+
+## Remove remaining numbness completely here
+
+- [ ] **DAILY ShoeBeat** - after meditation numberness gone, remove remaining numbness completely here 06:30 - 07:00
+
+> [!faq] CLEAR RIGHT SIDE BEFORE GOING TO GYM.
+
+## THE UNDERRATED "PHYSICAL WORKOUT" in GYM
+
+- [ ] 07:00 - 08:30 **THE UNDERRATED "PHYSICAL WORKOUT" in GYM**
+	- [ ] > [!check] Enjoy the Early morning road to gym]
+        ![[MASTER DAY ROUTINES-20241230135350769.webp]]
+        ![[MASTER DAY ROUTINES-20241230135516296.webp]]
+        ![[MASTER DAY ROUTINES-20241230135546583.webp]]
+	- [ ] > [!check] Sweat and Sore the muscles like good old days and change Inertia of body completely.  ![[MASTER DAY ROUTINES-20241230135933777.webp]]
+	- [ ] >[!check] Enjoy the sore muscle pain after workout. <br>  <br> ALWAYS BE SORED AND SWEATING STATE.\
+        ![[MASTER DAY ROUTINES-20241230140120815.webp]]
+	- [ ] > [!FAILURE] IF YOU MISS EARLY MORNING GYM TIME, THEN ITS VERY UNLIKELY FOR YOU TO GO TO GYM IN THE EVENING OR NEXT MORNING.  AND END THE GYM CONSISTENCY.  <BR>  <BR> IF GYM IS NOT DONE FOR 2-3 DAYS, THEN BRACE YOURSELF FOR FALL DOWN FALL OF WHAT YOU HAVE ACQUIRED TILL NOW.  <BR>  <BR>  GO TO GYM EVEN <BR>-- IF YOU DONT FEEL LIKE ? THEN DEFINITELY GO.  JUST LEAVE HOME IMMEDIATELY <BR> -- NOT FEELING BETTER IN SWADHISTANS ? <BR> -- FEELING WEAK ?
+	- [ ] > [!check] PUMP UP: : <br>  <br>GET A ALL TIME READY BODY LIKE TEEN,   <br><br>MARRIED MAN PHYSIQUE. GOOD LOOKING BODY IN SHIRTLESS,   <br><br>ANY DRESS LOOKS GOOD FOR GOOD PHYSIQUE BODY.
+	- [ ] > [!danger] **THE STATE OF EMERGENCY** <br><br>REVERSE WHITE HAIR,   <br> <br>REVERSE TO ALWAYS HAVE SORE BODY  <br> <br>REVERSE TO ALWAYS HAV SWEATING STATE. <br> <br>REVERSE PRE DIABETES <br> <br>REVERSE GALL STONE  <br><br>REVERSE FUN TIME
+	- [ ] GYM Pre requisites
+		- [ ] Gym shirt,
+		- [ ] Inner wear and Pant
+		- [ ] watch to count rest,
+		- [ ] banyans/ dark inner clothes?
+		- [ ] Take Print outs or small papers printed out for gym.
+	- [ ] Gym Planning Rules
+		- [ ] two cycles in a week ?
+		- [ ] three times legs per week
+		- [ ] FOCUS ON WEAK - Hands: Bicep tricep Forearms, - Legs: Tighs Calf muscles, - ABS
+		- [ ] Balance in Heafrt , Lung, Thigh\`
+		- [ ] BALANCE in arms, chest, back , biceps, forearms, legs, abs, core
+	- [ ] GYM PLANNING
+		- [ ] DAY 0:  After a break
+			- [ ] Doing legs & Calfs as first day after a break. ?
+			- [ ] warm up back to square 1
+		- [ ] DAY1:
+			- [ ]
+		- [ ] DAY2:
+		- [ ] DAY3:
+		- [ ] DAY4:
+		- [ ] DAY5:
+		- [ ] DAY6:
+	- [ ] In Gym Rules:
+		- [ ] go with a written plan to gym and did all things completely as per list
+		- [ ] exact amount of rest periods
+		- [ ] use phone to record
+		- [ ] do hardest workout first and do other later
+		- [ ] push youeself hard enough
+		- [ ] do untill failure in each last set ?
+		- [ ] drink 1-2l water in gym ?
+		- [ ] train with intensity
+		- [ ] complete all exercise as per the scheduled list?
+	- [ ] > [!attention] Sore muscles and activate body with hydrated body
+	- [ ] After Gym Questions:
+		- [ ] Which Muscle group today?
+		- [ ] Did you talk to any bro at all in gym? Any gym buddy to help in sets ?
+		- [ ] Feeling great after gym ? performance
+		- [ ] Did you sweat ? how much ? ?/5
+		- [ ] How much time you did gym?
+			- [ ] Need more time ? time not enough to do all ? always looking at time ?
+		- [ ] Body Weight in KGS ?
+		- [ ] SY:
+			- [ ] Tingling moved to head top ?
+		- [ ] Talked to Krupa in gym daily ?
+		- [ ] Pullps total by now
+		- [ ] Pushups total by now
+		- [ ] Plank total by now
+		- [ ] Squats total by now
+		- [ ] Dips
+		- [ ] Actual Gym duration ?
+		- [ ] skipped stretches ?
+		- [ ] DID THIS BRING A INERTIA CHANGE WITHIN YOU?
+	- [ ] After Gym tasks:
+        \- [ ] Document all exercises including the pre and post
+	- [ ] **Back from Gym ?**
+		- [ ] ![[MASTER DAY ROUTINES - fixed blocks for recalling#Success]]
+		- [ ] No P, M AT ALL [[SY SOS.canvas|SY SOS]] #Task/NameAndType/ADITYA_TASK\_TASK/21DayChallenge #Task/NameAndType/SY_TASK/AgainstSYascent
+		- [ ] Are you watching reels ? 😂😂😂😂😂😂
+			- [ ] If you are watching Instagram on the early morning or anytime without any morning meditation and without doing FS before night your actually putting yourself in a catch state as you will catch when watching reels.
+		- [ ] Is attention all good ?
+		- [ ] >[!failure] Never do anything against the kundalini going up
+		- [ ] Quick Tasks:
+			- [ ] Open Windows
+			- [ ] Start Geysor immediately
+			- [ ] Hand wash
+			- [ ] Throw old clothes in laundry bag.Or else it will smell. or WASH IMMEDIATELY.
+			- [ ] Laundry bag: Dry/Run washing machine for Daily gym/home clothes.
+			- [ ] Bath
+		- [ ] Kitchen and Post work out Food
+			- [ ] Eat ORGANIC bananas and post workout/ breakfast
+			- [ ] pack the bag with boxes
+			- [ ] Take picture of food daily morning.
+		- [ ] Do everything and then finally do FS with clean outside clothes
+
+## Finish a SY clearance cycle once a day
+
+- [ ] **NAMES** Finish a SY clearance cycle once a day  04:00 - 05:30
+	- [ ] > [!hint] PUMP UP: :   <br>REMEMBER THE WATER FLOW INTO THE HEAD?   <br>GET THAT BACK BY BREATING AND   <br>MAKING SUSSHUMNA FILLED UP WITH WATER. |
+	- [ ] CLOSE DOOR PROTOCOL
+	- [ ] Meditation Types:
+		- [ ] FS Hot Cold ?
+		- [ ] Sitting on Floor
+		- [ ] Mix of sitting Floor and FS
+		- [ ] Do both sides and don't just do 1 side.
+	- [ ] Meditation instructions:
+		- [ ] Sit straight not bend front back and just look front. Same protocols like Bindi, height , candle etc
+		- [ ] Breathe and push to the top and send out through hands
+		- [ ] Take Mantras ALOUD
+	- [ ] Post Meditation/FS Questions:
+		- [ ] Actual FS start time ?
+		- [ ] Names taken today:
+			- [ ] GAS
+				- [ ] one time
+				- [ ] two times
+				- [ ] three times
+				- [ ] Four times
+			- [ ] Shri Mataji ?
+				- [ ] Shri Mataji names count..
+				- [ ] Duration
+				- [ ] How is the FS ?
+					- [ ] Cooling
+						- [ ] yes
+						- [ ] no
+					- [ ] Great feeling after FS ?
+						- [ ] Yes
+						- [ ] No
+					- [ ] Tingling Status?
+						- [ ] Did they leave hands ?
+						- [ ] Incomplete numbess in fingers
+						- [ ] Left hand still have numbness
+						- [ ] Right hand still have numbness
+						- [ ] Completely left
+			- [ ] Shri Ganesha ?
+				- [ ] Shri Ganesha names count..
+				- [ ] Duration
+				- [ ] How is the FS ?
+					- [ ] Cooling
+						- [ ] yes
+						- [ ] no
+					- [ ] Great feeling after FS ?
+						- [ ] Yes
+						- [ ] No
+					- [ ] Tingling Status?
+						- [ ] Did they leave hands ?
+						- [ ] Incomplete numbess in fingers
+						- [ ] Left hand still have numbness
+						- [ ] Right hand still have numbness
+						- [ ] Completely left
+			- [ ] Shri bhairavnath ?
+				- [ ] Shri bhairavnath names count..
+				- [ ] Duration
+				- [ ] How is the FS ?
+					- [ ] Cooling
+						- [ ] yes
+						- [ ] no
+					- [ ] Great feeling after FS ?
+						- [ ] Yes
+						- [ ] No
+					- [ ] Tingling Status?
+						- [ ] Did they leave hands ?
+						- [ ] Incomplete numbess in fingers
+						- [ ] Left hand still have numbness
+						- [ ] Right hand still have numbness
+						- [ ] Completely left
+			- [ ] Shri Karthikeya
+				- [ ] Shri Karthikeya names count
+				- [ ] Duration
+					- [ ] How is the FS ?
+						- [ ] Cooling
+							- [ ] yes
+							- [ ] no
+						- [ ] Great feeling after FS ?
+							- [ ] Yes
+							- [ ] No
+						- [ ] Tingling Status?
+							- [ ] Did they leave hands ?
+							- [ ] Incomplete numbess in fingers
+							- [ ] Left hand still have numbness
+							- [ ] Right hand still have numbness
+							- [ ] Completely left
+			- [ ] Shri Hanumana ?
+				- [ ] Shri hanumana names count..
+				- [ ] Duration
+					- [ ] How is the FS ?
+						- [ ] Cooling
+							- [ ] yes
+							- [ ] no
+						- [ ] Great feeling after FS ?
+							- [ ] Yes
+							- [ ] No
+						- [ ] Tingling Status?
+							- [ ] Did they leave hands ?
+							- [ ] Incomplete numbess in fingers
+							- [ ] Left hand still have numbness
+							- [ ] Right hand still have numbness
+							- [ ] Completely left
+			- [ ] Shri Adiguru Dattatreya,
+			- [ ] Shri Ekadasha rudra,
+			- [ ] Shri Durga
+		- [ ] are you hungry now ?
+		- [ ] DID THIS BRING AINERTIA CHANGE WITHIN YOU?
+		- [ ] Overall Actual FS and names duration??
+		- [ ] Are you STILL at home ?😂😂😂😂😂😂
+
+## Planning, Organising, Working
+
+- [ ] **Planning, Organising, course, work** 09:30 - 10:00
+	- [ ] Plan todays Work from office and free time
+		- [ ] SCHEDULE THE DAY AND DETERMINE THE WORK FOR THE DAY
+		- [ ] **Do Office First and finish it off, Then open MacBook**
+			- [ ] Plan day or attend te office by 11 AM then plan the day
+	- [ ] Laptop Workflow
+		- [ ] Breakfast first (Post workout)
+			- [ ] whats for breakfast today ?
+			- [ ] Breakfast vibrated ?
+			- [ ] Take a breakfast pic and vlog
+			- [ ] How much time did you spenmd to chew 50 times?
+			- [ ] Chew 50 times.
+		- [ ] Laptop open Routines - Automation icon
+			- [ ] Check the button and turn on Obsidian G Drive sync and rest of all by automation
+		- [ ] [[Things to master for KUBESTRONAUT]]
+			- [ ] **MUSCLE MEMORY / PRACTICE SECTION**
+				- [ ] \*\*MUSCLE MEMORY [[Touch Typing]] \*\* 08:30 - 09:00
+					- [ ] In 2 websites
+						- [ ] Typing club
+						- [ ] Monkey Type typing
+					- [ ] DO NOT BUY ANY KEYBOARD OR THINK SO. TRY THIS VERSION OF BASE VERSION TO LEARN THNGS.
+				- [ ] **MUSCLE MEMORY** [[VIM]] [[NeoVim nvim]] 09:00 - 09:30
+					- [ ] Vim Plugins
+						- [ ] [[VimTutor]] COMPLETELY and DAILY
+						- [ ] vim be good plugin
+						- [ ] Hardtime
+						- [ ] Other places for gaining muscle memory
+							- [ ] VimAdventures
+								- [ ] Dont pay for Vim adventures as of now, try using Vimtutor and test of all the list of the tools for now
+								- [ ] EXPLORE ALL DIFFERENT LINKS FOR LEARNING VIM
+							- [ ] VimRacer
+							- [ ] Vimgolf
+				- [ ] **MUSCLE MEMORY/ Organise** [[Obsidian + VIM]] 09:30 - 10:00
+					- Obsidian Sustaining
+						- [ ] Dedicate time to write somehting Daily morning and evening
+						- [ ] WRITING GIVES YOUR ORGANISED MENTAL CLARITY ON ALL DIFFERENT SEGMENTS IN LIFE.
+						- [ ] TWO Parts
+							- [ ] Organisation ideas of your own and get lost.
+								- [ ] Just keep doing something something and get lost.
+							- [ ] Update as per specific things from whats app chat
+							- [ ] The more you sit with yourself the more you construct
+				- [ ] **MUSCLE MEMORY** [[Browser + VIM]]
+					- [ ] vimium in real life
+			- [ ] **THEORY SECTION**  10:30 - 13:00
+				- [ ] [[Linux]]
+					- [ ] Abhishek veeramalla
+					- [ ] KodeKloud
+				- [ ] [[Kubernetes]]
+					- [ ] Daily KUBESTRONAUT Study List
+						- [ ] FIRST: High level over view of study inertia
+						- [ ] Daily High level Overview
+							- [ ] ALL Project View
+								- [ ] Check Excel and Kanban
+							- [ ] Current Subjects
+								- [ ] See Index what am I doing now
+								- [ ] Subjects list
+									- [ ] Open [[qKubernetes Launchpad🚀 (Data view)]]
+									- [ ] See where are you and master study plan and see where are you and how many days to complete and inertia and consistency
+								- [ ] Block time and Dedicate time for both of the subjects for the day
+						- [ ] [[Kubernetes Tasks]]
+						- [ ] Open Kodekloud and Pomodoro ON
+							- [ ] Move Kandhans for the day and start
+							- [ ] Continue with Pomodoro pattern ON OFF from work
+							- [ ] Daily update obsidian high level over view
+	- [ ] High level Overview Checklist
+		- [ ] Daily note creatyion as per WFH or WFO
+		- [ ] Check daily calender adjustments
+			- [ ] **Daily idea Dump Tasks**
+				- [ ] High level over view for tasks
+				- [ ] Categorise all tasks and place them in respective notes and assign task dates
+					- [ ] Journals folder
+				- [ ] Daily tasks:
+					- [ ] [[Tasks List MASTER]]
+	- [ ] Questions during Course DAILY
+		- [ ] Pomodoro used ?
+		- [ ] Drink 1L water
+		- [ ] Take Toilet break
+	- [ ] Post Study:
+		- [ ] Actual Duration of studying?
+		- [ ] Number of topics done ?
+		- [ ] Name of topics ?
+		- [ ] DID THIS BRING A INERTIA CHANGE WITHIN YOU? HOW MOVED ARE YOU?
+	- [ ] Work
+		- [ ] Keep earphoes loose and talk office calls.
+
+## Leave as early as possible
+
+- [ ] **Travel as early as possible** 09:30 - 10:30
+	- [ ] >[!hint] PUMP UP: :   <br>MAN SHOULD LEAVE HOME AND BUILD SOMTHING OUTSIDE AND   <br>TAKE CARE FAMILY AS A MAN.   <br>CANT BLAME ANYONE ON THIS.
+	- [ ] Are you watching reels ? 😂😂😂😂😂😂 after she went ?
+		- [ ] |f you are watching Instagram on the early morning or anytime without any morning meditation and without doing FS before night your actually putting yourself in a catch state as you will catch when watching reels.
+		- [ ] LEAVE HOME BY
+			- [ ] NO MOBILE CHARGING
+			- [ ] NO SUNLIGHT , NO MEMORABLE WARM SUNLIGHT MOMENTS. NO GLASS BUILDINGS
+			- [ ] BAD TRAFIIC
+			- [ ] NO WATER DRIKING
+			- [ ] NO BREAKFAST NO DRY FRUITS NO SPROUTS NO INSTA POST
+			- [ ] NO PARKING SPACE
+			- [ ] NO HOME COOKED FOOD
+			- [ ] NO WORK OR STUDY HAPPENS
+			- [ ] NO SY ROUTINES EVEN AT HOME
+			- [ ] LIFE WHICH ONLY LISTENS AND DO WHAT SHE SAYS
+			- [ ] LIFE WITH BAD OUTSIDE FOOD
+			- [ ] LIFE WITHOUT ANY GOALS AND FORGET GOALS
+			- [ ] LIFE WITH FULL REGRET
+			- [ ] LIFE WITHOUT ANY SATISFACTION
+			- [ ] THE MORE LATE YOU ARE THE MORE THE TIME YOU TAKE TO SETTLE.
+			- [ ] LIFE FEELS LIKE DAY IS GONE AND PROBLEM IS INERTIA/CONSISTENCY IS AFFECTED AND NOW THIS HABIT REPEATS
+	- [ ] krupa
+		- [ ] Drop her at school when though she says she can go alone. thinks she can do it.
+		- [ ] Leave with wife once a week, come through glass buildings
+	- [ ] Pre requites to leave:
+		- [ ] Eat
+			- [ ] ORGANIC bananas as well.
+			- [ ] breakfast at home itself.
+			- [ ] Take Chana prasad,
+				- [ ] Thank and say the Glory of the Devi and then Take Bandhan
+		- [ ] Tasks
+			- [ ] Leave early for Work/SYcenter. Plan as per Rain as well.
+			- [ ] COMMON SENSE: HAVE A CLEAR ITERNARY BEFORE LEAVING. DONT JUST FOLLOW
+			- [ ] Hope you are dressed professinally even if work or institute, Reverse comb  <br>If gym wear pant tight.
+				- [ ] Work: Full formal TUCKED with shoes
+				- [ ] Institute: Uncle pants and formal clothes TUCKED and shoes
+				- [ ] Outisde: Jeans and cauals and green shoes
+				- [ ] Home: New washed T shirts zudio and track pants
+				- [ ] Gym: Wear Gym clothes and TIGHT PANTS
+				- [ ] SY: Ironed kurta and pants
+				- [ ] SY House: Good semi traditional clothes
+			- [ ] **Mandatory Check:** house keys, purse and A Charged phone.
+			- [ ] **SY:**\*\* Keep FSD ready for evening. Half mug water for krupa
+			- [ ] **Clothes**:\*\* Dry clothes daily after running washed machine morning.
+			- [ ] **Kitchen:** kitchen top, keep all inside.
+			- [ ] **Bag Pack:** Office - Comb/boxes, Institute - 2X Chargers, Headphones.
+			- [ ] **Bike:** Check season items like Helmet/New Socks/1Lwater bootle/jacket/Bikebag(min cloth bag)/Rain Coats
+			- [ ] **Bike:** Clear ola bike storage as neeed. GO SLOW AT 40 SPEED
+			- [ ] **Close:** windows, SECOND DOOR LOCK, Curtains, Mesh gaps, Locks , TAPS
+			- [ ] **Open:** Washroom zone curtains
+			- [ ] **Electric items OFF:** Geyser, Ironing box, TV, lights, Wifi OFF, WASHING MACHINE OFF, 2 outside lights OFF, Induction stove OFF
+			- [ ] **Phone:** Enough Battery charge left? open Google maps app and keep open
+			- [ ] **Tour/Long Vacations:** Check Tour Lists, Preparation and vacation lists accordingly. Reuse lists  <br>Check: Charge and put Ola in vacation mode, Lock both vehicles with particular locks if not using bikes
+			- [ ] **Finally**
+				- [ ] Drink water, Quickly have 2 ORGANIC bananas as well before leaving
+				- [ ] **Don't leave home without FS**
+				- [ ] **Don't leave home without FS**
+				- [ ] **Don't leave home without FS**
+				- [ ] **Don't leave home without FS**
+				- [ ] **Don't leave home without FS**
+				- [ ] Leave home satisfied and with 0 worries.
+	- [ ] Post travel
+		- [ ] DID BIKE RIDE BROUGHT A INERTIA CHANGE WITHIN YOU?
+		- [ ] Actual leave home time?
+		- [ ] Actual travel duration?
+
+***
+
+## First do Office work
+
+- [ ] **First do Office work with EXTERNAL MONITORS**  10:25 - 12:30⏳ 2025-03-07
+
+***
+
+## Enjoy work
+
+- [ ] 10:30 - 16:30 **Office Work**
+	- [ ] **SCHEDULE THE DAY AND DETERMINE THE WORK FOR THE DAY**
+	- [ ] > [!hint] PUMP UP: :   <br>MATCH THE PERFORMACE GOALS AND   <br>FORESEE THE HAPPENING AND   <br>PLAN THE DAYS AND MONTHS
+	- [ ] Take work seriously
+		- [ ] **Do Office First and finish it off** 10:00 - 10:30 
+		- [ ] Only then start course
+	- [ ] During work
+		- [ ] Work Performace score in office ?
+		- [ ] Start routines in office
+		- [ ] Pomodoro in office as well.
+		- [ ] Enjoy the work
+		- [ ] One L water in office
+		- [ ] Straight Talk
+		- [ ] End routines like logging in office
+	- [ ] Post work record
+		- [ ] How is flow of work ? Good?
+		- [ ] Did pomodoro distrub you and you are flowing with work. ?? Inertia achieved
+			- [ ] Dont feel like taking break ??
+		- [ ] Are you hungry today ?
+		- [ ] Legs L and numbness ?
+
+## Lunch
+- [ ] **Cook and have Lunch** 13:00
+
+## Mid Office Routines
+
+- [ ] **Mid Office Routines** 13:30 - 14:30
+	- [ ] > [!missing] **Afternoon youre losing track. Plan to stand and leave accordingly.**
+	- [ ] AFTERNOON Time
+		- [ ] **Plan the time**
+		- [ ] This is only ME time to update the excel, lists, changes, see what's happening in life.
+		- [ ] use this time for yourself
+		- [ ] Are you staying in office knowing that there is no real help from staying there ?
+	- [ ] Lunch: Chew 50 times. Use WFO to chew 50x
+		- [ ] How much time did you spenmd to chew 50 times?
+		- [ ] whats for Lunch today ?
+		- [ ] Lunch vibrated ?
+		- [ ] Take a pic and vlog
+	- [ ] Post Lunch tasks to do
+		- [ ] **Fresh up**
+			- [ ] Teeth and face
+		- [ ] **Sit:**
+			- [ ] Document gym workouts
+			- [ ] Apply OD
+			- [ ] Digital works like Bills/ Challans/ Amazon orders/ insurance
+			- [ ] Automations like Milk/meat Licious deliveries scheduling
+			- [ ] Work on making lists/ remiander/ automations/prints/updates and management 
+			- [ ] Bills payments
+			- [ ] Planned, Scheduled Tasks: CHECK LIST
+				- [ ] Day tasks
+				- [ ] Weekend tasks
+		- [ ] **Walk:**
+			- [ ] Parents talk and health
+			- [ ] Any refill like dry fruits and update in master buy list items.   <br>AND update in master buy list items
+			- [ ] Music
+			- [ ] AI
+	- [ ] Actual tasks done today in office duration
+
+- [ ] **Travel back home** 16:30 - 17:30
+
+***
+
+## Start the day again for the 2nd time as if you just woke up.
+
+- [ ]  **Start the day again for the 2nd time as if you just woke up.** 17:30 - 18:00
+	- [ ] **GOING HOME EARLY IS PURE WASTE OF TIME AND NO RETURN FROM IT.   <br>TRY TO BE OUTSIDE AND WORK MORE.**
+	- [ ] On the way home
+		- [ ] Snacks/ Daily Refills on the way back home. and update in master buy list items
+		- [ ] IRONING bag give/take / Start washing machine + Timer 15 min daily wash  <br>record count of items given
+		- [ ] Park in Own bike parking spaces ONLY.
+	- [ ] Quick Tasks after reaching: *Same template like morning*
+		- [ ] Actual back home time?
+		- [ ] Order Non Veg 2X per week.
+	- [ ] IF YOU KEEP ANY VALUABLE ITEMS IN BED ROOM THEY WILL GO MISSING FOR SURE.
+	- [ ] **Something like morning**
+		- [ ] Keep bikes at their places.
+		- [ ] Bring dustbin back inside.
+		- [ ] Drink water / Vibrated water
+			- [ ] Drink water and take pre workout ORGANIC bananas if needed
+		- [ ] Clean: wash face, clean eyes with eye cup
+		- [ ] Open curtains and windows
+		- [ ] Charge phone (turn on switch), Mac book, ola bike 🛵 evenings
+		- [ ] Open Office laptop once you're home
+			- [ ] Keep Lunch boxes out, bags all at their places hanged up.
+		- [ ] Soak Dal Rice
+		- [ ] Coolant water/soup keep hydrating and continue work
+			- [ ] Potty
+		- [ ] bath
+			- [ ] HOT WATER BATH
+			- [ ] COLD WATER BATH
+			- [ ] BATH under tap EARLY EVENING
+			- [ ] Wear clean clothes, keep old clothes hanged to hanger.
+		- [ ] Turn on all lights inclsuing outside 2x lights.
+		- [ ] Shri Mataji
+			- [ ] Clean Shri Mataji table/sofa
+			- [ ] Kundali up and bandhan.
+			- [ ] Puja and JalAbhishek if not morning after bath and cleaning sofa and wearing good clothes
+			- [ ] Meditate
+				- [ ] Meditate together /
+				- [ ] Take names
+				- [ ] one more 2nd ROCK SOLID numbness cycle before Shri Mataji and FS
+				- [ ] Listen to series of speeches TOGETHER in order from Amruta in macbook.
+			- [ ] Are you asking your GURU doubts and problems and then meditate untill you get cool again?. DONE porbelm resolved.
+				- [ ] If there are any issues ask her the solution, talk to her and write a latter to her.
+				- [ ] Bandhan for all Subtle and life problems TOGETHER
+				- [ ] Daily ask for blessing to do all routines and make me active and remove laziness
+			- [ ] Aarthi in the evening
+			- [ ] Eat prasad
+			- [ ] Together meditation time ?
+	- [ ] ![[MASTER DAY ROUTINES - fixed blocks for recalling#Success]] ..::SUPER CONSCIOUS ATTENTION MODE::.. ^4ee2a3
+
+
+
+## EVENING PLANNING
+- [ ] PLAN EVENING: 17:30 - 18:00
+	- [ ] **GET READY FOR EVENING GYM**
+		- [ ] Somehting like morning: Go to gym evening.
+		- [ ] DON'T EAT ANY FOOD AT HOME OR OUTSIDE....
+		- [ ] Only DRINK WATER
+		- [ ] STRICTLY NO SNACKS EVEN YOURE HUNGRY. before Gym .
+		- [ ] Only eat pre workouts Eat ORGANIC bananas, Fruits for snacks
+		- [ ] Drink water
+		- [ ] Refills: Eggs, Bowenpally Veg Market.   <br>AND update in master buy list items
+		- [ ] Daily refills like ORGANIC bananas pomegranate, pineapple, watermelon.   <br>AND update in master buy list items
+		- [ ] Make coolants and sweet potato
+		- [ ] Drink water again after gym
+		- [ ] Daily refills/clothesIroning when coming back from Gym   <br>AND update in master buy list items   <br>record count of items given
+
+
+
+
+## The Joy of cooking together
+
+- [ ]  **The Joy of cooking together**   18:00 - 19:00
+	- [ ] > [!danger] ..::SUPER CONSCIOUS ATTENTION MODE::..<br><br>DONT WASTE YOUR ENERGY ON PLEASING OTHERS. DO WHAT YOU HAVE TO DO.  <br><br> ALL OTHER TASKS ARE NOT EVEN COUNTED AT ALL ANYWAY  <br><br> ---- <br><br>   DONT LISTEN FROM NOW.<br><br>YOU STARTING TALKING/ TELLING/ASSIGNING TASKS TO SOMEONE. <br><br>--- <br><br>DONT DEPEND OR EXPECT FROM ANYONE AT ALL. <br><br>YOU ARE HERE TO ONLY PROVIDE AND NOT EXPECT. <br><br> --- <br><br> DONT FALL IN HER MAYA
+	- [ ] > [!success] ..::SUPER CONSCIOUS ATTENTION MODE::..<br><br>HEADPHONES mode  <br> <br> Quick\_Straight talk mode  <br> <br> Drink water and Pushups<br><br> Alone Mode <br><br>  4 hands and quick tasks mode<br>  <br>Tasks deligation mode and look tasks list<br> <br> gym <br> <br> bath<br> <br>Leave Home and think outside for what to do /
+	- [ ] **PLAN**:
+		- [ ] Talk to Krupa
+			- [ ] involve her in the evenings to being with
+			- [ ] TELL THAT YOU DONT EAT OUTSIDE FOOD ANYMNORE. COMPLETELY.   <br>ONLY IDLY MAXIMUM.
+				- [ ] EATING ONCE ALSO WILL CREATE A CHAIN REACTION AND YOU WILL CONTINUE AND EVENTUALLY FORGET THAT YOU THOUGHT OF NOT EATING OUT . SO DINT EVER EAT OUTSIDE
+			- [ ] NO OUTSIDE FOOD PROTOCOL FOR MYSELF. ONLY IDLY MAXIMUM.   <br>BUT SHE CANT EAT. NOT STOPPING HER.
+		- [ ] Talk to Myself
+			- [ ] ***NO ONE IS HERE TO DO ANYTHING FOR YOU. YOU ONLY HELP YOURSELF. <br>NO ONE IS HERE FOR YOU FOR ANYTHING.   <br>NOT FOR BREAKFAST.   <br>NOT FOR LUNCH.  <br>NOT FOR DINNER.   <br>NOT FOR PACKING OR CLEANING HOUSE OR ANYTHING AT ALL.   <br>  <br>YOU ARE HERE ALL BY YOURSELF.   <br>  <br>PLAN AND JUST COOK YOUESELF AND EAT SO YOU WILL EAT AND LIVE   <br>YOU CAN PROVIDE OTHERS. BUT YOU DONT RELY/EXPECT FROM OTHERS AND LIVE IN DISAPPOINTMENT LATER.***
+			- [ ] DEDICATE 1 HOUR PER DAY TOGETHER FOR DINNER COOKING
+			- [ ] Wait a minute !!  <br>How about NOT EATING ANYTHING AT NIGHT ?
+			- [ ] Are you still not taking any cooking initiative by yourelf even though you know what happens when you dont cook and eat yourself and not depend on anyone ?
+	- [ ] **Pre cooking Planning:**
+		- [ ] Turn on all lights inclsuing outside 2x lights.
+		- [ ] Check fridge and Empty and plan first and plan as per items.
+		- [ ] Plan curies for today and tomorrow.
+		- [ ] Plan from Menu book for Breakfast, lunch
+		- [ ] Plan and decide on the Food PLAN/table/template for week and follow it. Template needs to be filled.
+		- [ ] Use market items list to plan
+		- [ ] Plan sids Farm accordingly
+		- [ ] Plan tomorrow juice
+		- [ ] Check the availability of daily foods: lemons, coconut, fruits ORGANIC Bananas, Pomegranate, Pineapple, Watermelon, fruits4juice, vegetables, pulses, dryfruits etc ready aside for NEXT FEW DAYS MINIMUM READY.
+		- [ ] Make all utensils washed and arrange them. Arrange old items as well.
+		- [ ] Cleam Kitchen tops 2X and stoves and Misie/juicer
+		- [ ] Arrange all items VEG/Groceries bought from Market
+		- [ ] Pluck all leaves from all green leafy vegetables and keep them in air tight boxes and keep in fridge
+		- [ ] Check sids farm app for tomorrow as per existing items in fridge.
+		- [ ] Make the help list ready: knealding, chopping, dicing, graiting based on the decided FOOD PLAN one by one Help tasks.
+		- [ ] Dont cook. Only help. Learn every time when she is actually cooking and dont only help.
+		- [ ] Dont cook too much Dal and rice and throw, Plan properly.
+		- [ ] No rice in the evenings and just chapatis with lots of curry
+		- [ ] **NO RICE IN THE NGHT CHALLENGE**
+		- [ ] **EAT ONLY HOT AND FRESHLY COOKED RICE CHALLENGE**
+		- [ ] **0 SUGAR CHALLENGE**
+		- [ ] **ONLY HOME COOKED FOOD CHALLENGE**
+		- [ ] **NO OUTSIDE FOOD CHALLENGE. MEANS NO KACHARA AT ALL.   <br>BUT SHE CAN EAT. I'M NOT STOPPING HER.**
+		- [ ] **ONLY HOLY VIBRATE FOOD**
+		- [ ] Stages of Home cooking:
+			- [ ] Plain Dal + rice with Ghee pickle
+			- [ ] Leafy Dal + rice with Ghee pickle
+			- [ ] Leafy Dal + rice with Ghee pickle + Curry
+			- [ ] Leafy Dal + rice with Ghee pickle + Curry + Buttermilk
+			- [ ] Leafy Dal + rice with Ghee pickle + Curry + Buttermilk + Salad
+			- [ ] Leafy Dal + rice with Ghee pickle + Curry + Buttermilk + Salad + Chapati
+			- [ ] Leafy Dal + rice with Ghee pickle + Curry + Buttermilk + Salad + Chapati + Dessert + Chutney powders
+		- [ ] Re-fill water in 20L water bootle. Helps in easy Dry fruits watering.
+		- [ ] Bring/give ironing clothes   <br>record count of items given
+		- [ ] Mahishi attendence X-X-X-X-X
+			- [ ] No maid ??   <br>Just cook dal rice
+		- [ ] SOAK
+			- [ ] Make salt water ready in copper Bowl before Shri Mataji
+			- [ ] Soak urad dal for idly- breakfast
+			- [ ] Soak big chana - breakfast protein salad
+			- [ ] Soak Green grams for Pesarattu dosa
+			- [ ] Soak pulses mix for protein dosa
+			- [ ] Soak Dal/Rajma to cook morning
+	- [ ] **Plan and KEEP READY**
+		- [ ] Keep Eggs in cooker ready to cook morning
+		- [ ] Make Salad bowl making for Lunch
+		- [ ] Make fruits cutting for morning breakfast and keep in dabbas
+		- [ ] Decide and plan juice first then Keep fruits and vegetables for morning drink cut and keep in fridge.
+		- [ ] Morning tiffin fruit box decide and cut accoringly
+		- [ ] Orange amla Lemon Coconut BANANA Beetroot Pomegranate Pine apple watermelon Papaya Spinach Berries Ash guard
+		- [ ] CUTTTTTT the vegetables (or fruits) in water for getting cold press juice.
+		- [ ] Make Salads for 3 days
+		- [ ] Prepare shots: Ginger/Turmetric Shots etc for next 3 days
+		- [ ] Keep juicer ready to start juicing
+		- [ ] Keep dabbas Ready - Curd rice round - Square smoothie - Small square for sprouts - Plastic Lunch - Fruits box plastic
+		- [ ] Keep tea setup ready along with ajwain and shee and jeera salt. Etc
+		- [ ] Fill 3 water bottles with Water and keep at 3 places, room. 2x , meditation place 1x
+		- [ ] Marinate Mutton
+	- [ ] **SPROUTS**
+		- [ ] First check yesterday's Soak new Sprouts
+		- [ ] remove unsprouted chana from chana sprouts for tomorrow morning
+		- [ ] Keep yesterday grown old sprouts in dabbas with lemon toppings+ onions etc
+	- [ ] **CHIA SEEDS PUDDING ,DRY FRUITS SOAKED, DRY FRUITS DRY, SMOOTHE, PROTEIN SHAKE3**
+		- [ ] Make coconut milk for 1 day one Coconut
+		- [ ] Make Chia seed pudding in 2 boxes with coconut water, seeds, nuts, OATS, MILK
+		- [ ] Keep ORGANIC bananas in Frozen area for smoothe.
+		- [ ] Soak dry fruits as well if needed
+		- [ ] Keep directly eatable dry fruits like dates, cashew nuts ready
+		- [ ] Keep ghee honey organic jaggery ready
+		- [ ] Make all of above as smoothe with milk
+	- [ ] **CURD AND RICE AND CURD RICE AND BUTTER MILK**
+		- [ ] Start with Milk heating, Cooker with Rice, Dal, Eggs, Sweet potato
+		- [ ] Try for curd rice directly for morning if possible in summer
+		- [ ] Use remaining yesterday's curd from yesterday bowl for butter milk. Save for tomorrow
+		- [ ] Put Curd + rice in matka + 🧅 onions+ chillies+ pink salt AND keep lemon ready for morning on top
+		- [ ] Make Butter milk with lemon 🍋 + curry 🌿 lesves+ pink salt + Ragi in 2 TUMBLERS ONLY and keep BUTTER MILK 2X in fridge
+		- [ ] Pack buttemilk in 2 thumblers
+	- [ ] **Cook Curry:**
+		- [ ] Krupa
+
+> [!important] DO ALL NOW. 0 TASKS FOR TOMORROW MORNING. MORNING=MEDITATION
+
+## Family Dinner
+
+- [ ] 19:00 - 19:30 **Family Dinner**
+	- [ ] Finish dough or curries and plan accordingly
+	- [ ] Any additives like Moms specail prawns, chutneys, ghee, pickles etc
+	- [ ] whats for dinner today ?
+	- [ ] Dinner vibrated ?
+	- [ ] Chew 50 times
+	- [ ] How much time did you spenmd to chew 50 times?
+	- [ ] IF YOU ARE COOKING JUST FOR YOURELF, THEN ITS NOT GOOD.
+	- [ ] Actual Dinner time ?
+	- [ ] Take picture of food and vlog
+
+## Family time Post Lunch
+
+- [ ] 19:30 - 19:45 **Family time Post Lunch**
+	- [ ] ME time
+		- [ ] Check all what's app groups and personal messages
+		- [ ] Talk to
+			- [ ] parents
+			- [ ] wife
+			- [ ] brother
+			- [ ] sis in law
+			- [ ] friends
+		- [ ] Watch Eng TV Channels/ Movies/ series - Comics mostly
+		- [ ] Vlog the day and pics on insta.
+	- [ ] Digital Detox STARTS - DIM LIGHTS, DARK, NO SCREENS
+		- [ ] ..::SUPER CONSCIOUS ATTENTION MODE::..
+		- [ ] Tomorrw's Agenda TALK: STANDUP AND TALK . HIGH ATTENTION
+		- [ ] DAY TYPES:
+			- [ ] Both - Both Work day ??? - Both Work day ??? then Timings of leaving home, back home, breakfast, lunch, clothes etc ready ?  <br>PREPARE THAT I WILL LEAVE HOUSE BY  AND COME BACK HOME EVENING AT
+			- [ ]  INSTITURE/ WORK: Decide the times for institute or work. - if work is pending then office first. Early office is productive.
+			- [ ] Even if she is working or Not, any case its alwasy and definitely Institute reading day ONLY. DEFAULT AND NOT EASILY CHANGEABLE. My Default is institute/work. No home day for me at all. COOK AT HOME DECLARATION and plan accordingly. PREPARE HER FOR THE SAME.  <br>Timings of leaving home, back home, breakfast, lunch, clothes etc ready ?  <br>PREPARE THAT I WILL LEAVE HOUSE BY  AND COME BACK HOME EVENING AT
+			- [ ] Weekday and Holiday and institute calso losed ??  <br>Then its a TRAP Day to break cycles  <br>plan the day now itself.   <br>TELL her and DELCARE You will be free ONLY after after DAILY-DAY routines.   <br>COOK AT HOME DECLARATION and plan accordingly. PREPARE THAT I WILL LEAVE HOUSE BY  AND COME BACK HOME EVENING AT
+			- [ ] Upcoming WEEKEND Same routines  <br>with mini puja and Center evening. 
+			- [ ] Normal Weekend   <br>plan ahead using weekend excel.   <br>Plan cookng as well.   <br>PREPARE HER FOR THE SAME.. What type of weekend are we heading ? full tasks?
+			- [ ] Puja wekend?   <br>CHECK LIST: form the weekend day types in weekend Excel.
+			- [ ] Festival?/TravelPlan? Discuss and also COOK AT HOME DECLARATION.
+	- [ ] Quality talk: 
+		- [ ] QULAITY WALK AFTER DINNER - Endorphins
+		- [ ] Walk outside with wife,
+		- [ ] Listen to all she says about her day.
+			- [ ] ONLY ASK QUESTIONS, ASK HER FEELINGS ONLY  <br>TAKE ANSWERS, VIEWS ONLY FROM HER.   <br>DONT SAY YOUR VIEWS/OPINIONS/REPONCES/ANSWERS OR ANYTHING IMMEDITAELY  <br>DONT ASK ANYTHING AT ALL EXPECT WHAT SHE WANTS,   <br>SHE CANT THINK ANYTHING. ONLY ASK QUESTIONS AND NOT MAKE HER ANALYSE ANYTHING. TAKE BARE WORDS AND
+			- [ ] "ONLY ASK" krupa on todays thoughts and updaet excel together and categrixe though and plan .
+			- [ ] "ONLY ASK" for her Irritating list and then normal list and task and start from her irritating\*\*\* tasks.
+			- [ ] "ONLY ASK" HER IS SHE HAPPY, WHAT ELSE SHE WANT, WHATS NOT GOOD AND STILL LACKING TO PROVIDE IN LIFE.
+			- [ ] "ONLY ASK" - SERIOUS TALKS: BAD ME? ,DOUBLE STANDARDS, BAD HUSBAND?.
+			- [ ] "ONLY ASK" - PLEASE TELL ME WHAT ELSE CAN I CAHNGE STILL KRUPA ?   <br>WHATS YOUR RATING FOR ME IN ALL AS OF NOW?   <br>- INITIATIVES,   <br>DONT LET ME TELL YOU 100 TIMES  <br>SURPRISES,
+			- [ ] If not ask and listen.
+				- [ ] Check LIST: Talk to krupa list
+		- [ ] SY SHOULD WRITE SOMETHING EVERY SINGLE DAY
+			- [ ] WRITING GIVES YOUR ORGANISED MENTAL CLARITY ON ALL DIFFERENT SEGMENTS IN LIFE.
+			- [ ] Write all good things about her whcih she is doing knowing or unknowlingly. Subtlely and physically.
+	- [ ] HOME ROUTINES INITIVATES, SURPRISES INITIVATES, WEEKEND ENTERTAINMENT INITIATIVES, FUN
+		- [ ] Remainders to myself from me
+		- [ ] Do all things perfectly
+		- [ ] juice veg/fruits cut and ready, milk orering, chia seeds pudding, clothes, wakeup
+		- [ ] Krupas biological cycle ? saffron day ?
+		- [ ] I wish not to speak
+		- [ ] DID I ASK YOU TO DO THAT
+		- [ ] Let me think and let you know
+		- [ ] Tell all tasks you did today. Or else thay are not recognised.
+		- [ ] Dont take any reminders iike Wakeup, do Brush, go to gym, Do FS in night. Whole idea is to eliminate all inivitivates from her to.house an me.
+		- [ ] Are the triggers correct ? are you able to follow alarms, notifications?
+		- [ ] Corrections in Krupa's way:
+			- [ ] If one thing is not done, I will be blamed as a whole
+			- [ ] Are you crazy ?
+			- [ ] Nohting you are doing. All I only have to tell you do kacharaa, cothes etc.
+			- [ ] Hundred times told list
+			- [ ] ./ CHECK / UPDATE /..
+			- [ ] Dont discuss without laptop.
+	- [ ] Post Lunch activities:
+		- [ ] Fun day: Mid week Fun time ? movie ?
+		- [ ] Fun rating ?
+		- [ ] Relax but
+		- [ ] TV is limited to a movie per week and a series for month. NOHTING more than that. you have tasks.
+		- [ ] Reading Corner: Physical Book - Read a book/ parayan/self improvement/ MOTIVATION IS FROM RESEARCH
+			- [ ] | Read atlest 20 pages per day.
+		- [ ] SY: - LIKE READING PARAYAN, MIRACLES/ TECHNIQUE/ MEETING SYS/ TRAVEL FOR PUJAS, YT ON OTHER SYS TALKS, MAHAJAN BOOKS, READ FROM PEOPLE SPENT TIME WITH SHRI MATAJI, SPREADING, ATTENDING ALL EVENTS/ DREAIMNG TO BE LIKE A MASTER OF SY AND BE LIKE ANGEL ON EARTH/ REMEMERBING THE DEVI / DEVI MAHATYAM/ OUR MARRIAGE/ BEACUTIFUL COLLECTIVITY / JUST REMEMBERING THE GLORY OF THE DEVI AND SAHAJA YOGA WORLD WIDE. DREAMING/RESEARCHIG/MOTICVATION / GANESHA BOOK and all printed books.
+		- [ ] Go out day: bike Ride
+		- [ ] QUALITY WALK AFTER DINNER
+		- [ ] Check all what's app groups and personal messages
+		- [ ] Talk to parents wife brother sis in law friends
+		- [ ] Watch Eng TV Channels/ Movies/ series - Comics mostly
+		- [ ] Vlog the day and pics on insta.
+	- [ ] Post Lunch TASKS:|
+		- [ ] clean fridge and throw old items
+		- [ ] keep plastic glasses in fridge
+		- [ ] Keep HIT/ cockroach paste or pest control setup like rat Pad and rat kill and insects flies check |
+		- [ ] close all door 🚪, windows, dustbins
+		- [ ] switch off computer desk, lights, geysors,
+		- [ ] clean bathroom sink basin and remove salt. Clean washroom floor
+		- [ ] Empty and clean kitchen top
+		- [ ] keep utenisils soap/liquid ready and brush dry after washing it
+		- [ ] clean salt on washroom camodes
+		- [ ] clothes fold
+		- [ ] Keeo tomorrow's Homeclothes, OfficeClothes, towels ready to wear
+		- [ ] Bed sheets new change
+		- [ ] bed 🛏️ fold and tidy up
+		- [ ] Bike air check and refill.
+			- [ ] Charge ola bike 🛵 AND Fill air when you charge ola
+		- [ ] Clean kitchen fridge and empty it
+		- [ ] Call parents and talk in mid week
+		- [ ] Change , Towels, Kitchen cloth, bed sheets, pillow covers
+		- [ ] Drink butter milk /ORGANIC Bananas /Milk at night
+		- [ ] Take selfies, casual house pics of Shri Mtaji Setups, rooms etc
+	- [ ] Facial and Facial hair and Tooth, Hair, Body/ skin routines:
+		- [ ] COOL water wash
+		- [ ] Beard routines. Beard oil
+		- [ ] put oil on your hair 3x per week. 3 rd time bhahman puri oil when no feeling good.
+		- [ ] Massage the head and not just put oil and simply rub
+		- [ ]  Winter skin oil
+		- [ ] Oil Massage for both of us.
+		- [ ] Change pillow covers after yesterday's oil head
+	- [ ] Tooth routines:
+		- [ ] Oil gargel
+		- [ ] Finally Brush teeth for night time
+	- [ ] Take medicines/Supplements if any
+	- [ ] TASKS:
+		- [ ] One Major important task for the day to focus on. PREFILL   <br>  <br>Check WhatsApp Group: Today's TASKS
+		- [ ] IF THERE IS ANY TASK REPEATING FOR LAST 2 DAYS IN DAYS TASK, IGNORE ALL AND DO IT FIRST.
+		- [ ] IF THERE ARE NO TASKS DO WEEEND TASKS HERE.
+	- [ ] SURPRISE
+		- [ ] DEDICATE TIME TO SURPRISE INITIATIVES ALSO.   <br>DONT ONLY FOCUS ON DAILY ROUTINES INITIATIVES.   <br>  <br>CHECK SURPRISE HER LIST.
+	- [ ] RELAX, have Fun if needed.
+
+## Connect to Shri Mataji and Thank for the great day
+
+- [ ] 20:00 - 20:15 **Connect to Shri Mataji and Thank for the great day**
+	- [ ] >[!important] KEPT ABSOLUTELY 0 TASK FOR MORNING. RIGHT ??
+	- [ ] Enjoy walk and relax.
+	- [ ] DONT FEEL LIKE DOING FS AT NIGHT?. THEN DEFINITELY DO FS
+		- [ ] Sit before any FS
+		- [ ] *CLOSE DOOR PROTOCOL*
+		- [ ] RECLAIM THE WHOLE 3 NADIS WITH COOLNESS AND   <br>  <br>FILLING THE BODY WITH COOLNESS IS MUST.
+		- [ ] WATER THE SEED DAILY MORNING AND EVENING.   <br>  <br>Water center channel mornings by sitting on floor and meditation  <br>  <br>MONRING FS WORKS TILL AFTERNOON.   <br>  <br>NIGHT FS WORKS TILL NEXT MONRING 4 AM
+		- [ ] Night FS with hot cold and "Red bindi" infront of Shri Mataji photograph with candle in front of it (CLOSE DOOR)  <br>with hands on Swadhistans. MUST DO FS OF THE DAY >>>
+		- [ ] Tell krupa to do all sides if both are doing FS.
+		- [ ] The good old Surrender FS. Just see the ATA the play of her during the FS. DO NOTHING. SHE KNOWS WHAT TO DO.
+		- [ ] Keep kundalini up. Push all bad up by deep breathing and giving it o Shri Mataji.
+	- [ ] Post FS tasks
+		- [ ] Actual night FS duration ?
+		- [ ] Keep FSD ready for both of us for now.. Half mug water for krupa
+		- [ ] Close all taps fully and keeo them up position and closed.
+		- [ ] Log all the experiences in log.
+			- [ ] Coolness ? Cool the body like good old days ?
+			- [ ] Relaxed, relieved after FS
+		- [ ] Meditian for some time after FS and before before sleep. Sleep with cool head.
+			- [ ] Vibrating clouds
+			- [ ] Use Vibrations daily
+				- [ ] state after bandhans?
+		- [ ] Ajwain whole house
+		- [ ] Make 2L vibrated water ready as Shri Mataji photograph is clean
+		- [ ] Also vibrate others as well like Garlic , lemon chillies
+		- [ ] Keep FSD SETUP with table for tomorrow morning. Half mug water for krupa.
+			- [ ] You cant END a day unless you do a FS.
+			- [ ] You cant START a day unless you do a FS.
+
+## Sleep is most underrated thing
+- [ ] 20:15 - 20:30 **Sleep is most underrated thing**
+	- [ ] >[!important] Cool the body like good old days and then sleep cool.
+	- [ ] PRE-REQUISITE FOR THE WHOLE SLEEP AND MORNING SY CYCLE
+		- [ ] Pray to wake me up early morning after night final FS done.
+		- [ ] Put Bindi before sleeping
+		- [ ] LOCK THE NIGHT FS, MORNING MEDITATION, FS ROUTINES
+			- [ ] Keep FSD SETUP with table for tomorrow morning. Half mug water for krupa.
+		- [ ] Dont be miser and try to wake up so early. Wake up late if you are sleeping late. Adjust accordingly.
+			- [ ] Check alarms and adjust as per tomorrow schedule. 5AM = Default Minmum wake up alarm
+			- [ ] Keep alarm setup, Gym Setup ready:   <br>- Mat and 2X water Bootles,   <br>- wooden amplifier and   <br>- phone at distance and  <br>- do push-ups morning   <br>- Helmet
+	- [ ] You cant END a day unless you do a FS.
+	- [ ] Before sleep tasks
+		- [ ] Cool Facewash
+		- [ ] Turn off diya
+		- [ ] Turn off Wifi and Data OFF in mobile and Keep Mobile sound in loud
+		- [ ] Get night wear dresses with fully covered dress and make env cozy with pillows
+		- [ ] Ghee camphor/ Netramjan
+		- [ ] Put Bindi, Quick meditate and kundalini up then take final bandhan and then sleep
+		- [ ] Not Sleepy?: 
+			- [ ] No Screens,
+			- [ ] Read a book/ parayan/self improvement/ MOTIVATION IS FROM RESEARCH.
+		- [ ] Actual time when you went to sleep? PM ?
+		- [ ] Drink WATER/ butter milk /ORGANIC Bananas /Milk at night
+
+## EOD Checklist - INERTIA/CONSISTENCY Check:
+
+- [ ] 19:45 - 20:00 **EOD Checklist - INERTIA/CONSISTENCY Check:**
+	- [ ] INERTIA = CONSISTENCY IN DOING THINGS. ARE YOU IN FLOW ? ? ?
+	- [ ] Effortless wake up consistency and results
+	- [ ] Rock Solid meditation, SB consistency and results
+	- [ ] Minring Routiens consistency and results
+	- [ ] FSMonring consistency and results
+	- [ ] Morning Gym consistancy, physical goals: consistency and results
+	- [ ] FS with names consistency and results
+	- [ ] Protein diets consistency and results
+	- [ ] Instagram posts 3x a day
+	- [ ] Course and Certificaiton studying consistency and results
+	- [ ] Projects studying consistency and results
+	- [ ] Work performance and logging consistency and results
+	- [ ] Evening Monring like Freshup and Meditation consistency and results |
+	- [ ] Evening gym consistency and results
+	- [ ] cooking at home consistency and results
+	- [ ] night routines consistency and results:
+	- [ ] Physcical health and no weakness
+	- [ ] arried life satisfaction consistency and results:
+	- [ ] FS nights consistency and results:
+	- [ ] Early Sleepiness and good sleeping consistency and results:
+	- [ ] Whats stopping you to do all things ?
+	- [ ] Mindset track
+		- [ ] Pre and post
+			- [ ] pre
+				- [ ] Can we talk in decicated time ?
+				- [ ] Im in middle of something
+				- [ ] I will think and let you know
+				- [ ] take breakout room to think and let them know
+			- [ ] Post
+				- [ ] end questions at last of any event
+				- [ ] there something else more to do
+					- [ ] folllow up tasks and action mindset
+		- [ ]
+
+## EOD Checklist- SY AND LIFE
+
+- [ ] 19:45 - 20:00 **EOD Checklist- SY AND LIFE**
+	- [ ] Effortless wake up consistency and results:
+	- [ ] Woke up at Early morning 4 AM ?
+	- [ ] Early Morning 4 AM meditation, GYM can break the vicious cycle.
+	- [ ] Tiredness after sleep ?
+	- [ ] Vibrations in morning on bed itself ?
+	- [ ] Vibrations on bed itself and when breathing you become light and come to center andWakeup simply ?
+	- [ ] Breath and simply kundalini going up ?
+	- [ ] Still numbness in 2 fingers when you wake up ?
+	- [ ] Felling so energitic ??? morning's up ?
+	- [ ] time wasted uselessly ?
+	- [ ] Rock Solid meditation, SB consistency and results
+	- [ ] Rock solid 1 hour meditation?
+	- [ ] Breath and simply kundalini going up ?
+	- [ ] SB ?
+	- [ ] Minring Routiens consistency and results
+	- [ ] Morning Routines ?
+	- [ ] Did you even brush today ?
+	- [ ] Did you even bath today ?
+	- [ ] Constipated and dehybreaated and no potty or bad oduor?
+	- [ ] Gas /bloated belly?
+	- [ ] before or after gym ?
+	- [ ] Did you feel Hunger at all? after potty.
+	- [ ] Jalbahishek ?
+	- [ ] Vibrations on their own ?
+	- [ ] FSMonring consistency and results
+	- [ ] Is effect staying or going after some time after FS ?
+	- [ ] Do you feel free after treatments?
+	- [ ] Cooling In FS ?
+	- [ ] Morning Gym consistancy, physical goals: consistency and results
+	- [ ] GYM today ?
+	- [ ] steps count ?
+	- [ ] using inertia you aquire from gym to use for all day tasks
+	- [ ] Did you have a sour body today?
+	- [ ] FS with names consistency and results
+	- [ ] Insta screent time from APP.
+	- [ ] Is effect staying or going after some time after FS ?
+	- [ ] Do you feel free after treatments?
+	- [ ] Taking Names Daily ?
+	- [ ] Protein diets consistency and results
+	- [ ] Food 3X ?
+	- [ ] Break fast ?
+	- [ ] Is Break fast Home made?
+	- [ ] Who cooked?
+	- [ ] is Break fast from Outside?
+	- [ ] Reason for the outside food ?
+	- [ ] No food but doing more gym ?
+	- [ ] Lunch ?
+	- [ ] Is Lunch from Home ?
+	- [ ] who cooked ?
+	- [ ] Is Lunch from Outside ?
+	- [ ] Reason for the outside food ?
+	- [ ] Dinner ?
+	- [ ] Is Dinner from Home ?
+	- [ ] who cooked ?
+	- [ ] Is Dinner from Outside ?
+	- [ ] Reason for the outside food ?
+	- [ ] Did you vibrate everythibg you ate today?
+	- [ ] Diets only and no gym ??
+	- [ ] Instagram posts 3x a day
+	- [ ] Course and Certificaiton studying consistency and results
+	- [ ] seats are paining on bike
+	- [ ] Seats are not paining but tingling when happy.
+	- [ ] Did you think shri mataji lotus feet on your head duriung bad thoughts and divert atention ?
+	- [ ] Till when vibrations stay in a day after morning meditation? Till ..
+	- [ ] Did you feel thirsty at all ?
+	- [ ] Total water intake Liters
+	- [ ] How musch did you build today?
+	- [ ] Did you research on anyting ? or else you will stop dreaming.
+	- [ ] Projects studying consistency and results
+	- [ ] Work performance and logging consistency and results
+	- [ ] work wenrt well ?
+	- [ ] Yellow Toilet ?
+	- [ ] How many times?
+	- [ ] Evening: Monring like Freshup and Meditation consistency and results
+	- [ ] Jalbahishek ?
+	- [ ] AAarthi ?
+	- [ ] Did you request dieties for help when you need help ? they are the doers.
+	- [ ] Evening gym consistency and results|
+	- [ ] cooking at home consistency and results
+	- [ ] Throwing Sprouts?
+	- [ ] Throwing and wasting food ?
+	- [ ] Failed food recipies and thorwing food and getting sad and guilt and angry ?
+	- [ ] night routines consistency and results:
+	- [ ] Night Routines ?
+	- [ ] Ajwain home ?
+	- [ ] Physcical health and no weakness
+	- [ ] Married life satisfaction consistency and results:
+	- [ ] Predict fight days
+	- [ ] Fights ?
+	- [ ] Predict fun days
+	- [ ] Good and cold baths after fun
+	- [ ] Mindset tracker. Lethargy ? Feel like doing things or not ? Bargain/keep silent ?
+	- [ ] Numbness in life is gone ?
+	- [ ] Thinking more
+	- [ ] Started enjoying everything ?
+	- [ ] Still having tingling in Swadhistans whenever you enjoy someithing like glass buildings ?
+	- [ ] Forget full ness?
+	- [ ] Dont want to talk and be alone mindset ?
+	- [ ] FS nights consistency and results:
+	- [ ] Cooling In FS ?
+	- [ ] two times FS ?
+	- [ ] Vibrations on their own ?
+	- [ ] Is effect staying or going after some time after FS ?
+	- [ ] Do you feel free after treatments?
+	- [ ] Still Numbness day...?
+	- [ ] then did you do all things correctly ?
+	- [ ] Kundalini going up effortlesly ?
+	- [ ] Early Sleepiness and good sleeping consistency and results:
+	- [ ] went to sleep with cooled body?
+	- [ ] Screen time ?
+	- [ ] Potty Happened ? How mnay times ? 0,1,2 ?
+	- [ ] half or bad or no POTTY is the first pattern of bad bad health. PROBLEM ALREDY STARTED. BEWARE.
+	- [ ] How many times?
+	- [ ] Are End goals Met for all sections above ?
+	- [ ] Did you have a fantastic day ?
+	- [ ] Notes of day
+	- [ ] Miracles ?
+	- [ ] Is the day joyful as if like a Child ?
+	- [ ] Is it lethargy guy or active guy awakened most of time today? or Note taking and observatin mode guy.
+
+## SY State logging
+
+- [ ] 19:45 - 20:00 **SY State logging**
+	- [ ] Any bad qualities beginning to show ?
+	- [ ] How is Thought process ?
+	- [ ] smp .tell KRUPA IMMEDIATELY.
+	- [ ] Which guy is active now ?
+	- [ ] Is it lethargic guy ? Duraiton ?
+	- [ ] active fast talkj and 4 hands mode guy ? Duraiton ?
+	- [ ] Master who organises you in me time. Me time for mental correstion as well for mentl detox. Duraiton ?
+	- [ ] The final happy guy. ? Duraiton ?
+	- [ ] How many time are you in Thoughtless Awareness ? Are you in Nirvichar ?
+	- [ ] Are thoughts bothering you all the time?
+	- [ ] Any Catches ?
+	- [ ] where?
+	- [ ] Any movements inside the body and bothering you when you are working?
+	- [ ] Any head scalp movements like in gym ?
+	- [ ] Headaches
+	- [ ] How are eyes ? steady ?
+	- [ ] bad eyes in instagram app ?
+	- [ ] Bodypains/weakness
+	- [ ] Bodypains/weakness in the morning
+	- [ ] any memories from kakinada houose, kakinada roads, pune roads, kakinada beach ??
+	- [ ] Hands smell ?
+	- [ ] Dont feel like going to gym ?
+	- [ ] Did you do anything to increase anxiery ?
+	- [ ] Any depression and anxiety
+	- [ ] did you attract any negativity ?
+	- [ ] Any insects moving around the body ?
+	- [ ] any strange bad things ?
+	- [ ] any trigger of uncontrollable state or a root of bigger pattern ?
+	- [ ] anger but staying calm by force?
+	- [ ] Encountering Bad stories in TV series ?
+	- [ ] Insta Youtube Scrolling ???? Left swadhistan ? Bhavasagar?
+	- [ ] wasting time and sloth behaviour ?
+	- [ ] Losing self mastery ?
+	- [ ] Likely to get fights soon ?
+	- [ ] Krupa weak?
+	- [ ] krupa hot hot vibrations?
+	- [ ] Krupa jatkas?
+	- [ ] Feels like the day is destroyed after.a very unproductive day with catches and lethargic uy rules the day. ?
+	- [ ] Feeling bad and uncntrollable after gym ?
+	- [ ] Throwing all food , failed food, milk packet, No chargin in phone?,
+	- [ ] Head top moveemnt while doing gym ?
+	- [ ] Any Good qualities beginning to show ?
+	- [ ] All bad quaities are beasuse when yoou are in pressure and sad, then you take up and ncline to whats bad wheich you einlined earlier once.
+	- [ ] o you see Balance in life after the names and FS and centers and mediation?
+	- [ ] |Why something/someone is coming into my attention?
+	- [ ] More alert and straight forwared and not left sided ?
+	- [ ] Are you in Nirvichar ?
+	- [ ] is sahastrara cooled ?
+	- [ ] which other got cooled today?
+	- [ ] Are you doing anyhting for yourself and SY ?
+	- [ ] Cool body whole day ???
+	- [ ] did someone cooled you with their vibrations ?
+	- [ ] automatic oolness at differnt times in day
+	- [ ] did krupa said i cooled her in fs or somewhere ?
+	- [ ] Numbness when sat on floor at home
+	- [ ] Just like coolnessand happiness and joy there is tingling and pain and obstruction lockage all times
+	- [ ] No movement on scalp
+	- [ ] No Sahastrara point feeling
+	- [ ] Just a small point on sahastrara
+	- [ ] lots of movement of scalp and head movement.
+	- [ ] Still Numbness when sat on floor at home when pressure aplied on head
+	- [ ] Swadhistans bad
+	- [ ] Always Swadhistans catches and sad life
+	- [ ] Do you feel like something is moving up as soon as you breathe and it pushes SAHASTARA ?? And then feel stoppage ???
+	- [ ] yellow toilet?
+	- [ ] Legs Numbless in Office when sat on chair and one leg crossed
+	- [ ] seats are paining on bike
+	- [ ] Seats are not paining but tingling when happy.
+	- [ ] Still Numbness at home but ends with some COOLNESS in some subtle center
+	- [ ] three tingling points are felt when shri Mataji hand is imagined on sahastrara.
+	- [ ] Vibrations are there but no good at bottom
+	- [ ] Numbness= no happiness no matter what even after a pursuit.
+	- [ ] Center Sahastrara COOLING slight
+	- [ ] Press sahastrara with vibrations pressure and push coolness inside.
+	- [ ] Ever felt like breathing is the soution to all opening sahastrara. this is close to opening. Continue this.
+	- [ ] thoughts bothering you
+	- [ ] Swadhistans not felt so much
+	- [ ] Focus on Center sahastrata point only for any type of CRL meditations
+	- [ ] Lots of pain in legs and relived in center when shri Mataji hand is imagined on sahastrara.
+	- [ ] |hakkars are when we have bad in agnyas and not don't grounded with 2 hands lately. Do both to earth.
+	- [ ] |eems close ? You are just moving thing to top and now they block your agnya ans effects vision.
+	- [ ] |s Footsoak taking so long?   <br>If your FS is taking less time and bosy is cooling then youare close to full clearnace.   <br>  <br>This is achievable by one hour Rock solid meditation.
+	- [ ] Numbness no more in swadhistaans and move dto top of head
+	- [ ] Focus on Center sahastrata point only for any type of CRL meditations
+	- [ ] Zandubalm on head automwatically ?
+	- [ ] Zandubalm wnile breathing on head automwatically ?
+	- [ ] Are you able to do FS 2X and Meditate on floor 1X daily ? you are close
+	- [ ] Swadhistans not felt at all
+	- [ ] Center Sahastrara COOLING more but loses all when did Right left
+	- [ ] No Numbness (Current stable state to reach)
+	- [ ] quick Sahastrara cooling as soon put feet in FS in less than 10 sec
+	- [ ] same should happen on 3 sides
+	- [ ] Focus on Center sahastrata point only for any type of CRL meditations
+	- [ ] more center sahastrara cooling but attention only on center sahastrara.
+	- [ ] Vibrtrions Sensitivity=   <br>All time happiness when you're not even doing anything also.
+	- [ ] Feel like something is moving up as you breathe ? Continue that and getting coolness on top?
+	- [ ] But somethings stoppping at top ? Breathe more and see whats she doing on top in automatic way and you dont put attetion.
+	- [ ] Breathe and coolness on center sahastrata. No stopping forse againstbreathing/kundalini going up.|
+	- [ ] Breathe and some chatkra cools wven when in office and Driving or walking back home etc
+	- [ ] When you hear Muisc and when there is n tingling in swadhisthans and mooladhara then kinda cleared
+	- [ ] can feel left right sahastratas but attention only on center sahastrara
+	- [ ] Just like pain and obstruction blockage all times, there is something called coolness and happiness and joy there is tingling and
+	- [ ] breathing and kundalini sync begins now ???
+	- [ ] Focus on Center sahastrata point only for any type of CRL meditations|
+	- [ ] Virat and cooling?
+	- [ ] Dieties names and cooling ?
+	- [ ] shri Ganesha Mooladhara meditation and cooling ?
+	- [ ] Vibrations in morning on bed itself ?
+	- [ ] Vibrations on bed itself and when breathing you become light and come to center and wakeup simply ?
+	- [ ] Vibrations on their own AT EVENINGS AND ASKING YOU TO DO FS AT THE SAME TIME YOU DO FS DAILY? Mother Kundalini telling you do to FS like good old days.
+	- [ ] Kundalini going up effortlesly ?
+	- [ ] Breath and simply kundalini going up ?
+	- [ ] Breath and simply kundalini going up early mornings ?
+	- [ ] Any time cool sahastrara yourself.
+	- [ ] Any new levels?
+	- [ ] Are above correct?
+	- [ ] Any new level unlocked ?o
+        c
