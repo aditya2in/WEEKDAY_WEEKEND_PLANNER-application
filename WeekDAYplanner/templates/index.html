@@ -250,17 +250,6 @@
             margin-bottom: 2px;
         }
 
-        .parallel-task-highlight {
-            background-color: #00796b; /* Deeper teal for parallel tasks */
-            color: white; /* Ensure text is readable */
-            padding: 2px 5px;
-            border-radius: 3px;
-        }
-
-        body.dark-mode .parallel-task-highlight {
-            background-color: #004d40; /* Even deeper teal for dark mode */
-            color: white;
-        }
 
         @keyframes highlight-blink {
             0% { background-color: yellow; }
@@ -385,7 +374,9 @@
                         <h4>Scheduled Tasks:</h4>
                         <ol>
                             {% for task in results.default_template_details.ScheduledTasks %}
-                                <li id="task-{{ task.id | e }}" data-task-name="{{ task.name | e }}" data-task-time="{{ task.time | e }}">(<span class="{% if task.is_parallel_time %}parallel-task-highlight{% endif %}">{{ task.time }}</span>) - {{ task.name }}</li>
+                                <li id="task-{{ task.id | e }}" data-task-name="{{ task.name | e }}" data-task-time="{{ task.time | e }}">
+                                    (<span {% if task.color %}style="background-color: {{ task.color }}; color: #333; padding: 2px 5px; border-radius: 3px;"{% endif %}>{{ task.time }}</span>) - {{ task.name }}
+                                </li>
                             {% endfor %}
                         </ol>
                     {% else %}
