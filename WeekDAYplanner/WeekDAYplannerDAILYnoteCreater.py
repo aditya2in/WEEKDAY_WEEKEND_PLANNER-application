@@ -10,7 +10,9 @@ import urllib.parse
 
 app = Flask(__name__)
 
-CONFIG_FILE = 'config.json'
+# Construct the absolute path to the configuration file
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+CONFIG_FILE = os.path.join(SCRIPT_DIR, 'config.json')
 
 DEFAULT_CONFIG = {
     "template_folder": "/home/aditya/obsidian/All Things/Template/",
@@ -192,13 +194,28 @@ def plan_and_create_note(create_file=False, debug_mode=False):
             # Sort scheduled_tasks by start_time
             scheduled_tasks.sort(key=lambda x: x["start_time"] if x["start_time"] else datetime.datetime.max)
 
-            # Identify tasks with parallel times
+            # Identify tasks with parallel times and assign colors
             time_counts = {}
             for task in scheduled_tasks:
                 time_counts[task["time"]] = time_counts.get(task["time"], 0) + 1
 
+            # Define a list of colors for parallel task groups
+            parallel_colors = [
+                "#a8d8ff", "#ffb3ba", "#bae1ff", "#ffdfba", "#ffffba",
+                "#baffc9", "#e0bbe4", "#ffb3ba", "#ffdfba", "#ffffba"
+            ]
+            color_index = 0
+            time_color_map = {}
+
             for task in scheduled_tasks:
                 task["is_parallel_time"] = time_counts[task["time"]] > 1
+                if task["is_parallel_time"]:
+                    if task["time"] not in time_color_map:
+                        time_color_map[task["time"]] = parallel_colors[color_index % len(parallel_colors)]
+                        color_index += 1
+                    task["color"] = time_color_map[task["time"]]
+                else:
+                    task["color"] = None # No color for non-parallel tasks
 
             default_template_details["ScheduledTasks"] = scheduled_tasks
         except Exception as e:
@@ -411,13 +428,29 @@ def plan_and_create_note(create_file=False, debug_mode=False):
     # Sort tasks by start time
     parsed_calendar_tasks.sort(key=lambda x: x["start_time"] if x["start_time"] else datetime.datetime.max)
 
-    # Identify tasks with parallel times
+    # Identify tasks with parallel times and assign colors
     time_counts = {}
     for task in parsed_calendar_tasks:
         time_counts[task["time"]] = time_counts.get(task["time"], 0) + 1
 
+    # Define a list of colors for parallel task groups
+    parallel_colors = [
+        "#a8d8ff", "#ffb3ba", "#bae1ff", "#ffdfba", "#ffffba",
+        "#baffc9", "#e0bbe4", "#ffb3ba", "#ffdfba", "#ffffba"
+    ]
+    color_index = 0
+    time_color_map = {}
+
     for task in parsed_calendar_tasks:
         task["is_parallel_time"] = time_counts[task["time"]] > 1
+        if task["is_parallel_time"]:
+            if task["time"] not in time_color_map:
+                time_color_map[task["time"]] = parallel_colors[color_index % len(parallel_colors)]
+                color_index += 1
+            task["color"] = time_color_map[task["time"]]
+        else:
+            task["color"] = None # No color for non-parallel tasks
+
 
     # Update default_template_details.ScheduledTasks with is_parallel_time and unique IDs
     for default_task in default_template_details["ScheduledTasks"]:
