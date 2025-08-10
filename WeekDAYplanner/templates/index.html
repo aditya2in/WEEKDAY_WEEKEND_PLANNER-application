@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obsidian Daily Note Planner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 10px;
+            background-color: #f4f4f4;
+            color: #333;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        body.dark-mode {
+            background-color: #282c34;
+            color: #abb2bf;
+        }
+        body.dark-mode .container {
+            background-color: #3a404a;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        body.dark-mode h1, body.dark-mode h2 {
+            color: #61afef;
+        }
+        body.dark-mode button {
+            background-color: #61afef;
+        }
+        body.dark-mode button:hover {
+            background-color: #529dcf;
+        }
+        body.dark-mode .config-form input[type="text"] {
+            background-color: #4b525d;
+            border: 1px solid #5c6370;
+            color: #abb2bf;
+        }
+        body.dark-mode .box {
+            background-color: #4b525d;
+            border: 1px solid #5c6370;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        body.dark-mode .box-success { background-color: #4CAF50; border: 1px solid #4CAF50; color: #fff; }
+        body.dark-mode .box-error { background-color: #f44336; border: 1px solid #f44336; color: #fff; }
+        body.dark-mode .box-info { background-color: #2196F3; border: 1px solid #2196F3; color: #fff; }
+        body.dark-mode .box h3 {
+            color: #fff;
+            border-bottom-color: rgba(255,255,255,0.1);
+        }
+        body.dark-mode .box p { color: #abb2bf; }
+        body.dark-mode .box pre {
+            background-color: #282c34;
+            border: 1px dashed #5c6370;
+            color: #abb2bf;
+        }
+        body.dark-mode .combination-flow .arrow { color: #61afef; }
+        body.dark-mode .combination-flow .label { color: #abb2bf; }
+        body.dark-mode .status-icon.success { color: #98c379; }
+        body.dark-mode .status-icon.error { color: #e06c75; }
+        body.dark-mode .calendar-view {
+            background-color: #3a404a;
+            border: 1px solid #5c6370;
+        }
+        body.dark-mode .time-axis {
+            border-right: 1px solid #5c6370;
+        }
+        body.dark-mode .time-axis div {
+            color: #abb2bf;
+        }
+        body.dark-mode .calendar-grid {
+            background-image: linear-gradient(to bottom, #5c6370 1px, transparent 1px);
+        }
+        body.dark-mode .calendar-event {
+            background-color: #61afef;
+            border: 1px solid #529dcf;
+            color: #282c34;
+        }
+        body.dark-mode .calendar-event:hover {
+            background-color: #529dcf;
+        }
+        .dark-mode-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+        .dark-mode-toggle:hover {
+            background-color: #0056b3;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 95%; /* Increased for two-column layout */
+            margin: 20px auto;
+        }
+        h1, h2 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        form {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .config-section, .planner-section, .create-section {
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        .config-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            text-align: left;
+        }
+        .config-form input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        .planner-container {
+            display: flex;
+            gap: 20px;
+        }
+        .main-content {
+            flex: 3; /* Takes up 3/4 of the space */
+        }
+        .sidebar {
+            flex: 1; /* Takes up 1/4 of the space */
+        }
+        .box {
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .box-success { background-color: #e6ffe6; border: 1px solid #4CAF50; }
+        .box-error { background-color: #ffe6e6; border: 1px solid #f44336; }
+        .box-info { background-color: #e6f7ff; border: 1px solid #2196F3; }
+        .box h3 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+        .box p { margin: 5px 0; }
+        .box pre {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 0.9em;
+            border: 1px dashed #ccc;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .combination-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 30px 0;
+        }
+        .combination-flow .arrow { font-size: 3em; color: #007bff; margin: 0 15px; }
+        .combination-flow .label { font-weight: bold; font-size: 1.2em; color: #555; }
+        .status-icon { font-size: 1.2em; margin-right: 5px; }
+        .status-icon.success { color: #4CAF50; }
+        .status-icon.error { color: #f44336; }
+
+        /* Calendar Specific Styles */
+        .calendar-view {
+            position: relative;
+            height: calc(24 * 60 * {{ pixels_per_minute }}px); /* 24 hours * 60 minutes/hour * pixels/minute */
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fdfdfd;
+            overflow: hidden;
+            padding-left: 50px; /* Space for time axis */
+        }
+        .time-axis {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 50px;
+            height: 100%;
+            border-right: 1px solid #eee;
+            box-sizing: border-box;
+        }
+        .time-axis div {
+            position: absolute;
+            width: 100%;
+            text-align: right;
+            padding-right: 5px;
+            font-size: 0.8em;
+            color: #777;
+            transform: translateY(-50%); /* Center text vertically */
+        }
+        .calendar-grid {
+            position: absolute;
+            left: 50px;
+            right: 0;
+            top: 0;
+            height: 100%;
+            background-size: 100% calc(30 * var(--pixels-per-minute)); /* 30 minutes * pixels/minute */
+            background-image: linear-gradient(to bottom, #eee 1px, transparent 1px);
+        }
+        .calendar-event {
+            position: absolute;
+            background-color: #a8d8ff; /* Light blue */
+            border: 1px solid #007bff;
+            border-radius: 4px;
+            padding: 5px;
+            font-size: 0.85em;
+            overflow: hidden;
+            box-sizing: border-box;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .calendar-event:hover {
+            background-color: #8acaff;
+        }
+        .calendar-event strong {
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .parallel-task-highlight {
+            background-color: #00796b; /* Deeper teal for parallel tasks */
+            color: white; /* Ensure text is readable */
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        body.dark-mode .parallel-task-highlight {
+            background-color: #004d40; /* Even deeper teal for dark mode */
+            color: white;
+        }
+
+        @keyframes highlight-blink {
+            0% { background-color: yellow; }
+            50% { background-color: transparent; }
+            100% { background-color: yellow; }
+        }
+
+        .highlight-task {
+            animation: highlight-blink 1s 3; /* Blink 3 times */
+            background-color: yellow; /* Ensure it's highlighted at the end */
+        }
+
+        body.dark-mode .highlight-task {
+            animation: highlight-blink-dark 1s 3;
+            background-color: #ffd700; /* Dark mode highlight color */
+        }
+
+        @keyframes highlight-blink-dark {
+            0% { background-color: #ffd700; }
+            50% { background-color: transparent; }
+            100% { background-color: #ffd700; }
+        }
+    </style>
+</head>
+<body>
+    <button class="dark-mode-toggle" id="darkModeToggle">Toggle Dark Mode</button>
+    <div class="container">
+        {% if message %}
+        <div class="box {% if 'Error' in message %}box-error{% elif 'Successfully' in message %}box-success{% else %}box-info{% endif %}">
+            <p>{{ message }}</p>
+        </div>
+        {% endif %}
+        <h1><a href="/" style="text-decoration: none; color: inherit;">Obsidian Daily Note Planner</a></h1>
+
+        <!-- Configuration Section -->
+        <div class="config-section">
+            <h2>Existing Configuration</h2>
+            <form action="/save_config" method="post" class="config-form">
+                <label for="template_folder">Template Folder:</label>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="text" id="template_folder" name="template_folder" value="{{ config.template_folder }}" style="flex-grow: 1;">
+                    <button type="submit" form="reset_template_folder_form" style="background-color: #6c757d; padding: 8px 12px; font-size: 0.9em;">Reset</button>
+                </div>
+                <label for="journal_folder">Journal Folder:</label>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="text" id="journal_folder" name="journal_folder" value="{{ config.journal_folder }}" style="flex-grow: 1;">
+                    <button type="submit" form="reset_journal_folder_form" style="background-color: #6c757d; padding: 8px 12px; font-size: 0.9em;">Reset</button>
+                </div>
+                <label for="default_template_filename">Default Template Filename:</label>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="text" id="default_template_filename" name="default_template_filename" value="{{ config.default_template_filename }}" style="flex-grow: 1;">
+                    <button type="submit" form="reset_default_template_filename_form" style="background-color: #6c757d; padding: 8px 12px; font-size: 0.9em;">Reset</button>
+                </div>
+                <label for="daily_note_filename_format">Daily Note Filename Format:</label>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="text" id="daily_note_filename_format" name="daily_note_filename_format" value="{{ config.daily_note_filename_format }}" style="flex-grow: 1;">
+                    <button type="submit" form="reset_daily_note_filename_format_form" style="background-color: #6c757d; padding: 8px 12px; font-size: 0.9em;">Reset</button>
+                </div>
+                <button type="submit">Save Configuration</button>
+            </form>
+            <form action="/delete_note" method="post" onsubmit="return confirm('Are you sure you want to delete today\'s daily note? This action cannot be undone.');" style="margin-top: 10px;">
+                <button type="submit" style="background-color: #dc3545;" {% if not daily_note_exists %}disabled style="opacity: 0.5; cursor: not-allowed;"{% endif %}>Delete Today's Daily Note</button>
+                {% if daily_note_exists %}
+                <span style="color: green; margin-left: 10px;">Note exists</span>
+                {% else %}
+                <span style="color: orange; margin-left: 10px;">Note does not exist</span>
+                {% endif %}
+            </form>
+        </div>
+
+        <!-- Process Management Section -->
+        <div class="config-section">
+            <h2>Process Management</h2>
+            {% if results and results.running_processes %}
+            <div class="box box-info">
+                <h3>Running Application Processes:</h3>
+                <form action="/kill_processes" method="post" onsubmit="return confirm('Are you sure you want to kill all listed processes? This will stop the application.');">
+                    <ul>
+                        {% for process in results.running_processes %}
+                            <li>
+                                <input type="checkbox" name="pid" value="{{ process.pid }}" id="pid_{{ process.pid }}" checked>
+                                <label for="pid_{{ process.pid }}"><strong>PID:</strong> {{ process.pid }} <strong>Command:</strong> {{ process.command }}</label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <button type="submit" style="background-color: #dc3545;">Kill Selected Processes</button>
+                </form>
+            </div>
+            {% elif results %}
+            <div class="box box-info">
+                <p>No running application processes found.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Planning Section -->
+        <div class="planner-section">
+            <h2>Plan Daily Note</h2>
+            <form action="/plan_note" method="post">
+                <button type="submit">Plan Daily Note</button>
+            </form>
+        </div>
+
+        <!-- Results Section (only shown after planning) -->
+        {% if results %}
+        <div class="planner-container">
+            <!-- Left Column -->
+            <div class="main-content">
+                {% if results.error_message %}
+                <div class="box box-error">
+                    <h3><span class="status-icon error">❌</span> Error!</h3>
+                    <p>{{ results.error_message }}</p>
+                </div>
+                {% endif %}
+
+                <div class="box {% if 'Found' in results.default_template_details.Status %}box-success{% else %}box-error{% endif %}">
+                    <h3><span class="status-icon {% if 'Found' in results.default_template_details.Status %}success{% else %}error{% endif %}">{% if 'Found' in results.default_template_details.Status %}✅{% else %}❌{% endif %}</span> Default Template (A)</h3>
+                    <p><strong>File Name:</strong> {{ results.default_template_details['File Name'] }}</p>
+                    <p><strong>Path:</strong> {{ results.default_template_details.Path }}</p>
+                    <p><strong>Status:</strong> {{ results.default_template_details.Status }}</p>
+                    {% if results.default_template_details.ScheduledTasks %}
+                        <h4>Scheduled Tasks:</h4>
+                        <ol>
+                            {% for task in results.default_template_details.ScheduledTasks %}
+                                <li id="task-{{ task.id | e }}" data-task-name="{{ task.name | e }}" data-task-time="{{ task.time | e }}">(<span class="{% if task.is_parallel_time %}parallel-task-highlight{% endif %}">{{ task.time }}</span>) - {{ task.name }}</li>
+                            {% endfor %}
+                        </ol>
+                    {% else %}
+                        <p>Scheduled Tasks: NONE</p>
+                    {% endif %}
+                </div>
+
+                <div class="box {% if 'Found' in results.day_specific_details.Status %}box-success{% else %}box-error{% endif %}">
+                    <h3><span class="status-icon {% if 'Found' in results.day_specific_details.Status %}success{% else %}error{% endif %}">{% if 'Found' in results.day_specific_details.Status %}✅{% else %}❌{% endif %}</span> Day-Specific Template (B)</h3>
+                    <p><strong>Expected Prefix:</strong> {{ results.day_specific_details['Expected Prefix'] }}</p>
+                    {% if results.day_specific_details['File Name'] %}
+                    <p><strong>File Name:</strong> {{ results.day_specific_details['File Name'] }}</p>
+                    <p><strong>Path:</strong> {{ results.day_specific_details.Path }}</p>
+                    {% endif %}
+                    <p><strong>Status:</strong> {{ results.day_specific_details.Status }}</p>
+                    {% if results.day_specific_details.ScheduledTasks %}
+                        <h4>Scheduled Tasks:</h4>
+                        <ol>
+                            {% for task in results.day_specific_details.ScheduledTasks %}
+                                <li>({{ task.time }}) - {{ task.name }}</li>
+                            {% endfor %}
+                        </ol>
+                    {% else %}
+                        <p>Scheduled Tasks: NONE</p>
+                    {% endif %}
+                </div>
+
+                <div class="combination-flow">
+                    <span class="label">Template A</span>
+                    <span class="arrow">➕</span>
+                    <span class="label">Template B</span>
+                    <span class="arrow">➡️</span>
+                    <span class="label">Final Note C</span>
+                </div>
+
+                <div class="box {% if results.status == 'success' %}box-success{% else %}box-error{% endif %}">
+                    <h3><span class="status-icon {% if results.status == 'success' %}success{% else %}error{% endif %}">{% if results.status == 'success' %}📝{% else %}🚨{% endif %}</span> Planned Final Note (C)</h3>
+                    <p><strong>File Name:</strong> {{ results.final_note_details['File Name'] }}</p>
+                    <p><strong>Path:</strong> {{ results.final_note_details.Path }}</p>
+
+                    
+
+                                        {% if results.insertion_report and results.insertion_report['Context Snippet'] %}
+                    <div class="box box-info">
+                        <h3>Insertion Context:</h3>
+                        <pre>{{ results.insertion_report['Context Snippet'] }}</pre>
+                    </div>
+                    {% endif %}
+
+                    <p><strong>Content Preview:</strong></p>
+                    <pre>{{ results.final_note_content_str }}</pre>
+                </div>
+            </div>
+
+            
+        </div>
+
+        <!-- Create Note Section (only shown after successful planning) -->
+        {% if results.status == 'success' %}
+        <div class="create-section">
+            <h2>Create Daily Note</h2>
+            <form action="/create_note" method="post">
+                <button type="submit">Create Daily Note</button>
+            </form>
+            <form action="/delete_note" method="post" onsubmit="return confirm('Are you sure you want to delete today\'s daily note? This action cannot be undone.');" style="margin-top: 10px;">
+                <button type="submit" style="background-color: #dc3545;" {% if not daily_note_exists %}disabled style="opacity: 0.5; cursor: not-allowed;"{% endif %}>Delete Today's Daily Note</button>
+                {% if daily_note_exists %}
+                <span style="color: green; margin-left: 10px;">Note exists</span>
+                {% else %}
+                <span style="color: orange; margin-left: 10px;">Note does not exist</span>
+                {% endif %}
+            </form>
+        </div>
+        {% endif %}
+        {% endif %}
+    </div>
+    <script>
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+
+        // Check for saved dark mode preference
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            body.classList.add('dark-mode');
+        }
+
+        darkModeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            // Save preference
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                localStorage.setItem('darkMode', 'disabled');
+            }
+        });
+
+        // Handle calendar event clicks for highlighting
+        document.querySelectorAll('.calendar-event').forEach(eventDiv => {
+            eventDiv.addEventListener('click', function() {
+                const taskId = this.dataset.taskId;
+                const correspondingTaskLi = document.getElementById(`task-${taskId}`);
+
+                if (correspondingTaskLi) {
+                    // Remove highlight from any previously highlighted task
+                    document.querySelectorAll('.highlight-task').forEach(el => {
+                        el.classList.remove('highlight-task');
+                    });
+
+                    // Add highlight to the clicked task
+                    correspondingTaskLi.classList.add('highlight-task');
+
+                    // Scroll to the highlighted task
+                    correspondingTaskLi.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+
+                    // Remove highlight after a delay
+                    setTimeout(() => {
+                        correspondingTaskLi.classList.remove('highlight-task');
+                    }, 3000); // Remove after 3 seconds
+                }
+            });
+        });
+    </script>
+</body>
+</html>

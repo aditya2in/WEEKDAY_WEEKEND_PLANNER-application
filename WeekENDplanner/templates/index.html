@@ -1,0 +1,571 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekend Planner</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+        }
+        h1, h2, h3, h4 {
+            text-align: center;
+            color: #2a4d69;
+        }
+        .task-table-container {
+            margin-bottom: 40px;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+            vertical-align: top;
+        }
+        thead {
+            background-color: #4b86b4;
+            color: #fff;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .planner-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        .task-list-container {
+            width: 25%;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+        .calendar-container {
+            width: 70%;
+        }
+        .calendar-section {
+            margin-bottom: 40px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: 60px repeat(auto-fill, minmax(200px, 1fr)); /* Time column + day columns */
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .calendar-header {
+            display: contents; /* Allows children to be direct grid items */
+        }
+        .time-column-header {
+            grid-column: 1;
+            grid-row: 1;
+            background-color: #4b86b4;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            border-right: 1px solid #fff;
+            font-weight: bold;
+        }
+        .day-header {
+            background-color: #4b86b4;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            border-right: 1px solid #fff;
+            font-weight: bold;
+        }
+        .time-column {
+            grid-column: 1;
+            background-color: #f9f9f9;
+            border-right: 1px solid #ddd;
+            padding-top: 10px;
+        }
+        .time-slot-label {
+            height: 25px; /* Half height for half-hour slots */
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            border-bottom: 1px dashed #eee;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .day-column {
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #ddd;
+        }
+        .day-column:last-child {
+            border-right: none;
+        }
+        .hour-slot {
+            min-height: 25px; /* Half height for half-hour slots */
+            border-bottom: 1px dashed #eee;
+            padding: 2px 5px; /* Adjusted padding */
+            list-style-type: none;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .hour-slot:last-child {
+            border-bottom: none;
+        }
+        .half-hour-line {
+            border-bottom: 1px dotted #ddd; /* Dotted line for half-hour */
+        }
+        .task-list {
+            min-height: 200px;
+            list-style-type: none;
+            padding: 0;
+        }
+        .task {
+            background-color: #eaf4fc;
+            color: #2a4d69;
+            padding: 5px 8px; /* Adjusted padding for smaller slots */
+            margin-bottom: 0; /* No margin-bottom for tasks within slots */
+            border-radius: 3px; /* Slightly smaller border-radius */
+            cursor: grab;
+            border: 1px solid #adcbe3;
+            font-size: 0.85em; /* Smaller font size */
+        }
+
+        .faded-task {
+            opacity: 0.5;
+            cursor: not-allowed !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="task-table-container">
+        <h2>All Tasks Overview</h2>
+        <table id="task-table">
+            <thead>
+                <tr>
+                    <th>S.No.</th>
+                    <th>Task Name</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <h1>Weekend Planner</h1>
+
+    <div class="planner-container">
+        <div class="task-list-container">
+            <h3>Unscheduled Tasks</h3>
+            <h4>Weekly</h4>
+            <ul id="unscheduled-weekly-tasks" class="task-list">
+            </ul>
+            <h4>Monthly</h4>
+            <ul id="unscheduled-monthly-tasks" class="task-list">
+            </ul>
+        </div>
+
+        <div class="calendar-container">
+            <div class="calendar-section" id="weeklyPlannerSection">
+                <h2>Current Weekend</h2>
+                <div class="calendar-grid" id="weekly-calendar">
+                    <!-- Weekend days will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const weeklyTasksList = document.getElementById('unscheduled-weekly-tasks');
+            const monthlyTasksList = document.getElementById('unscheduled-monthly-tasks');
+            const taskTableBody = document.querySelector('#task-table tbody');
+            const taskTableHeader = document.querySelector('#task-table thead tr');
+            const weeklyCalendarDiv = document.getElementById('weekly-calendar');
+
+            let scheduledWeeklyTasks = {}; // Tracks 1X weekly tasks scheduled per week number
+            let scheduledTasksByDate = {}; // Stores all scheduled tasks by date and hour
+            let unscheduledTasksState = { weekly: {}, monthly: {} }; // Stores original state of unscheduled tasks
+            let allWeekendsData = []; // Store all weekend data from Flask
+            let allTasksData = {}; // Store all tasks data including tags for validation
+
+            function createTaskElement(task, isScheduled = false, isFaded = false) {
+                const li = document.createElement('li');
+                li.className = 'task';
+                if (isFaded) {
+                    li.classList.add('faded-task');
+                    li.draggable = false; // Disable dragging for faded tasks
+                }
+                
+                let taskText = task.name;
+                if (!isScheduled) {
+                    taskText += ` (${task.frequency_desc}`;
+                    const fullTaskDetails = allTasksData[task.name];
+                    console.log(`createTaskElement: Task: ${task.name}, fullTaskDetails:`, fullTaskDetails);
+                    if (fullTaskDetails && fullTaskDetails.tag_values && fullTaskDetails.tag_values['When/Whichday'] && fullTaskDetails.tag_values['When/Whichday'].length > 0) {
+                        taskText += `, ${fullTaskDetails.tag_values['When/Whichday'].join(', ')}`;
+                    }
+                    taskText += `)`;
+                }
+                li.textContent = taskText;
+
+                li.dataset.taskName = task.name;
+                li.dataset.frequencyDesc = task.frequency_desc;
+                li.dataset.frequencyCount = task.frequency_count;
+                return li;
+            }
+
+            function renderUnscheduledTasks() {
+                console.log("Rendering unscheduled tasks. Current state:", unscheduledTasksState);
+                weeklyTasksList.innerHTML = '';
+                monthlyTasksList.innerHTML = '';
+
+                for (const taskName in unscheduledTasksState.weekly) {
+                    const task = unscheduledTasksState.weekly[taskName];
+                    weeklyTasksList.appendChild(createTaskElement(task, false, task.isFaded));
+                }
+                for (const taskName in unscheduledTasksState.monthly) {
+                    const task = unscheduledTasksState.monthly[taskName];
+                    monthlyTasksList.appendChild(createTaskElement(task, false, task.isFaded));
+                }
+            }
+
+            function setupSortable(listElement) {
+                new Sortable(listElement, {
+                    group: 'shared',
+                    animation: 150,
+                    onEnd: function (evt) {
+                        const item = evt.item;
+                        const fromList = evt.from;
+                        const toList = evt.to;
+
+                        const taskName = item.dataset.taskName;
+                        const frequencyDesc = item.dataset.frequencyDesc;
+                        const originalFrequencyCount = parseInt(item.dataset.frequencyCount, 10);
+                        const targetDate = toList.closest('.day-column') ? toList.closest('.day-column').dataset.date : null;
+                        const targetHour = toList.dataset.hour;
+                        const targetMinute = toList.dataset.minute;
+                        const targetTime = targetHour && targetMinute ? `${targetHour}:${targetMinute}` : null; // Combine hour and minute
+                        const targetWeekNumber = toList.closest('.day-column') ? toList.closest('.day-column').dataset.weekNumber : null;
+
+                        console.log(`Drag ended: ${taskName} from ${fromList.id} to ${toList.id}`);
+
+                        // Get the full task details from allTasksData for tag validation
+                        const fullTaskDetails = allTasksData[taskName];
+                        const taskWhichday = fullTaskDetails && fullTaskDetails.tag_values['When/Whichday'] ? fullTaskDetails.tag_values['When/Whichday'][0] : null;
+                        const targetDayName = targetDate ? new Date(targetDate).toLocaleString('en-us', { weekday: 'long' }) : null;
+
+                        console.log(`Task: ${taskName}, Preferred Day: ${taskWhichday}, Target Day: ${targetDayName}`);
+
+                        // Scenario 1: Dragging from unscheduled list to a calendar day/hour slot
+                        if (fromList.id.includes('unscheduled') && toList.classList.contains('hour-slot-tasks')) {
+                            console.log("Scenario 1: Unscheduled to Calendar");
+                            // Enforce When/Whichday rule
+                            if (taskWhichday) {
+                                const requiredDay = taskWhichday.toLowerCase();
+                                const actualDay = targetDayName.toLowerCase();
+                                
+                                // Check if the task is specifically for Saturday or Sunday
+                                const isSaturdayTask = requiredDay.includes('saturday');
+                                const isSundayTask = requiredDay.includes('sunday');
+
+                                if (isSaturdayTask && !actualDay.includes('saturday')) {
+                                    console.log(`Cannot drop ${taskName} on ${targetDayName}. It's a Saturday task.`);
+                                    toList.removeChild(item); // Revert the drag
+                                    renderUnscheduledTasks();
+                                    renderCalendar();
+                                    return;
+                                } else if (isSundayTask && !actualDay.includes('sunday')) {
+                                    console.log(`Cannot drop ${taskName} on ${targetDayName}. It's a Sunday task.`);
+                                    toList.removeChild(item); // Revert the drag
+                                    renderUnscheduledTasks();
+                                    renderCalendar();
+                                    return;
+                                }
+                            }
+
+                            // Enforce 1X Weekly rule
+                            if (frequencyDesc.includes('Weekly') && frequencyDesc.startsWith('1X')) {
+                                if (!scheduledWeeklyTasks[targetWeekNumber]) {
+                                    scheduledWeeklyTasks[targetWeekNumber] = {};
+                                }
+                                if (scheduledWeeklyTasks[targetWeekNumber][taskName]) {
+                                    // Task already scheduled in this week, revert the drag
+                                    console.log("1X Weekly task already scheduled this week. Reverting.");
+                                    toList.removeChild(item); // Remove from target
+                                    renderUnscheduledTasks(); // Re-render unscheduled list to restore original
+                                    renderCalendar();
+                                    return;
+                                } else {
+                                    // Mark as scheduled for this week
+                                    scheduledWeeklyTasks[targetWeekNumber][taskName] = true;
+                                }
+                            }
+
+                            // Update unscheduled task state
+                            let sourceState = fromList.id.includes('weekly') ? unscheduledTasksState.weekly : unscheduledTasksState.monthly;
+                            if (sourceState[taskName]) {
+                                sourceState[taskName].frequency_count -= 1;
+                                // Update frequency_desc based on new count
+                                if (sourceState[taskName].frequency_count > 0) {
+                                    const descParts = sourceState[taskName].frequency_desc.split(' ');
+                                    sourceState[taskName].frequency_desc = `${sourceState[taskName].frequency_count}X ${descParts[1]}`;
+                                } else {
+                                    sourceState[taskName].frequency_desc = `0X ${sourceState[taskName].frequency_desc.split(' ')[1]}`;
+                                    sourceState[taskName].isFaded = true;
+                                }
+                                console.log(`Updated unscheduled state for ${taskName}:`, sourceState[taskName]);
+                            }
+
+                            // Store the dropped task in scheduledTasksByDate
+                            if (!scheduledTasksByDate[targetDate]) {
+                                scheduledTasksByDate[targetDate] = {};
+                            }
+                            if (!scheduledTasksByDate[targetDate][targetTime]) { // Use targetTime
+                                scheduledTasksByDate[targetDate][targetTime] = [];
+                            }
+                            scheduledTasksByDate[targetDate][targetTime].push({name: taskName, frequency_desc: frequencyDesc, frequency_count: 1}); // Use targetTime
+                            console.log(`ScheduledTasksByDate updated for ${targetDate} ${targetTime}:`, scheduledTasksByDate[targetDate][targetTime]); // Use targetTime
+
+                            item.remove(); // Remove the original item from the DOM
+                        }
+                        // Scenario 2: Dragging from calendar to unscheduled list
+                        else if (fromList.classList.contains('hour-slot-tasks') && toList.id.includes('unscheduled')) {
+                            const originalDate = fromList.closest('.day-column').dataset.date;
+                            const originalHour = fromList.dataset.hour;
+                            const originalMinute = fromList.dataset.minute;
+                            const originalTime = originalHour && originalMinute ? `${originalHour}:${originalMinute}` : null; // Combine hour and minute
+                            const originalWeekNumber = fromList.closest('.day-column').dataset.weekNumber;
+
+                            // Remove from scheduledTasksByDate
+                            if (scheduledTasksByDate[originalDate] && scheduledTasksByDate[originalDate][originalTime]) { // Use originalTime
+                                scheduledTasksByDate[originalDate][originalTime] = scheduledTasksByDate[originalDate][originalTime].filter(t => t.name !== taskName); // Use originalTime
+                                if (scheduledTasksByDate[originalDate][originalTime].length === 0) { // Use originalTime
+                                    delete scheduledTasksByDate[originalDate][originalTime]; // Use originalTime
+                                }
+                                if (Object.keys(scheduledTasksByDate[originalDate]).length === 0) {
+                                    delete scheduledTasksByDate[originalDate];
+                                }
+                                console.log(`Removed ${taskName} from scheduledTasksByDate for ${originalDate} ${originalTime}`); // Use originalTime
+                            }
+
+                            // Unmark 1X Weekly task
+                            if (frequencyDesc.includes('Weekly') && frequencyDesc.startsWith('1X')) {
+                                if (scheduledWeeklyTasks[originalWeekNumber]) {
+                                    delete scheduledWeeklyTasks[originalWeekNumber][taskName];
+                                }
+                            }
+
+                            // Update unscheduled task state
+                            let targetState = toList.id.includes('weekly') ? unscheduledTasksState.weekly : unscheduledTasksState.monthly;
+                            if (targetState[taskName]) {
+                                targetState[taskName].frequency_count += 1;
+                                targetState[taskName].isFaded = false;
+                                // Update frequency_desc based on new count
+                                const descParts = targetState[taskName].frequency_desc.split(' ');
+                                targetState[taskName].frequency_desc = `${targetState[taskName].frequency_count}X ${descParts[1]}`;
+                            } else { // If it was the last instance and removed from unscheduledState
+                                targetState[taskName] = { name: taskName, frequency_desc: frequencyDesc, frequency_count: 1, isFaded: false };
+                                console.log(`Restored ${taskName} to unscheduled state:`, targetState[taskName]);
+                            }
+                            item.remove(); // Remove the original item from the DOM
+                        }
+                        // Scenario 3: Dragging within calendar (from one hour slot to another)
+                        else if (fromList.classList.contains('hour-slot-tasks') && toList.classList.contains('hour-slot-tasks')) {
+                            const originalDate = fromList.closest('.day-column').dataset.date;
+                            const originalHour = fromList.dataset.hour;
+                            const originalMinute = fromList.dataset.minute;
+                            const originalTime = originalHour && originalMinute ? `${originalHour}:${originalMinute}` : null; // Combine hour and minute
+                            const newDate = toList.closest('.day-column').dataset.date;
+                            const newHour = toList.dataset.hour;
+                            const newMinute = toList.dataset.minute;
+                            const newTime = newHour && newMinute ? `${newHour}:${newMinute}` : null; // Combine hour and minute
+
+                            // Remove from old slot
+                            if (scheduledTasksByDate[originalDate] && scheduledTasksByDate[originalDate][originalTime]) { // Use originalTime
+                                scheduledTasksByDate[originalDate][originalTime] = scheduledTasksByDate[originalDate][originalTime].filter(t => t.name !== taskName); // Use originalTime
+                                if (scheduledTasksByDate[originalDate][originalTime].length === 0) { // Use originalTime
+                                    delete scheduledTasksByDate[originalDate][originalTime]; // Use originalTime
+                                }
+                                if (Object.keys(scheduledTasksByDate[originalDate]).length === 0) {
+                                    delete scheduledTasksByDate[originalDate];
+                                }
+                                console.log(`Removed ${taskName} from scheduledTasksByDate for ${originalDate} ${originalTime}`); // Use originalTime
+                            }
+
+                            // Add to new slot
+                            if (!scheduledTasksByDate[newDate]) {
+                                scheduledTasksByDate[newDate] = {};
+                            }
+                            if (!scheduledTasksByDate[newDate][newTime]) { // Use newTime
+                                scheduledTasksByDate[newDate][newTime] = [];
+                            }
+                            scheduledTasksByDate[newDate][newTime].push({name: taskName, frequency_desc: frequencyDesc, frequency_count: 1}); // Use newTime
+                            console.log(`Added ${taskName} to scheduledTasksByDate for ${newDate} ${newTime}`); // Use newTime
+
+                            item.remove(); // Remove the original item from the DOM
+                        }
+                        renderUnscheduledTasks();
+                        renderCalendar();
+                    }
+                });
+            }
+
+            setupSortable(weeklyTasksList);
+            setupSortable(monthlyTasksList);
+
+            // Function to render calendar days based on selected view/week
+            function renderCalendar() {
+                weeklyCalendarDiv.innerHTML = '';
+
+                // Create calendar header
+                const calendarHeader = document.createElement('div');
+                calendarHeader.className = 'calendar-header';
+                calendarHeader.innerHTML = `<div class="time-column-header"></div>`; // Empty corner for time column
+
+                allWeekendsData.forEach(weekend => {
+                    const dayHeader = document.createElement('div');
+                    dayHeader.className = 'day-header';
+                    dayHeader.textContent = weekend.full_date_display;
+                    calendarHeader.appendChild(dayHeader);
+                });
+                weeklyCalendarDiv.appendChild(calendarHeader);
+
+                // Create time column and day columns
+                const timeColumn = document.createElement('div');
+                timeColumn.className = 'time-column';
+                weeklyCalendarDiv.appendChild(timeColumn);
+
+                const dayColumns = {}; // Store day column elements for easy access
+                allWeekendsData.forEach(weekend => {
+                    const dayCol = document.createElement('div');
+                    dayCol.className = 'day-column';
+                    dayCol.dataset.weekNumber = weekend.week_number;
+                    dayCol.dataset.date = weekend.date;
+                    weeklyCalendarDiv.appendChild(dayCol);
+                    dayColumns[weekend.date] = dayCol;
+                });
+
+                for (let i = 6; i <= 22; i++) { // Hours from 06:00 to 22:00
+                    const hour = i < 10 ? '0' + i : i;
+
+                    // Full hour slot
+                    const hourLabelFull = `${hour}:00`;
+                    const timeLabelDivFull = document.createElement('div');
+                    timeLabelDivFull.className = 'time-slot-label';
+                    timeLabelDivFull.textContent = hourLabelFull;
+                    timeColumn.appendChild(timeLabelDivFull);
+
+                    allWeekendsData.forEach(weekend => {
+                        const hourSlotUlFull = document.createElement('ul');
+                        hourSlotUlFull.className = 'hour-slot hour-slot-tasks';
+                        hourSlotUlFull.dataset.hour = hour;
+                        hourSlotUlFull.dataset.minute = '00'; // Add minute dataset
+                        hourSlotUlFull.dataset.date = weekend.date;
+                        dayColumns[weekend.date].appendChild(hourSlotUlFull);
+
+                        if (scheduledTasksByDate[weekend.date] && scheduledTasksByDate[weekend.date][`${hour}:00`]) {
+                            scheduledTasksByDate[weekend.date][`${hour}:00`].forEach(task => {
+                                hourSlotUlFull.appendChild(createTaskElement(task, true));
+                            });
+                        }
+                    });
+
+                    // Half-hour slot
+                    const hourLabelHalf = `${hour}:30`;
+                    const timeLabelDivHalf = document.createElement('div');
+                    timeLabelDivHalf.className = 'time-slot-label half-hour-line'; // Add half-hour-line class
+                    timeLabelDivHalf.textContent = hourLabelHalf;
+                    timeColumn.appendChild(timeLabelDivHalf);
+
+                    allWeekendsData.forEach(weekend => {
+                        const hourSlotUlHalf = document.createElement('ul');
+                        hourSlotUlHalf.className = 'hour-slot hour-slot-tasks half-hour-line'; // Add half-hour-line class
+                        hourSlotUlHalf.dataset.hour = hour;
+                        hourSlotUlHalf.dataset.minute = '30'; // Add minute dataset
+                        hourSlotUlHalf.dataset.date = weekend.date;
+                        dayColumns[weekend.date].appendChild(hourSlotUlHalf);
+
+                        if (scheduledTasksByDate[weekend.date] && scheduledTasksByDate[weekend.date][`${hour}:30`]) {
+                            scheduledTasksByDate[weekend.date][`${hour}:30`].forEach(task => {
+                                hourSlotUlHalf.appendChild(createTaskElement(task, true));
+                            });
+                        }
+                    });
+                }
+                // Re-setup sortable for newly rendered calendar columns
+                document.querySelectorAll('.hour-slot-tasks').forEach(col => setupSortable(col));
+            }
+
+            // Fetch tasks and populate lists and table
+            fetch('/api/tasks')
+                .then(response => response.json())
+                .then(data => {
+                    // Initialize unscheduledTasksState
+                    data.weekly.forEach(task => {
+                        unscheduledTasksState.weekly[task.name] = { ...task, isFaded: false };
+                    });
+                    data.monthly.forEach(task => {
+                        unscheduledTasksState.monthly[task.name] = { ...task, isFaded: false };
+                    });
+                    renderUnscheduledTasks(); // Initial render of unscheduled tasks
+
+                    // Populate the final, clean task table
+                    const { headers, tasks } = data.table_view;
+                    
+                    headers.forEach(header => {
+                        const th = document.createElement('th');
+                        th.textContent = header;
+                        taskTableHeader.appendChild(th);
+                    });
+
+                    tasks.forEach((task, index) => {
+                        const row = document.createElement('tr');
+                        const serialNoCell = document.createElement('td');
+                        serialNoCell.textContent = index + 1;
+                        row.appendChild(serialNoCell);
+
+                        const nameCell = document.createElement('td');
+                        nameCell.textContent = task.name;
+                        row.appendChild(nameCell);
+
+                        headers.forEach(header => {
+                            const cell = document.createElement('td');
+                            cell.innerHTML = task.tag_values[header] ? task.tag_values[header].join('<br>') : '';
+                            row.appendChild(cell);
+                        });
+                        taskTableBody.appendChild(row);
+                    });
+
+                    // Store all tasks data for validation
+                    data.table_view.tasks.forEach(task => {
+                        allTasksData[task.name] = task;
+                    });
+                });
+            
+            // Initial render of calendars
+            // allWeekendsData is populated from Jinja2 context
+            allWeekendsData = {{ weekends | tojson }};
+            renderCalendar(); // Default to weekly view
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,535 @@
+from flask import Flask, render_template, request, redirect, url_for
+import os
+import datetime
+import re
+import io
+import sys
+import webbrowser
+import json
+import urllib.parse
+
+app = Flask(__name__)
+
+CONFIG_FILE = 'config.json'
+
+DEFAULT_CONFIG = {
+    "template_folder": "/home/aditya/obsidian/All Things/Template/",
+    "journal_folder": "/home/aditya/obsidian/All Things/Journal/Daily Journal/",
+    "default_template_filename": "000 Default Day Template.md",
+    "daily_note_filename_format": "%Y-%m-%d_TEST.md"
+}
+
+def load_config():
+    """Loads the configuration from config.json."""
+    try:
+        with open(CONFIG_FILE, 'r') as f:
+            config = json.load(f)
+            # Ensure all default keys are present in the loaded config
+            for key, default_value in DEFAULT_CONFIG.items():
+                if key not in config:
+                    config[key] = default_value
+            return config
+    except FileNotFoundError:
+        # If the file doesn't exist, create it with default values
+        with open(CONFIG_FILE, 'w') as f:
+            json.dump(DEFAULT_CONFIG, f, indent=2)
+        return DEFAULT_CONFIG
+
+def save_config(config):
+    """Saves the configuration to config.json."""
+    with open(CONFIG_FILE, 'w') as f:
+        json.dump(config, f, indent=2)
+
+def plan_and_create_note(create_file=False, debug_mode=False):
+    output_buffer = io.StringIO()
+    sys.stdout = output_buffer
+
+    results = {
+        "status": "",
+        "general_output": "",
+        "default_template_details": {},
+        "day_specific_details": {},
+        "insertion_report": {},
+        "final_note_details": {},
+        "error_message": "",
+        "final_note_content_str": "",
+        "running_processes": []
+    }
+
+    def get_script_processes():
+        try:
+            # Use a shell command to find processes related to this script
+            # Exclude the grep command itself
+            cmd = "ps aux | grep 'WeekDAYplannerDAILYnoteCreater.py' | grep -v grep"
+            process = os.popen(cmd)
+            output = process.read()
+            processes = []
+            for line in output.splitlines():
+                parts = line.split()
+                if len(parts) > 1:
+                    pid = parts[1]
+                    command = ' '.join(parts[10:]) # Command starts from 11th part (index 10)
+                    processes.append({"pid": pid, "command": command})
+            return processes
+        except Exception as e:
+            return [{"error": f"Failed to get processes: {e}"}]
+
+    # Update results with running processes
+    results["running_processes"] = get_script_processes()
+
+    # Define a consistent width for all boxes (not directly used for web UI, but kept for context)
+    TARGET_BOX_WIDTH = 100
+
+    def debug_print(message):
+        print(f"🐞 DEBUG: {message}")
+
+    print("✨ Starting the Obsidian Daily Note Creation Script ✨")
+    print("-" * 50)
+
+    # --- Configuration Paths (from config.json) ---
+    config = load_config()
+    template_folder = config.get("template_folder", "")
+    journal_folder = config.get("journal_folder", "")
+    default_template_filename = config.get("default_template_filename", "")
+    daily_note_filename_format = config.get("daily_note_filename_format", "%Y-%m-%d_TEST.md")
+
+    default_template_path = os.path.join(template_folder, default_template_filename)
+    debug_print(f"Default template path set to: {default_template_path}")
+
+    # --- 1. Find and check existence of default day template ---
+    print("\n🔍 Locating Template A (Default)...")
+    default_template_details = {
+        "File Name": default_template_filename,
+        "Path": default_template_path,
+        "ScheduledTasks": [] # Initialize ScheduledTasks to an empty list
+    }
+    if os.path.exists(default_template_path):
+        default_template_details["Status"] = "✅ Found"
+        try:
+            with open(default_template_path, 'r') as f:
+                template_content = f.read()
+            # Extract scheduled tasks with full time ranges
+            # This regex looks for lines starting with optional whitespace, then "- [ ]",
+            # then captures any text (non-greedy) before a time range, and the time range itself.
+            # It also handles cases where the time range might be at the beginning or middle of the line.
+            scheduled_tasks = []
+            for line in template_content.splitlines():
+                match = re.search(r"^\s*- \[ ]\s*(.*?)((\d{2}:\d{2})\s*-\s*(\d{2}:\d{2}))", line)
+                if match:
+                    task_name_part = match.group(1).strip()
+                    time_range = match.group(2).strip()
+                    
+                    # Reconstruct task name by removing the time range if it was captured in task_name_part
+                    task_name = task_name_part.replace(time_range, "").strip()
+                    
+                    # If time range was at the beginning, task_name will be empty, so use the rest of the line
+                    if not task_name:
+                        task_name = line.replace(match.group(0).strip(), "").replace(time_range, "").strip()
+                        
+                    task_id = f"{task_name}-{time_range}" # Simple unique ID
+                    scheduled_tasks.append({"id": task_id, "name": task_name, "time": time_range, "start_time": start_time_obj})
+            
+            # Sort scheduled_tasks by start_time
+            scheduled_tasks.sort(key=lambda x: x["start_time"] if x["start_time"] else datetime.datetime.max)
+
+            default_template_details["ScheduledTasks"] = scheduled_tasks
+        except Exception as e:
+            default_template_details["Sections"] = []
+            results["error_message"] = f"Could not read or parse default template: {e}"
+    else:
+        default_template_details["Status"] = "❌ Not Found!"
+        results["default_template_details"] = default_template_details
+        results["error_message"] = "Please ensure the path and filename for the default template are correct in the configuration."
+        results["status"] = "error"
+        sys.stdout = sys.__stdout__ # Restore stdout
+        results["general_output"] = output_buffer.getvalue()
+        return results
+    results["default_template_details"] = default_template_details
+
+    # --- 2. Determine what day it is today ---
+    today = datetime.date.today()
+    day_of_week_num = today.weekday() # Monday is 0, Sunday is 6
+    day_name = today.strftime("%A") # Full weekday name (e.g., Monday, Tuesday)
+
+    debug_print(f"Day of week (numeric): {day_of_week_num}")
+
+    # --- 3. Look for day-specific templates ---
+    print(f"\n🔎 Locating Template B (Day-Specific for {day_name})...")
+    day_prefix_map = {0: "0.1", 1: "0.2", 2: "0.3", 3: "0.4", 4: "0.5", 5: "0.6", 6: "0.7"}
+    today_prefix = day_prefix_map.get(day_of_week_num)
+    debug_print(f"Today's prefix is: {today_prefix}")
+
+    day_specific_template_filename = None
+    if os.path.exists(template_folder):
+        for filename in os.listdir(template_folder):
+            if filename.startswith(today_prefix) and filename.endswith(".md"):
+                day_specific_template_filename = filename
+                debug_print(f"Found matching day-specific template: {filename}")
+                break
+
+    day_specific_template_path = None
+    day_specific_details = {"Expected Prefix": today_prefix}
+    if day_specific_template_filename:
+        day_specific_template_path = os.path.join(template_folder, day_specific_template_filename)
+        day_specific_details["File Name"] = day_specific_template_filename
+        day_specific_details["Path"] = day_specific_template_path
+        day_specific_details["Status"] = "✅ Found"
+    else:
+        day_specific_details["Status"] = f"❌ Not Found for {day_name}"
+    results["day_specific_details"] = day_specific_details
+
+    # --- Read Template Contents ---
+    default_template_content = ""
+    day_specific_template_content = ""
+    try:
+        with open(default_template_path, 'r') as f:
+            default_template_content = f.read()
+        debug_print("Successfully read default template content.")
+    except Exception as e:
+        results["error_message"] = f"Could not read default template: {e}"
+        results["status"] = "error"
+        sys.stdout = sys.__stdout__ # Restore stdout
+        results["general_output"] = output_buffer.getvalue()
+        return results
+
+    if day_specific_template_path:
+        try:
+            with open(day_specific_template_path, 'r') as f:
+                day_specific_template_content = f.read()
+            debug_print("Successfully read day-specific template content.")
+        except Exception as e:
+            results["error_message"] = f"Could not read day-specific template: {e}"
+            results["status"] = "error"
+            day_specific_template_content = ""
+            # Don't return here, try to proceed with only default content
+
+    # --- Visual Separator ---
+    print("\n" + " " * 15 + "➕")
+    print(" " * 10 + "Combining A and B...")
+
+    # --- Concatenating Logic ---
+    final_note_content = default_template_content.splitlines()
+    debug_print(f"Default template has {len(final_note_content)} lines.")
+
+    def clean_for_comparison(text):
+        cleaned_text = re.sub(r'\d{1,2}:\d{2}(\s*-\s*\d{1,2}:\d{2})?', '', text)
+        cleaned_text = re.sub(r'[\d:]', '', cleaned_text)
+        return cleaned_text.strip()
+
+    insertion_details = {"Context Snippet": ""}
+    if day_specific_template_content:
+        day_specific_lines = day_specific_template_content.splitlines()
+        debug_print(f"Day-specific template has {len(day_specific_lines)} lines.")
+
+        if day_specific_lines:
+            search_keyword = day_specific_lines[0]
+            cleaned_search_keyword = clean_for_comparison(search_keyword)
+            inserted = False
+            if cleaned_search_keyword:
+                for i, line in enumerate(final_note_content):
+                    cleaned_line = clean_for_comparison(line)
+                    if cleaned_line and cleaned_line == cleaned_search_keyword:
+                        insertion_details["Search Keyword"] = search_keyword
+                        insertion_details["Matched Line"] = line.strip()
+                        insertion_details["Line Number"] = i + 1
+                        final_note_content[i+1:i+1] = day_specific_lines[1:]
+                        inserted = True
+                        break
+
+            if inserted:
+                insertion_details["Status"] = "Content was inserted."
+                insertion_details["Location"] = f"After line {i + 1}"
+                # Context snippet for web display (expanded)
+                start_line = max(0, i - 10)
+                end_line = min(len(final_note_content), i + 11)
+                context_lines = []
+                for idx, line in enumerate(final_note_content[start_line:end_line]):
+                    original_line_num = start_line + idx + 1
+                    prefix = "--> " if "Matched Line" in insertion_details and line.strip() == insertion_details["Matched Line"].strip() else ""
+                    context_lines.append(f"{original_line_num:4d}: {prefix}{line}")
+                insertion_details["Context Snippet"] = "\n".join(context_lines)
+            else:
+                debug_print("Executing 'else' block for Insertion Report (appending content).")
+                insertion_details["Status"] = "No match was found."
+                insertion_details["Location"] = "Appended to the end of the file."
+                insertion_details["Search Keyword"] = cleaned_search_keyword
+                insertion_details["Context Snippet"] = "No specific insertion context available (content appended)."
+                final_note_content.append("\n\n--- Day Specific Additions ---\n")
+                final_note_content.extend(day_specific_lines)
+    results["insertion_report"] = insertion_details
+
+    final_note_content_str = "\n".join(final_note_content)
+    debug_print(f"Final note content length: {len(final_note_content_str)} characters.")
+
+    # --- Extract and Sort All Scheduled Tasks from Final Content ---
+    parsed_calendar_tasks = []
+    task_regex = re.compile(r"^- \[ ]\s*(.*?)((\d{2}:\d{2})\s*-\s*(\d{2}:\d{2}))")
+    for line in final_note_content_str.splitlines():
+        match = task_regex.search(line)
+        if match:
+            task_name_part = match.group(1).strip()
+            time_range = match.group(2).strip()
+            start_time_str = match.group(3)
+            end_time_str = match.group(4)
+
+            task_name = task_name_part.replace(time_range, "").strip()
+            if not task_name:
+                # If time range was at the beginning, task_name will be empty, so use the rest of the line
+                task_name = line.replace(match.group(0).strip(), "").replace(time_range, "").strip()
+
+            try:
+                start_hour, start_minute = map(int, start_time_str.split(':'))
+                # Create a dummy datetime object for sorting
+                start_time_obj = datetime.datetime(1, 1, 1, start_hour, start_minute)
+            except ValueError:
+                start_time_obj = None # Handle cases where time parsing fails
+
+            try:
+                end_hour, end_minute = map(int, end_time_str.split(':'))
+                end_time_obj = datetime.datetime(1, 1, 1, end_hour, end_minute)
+                duration = end_time_obj - start_time_obj
+                duration_minutes = duration.total_seconds() / 60
+            except ValueError:
+                end_time_obj = None
+                duration_minutes = 0
+
+            parsed_calendar_tasks.append({
+                "name": task_name,
+                "time": time_range,
+                "start_time": start_time_obj, # For sorting
+                "end_time": end_time_obj,
+                "duration_minutes": duration_minutes,
+                "id": f"{task_name}-{time_range}" # Add unique ID
+            })
+
+    # Sort tasks by start time
+    parsed_calendar_tasks.sort(key=lambda x: x["start_time"] if x["start_time"] else datetime.datetime.max)
+
+    # Identify tasks with parallel times
+    time_counts = {}
+    for task in parsed_calendar_tasks:
+        time_counts[task["time"]] = time_counts.get(task["time"], 0) + 1
+
+    for task in parsed_calendar_tasks:
+        task["is_parallel_time"] = time_counts[task["time"]] > 1
+
+    # Update default_template_details.ScheduledTasks with is_parallel_time and unique IDs
+    for default_task in default_template_details["ScheduledTasks"]:
+        for parsed_task in parsed_calendar_tasks:
+            if default_task["name"] == parsed_task["name"] and default_task["time"] == parsed_task["time"]:
+                default_task["is_parallel_time"] = parsed_task["is_parallel_time"]
+                default_task["id"] = parsed_task["id"]
+                break
+
+    def assign_task_columns(tasks):
+        # Sort tasks by start time to process them in order
+        tasks.sort(key=lambda x: x["start_time"])
+
+        # List of lists, where each inner list represents a column and contains tasks assigned to it
+        columns = []
+
+        for task in tasks:
+            assigned = False
+            # Try to place the task in an existing column
+            for col_idx, column_tasks in enumerate(columns):
+                # Check if this task overlaps with any task already in this column
+                overlap = False
+                for existing_task in column_tasks:
+                    if not (task["end_time"] <= existing_task["start_time"] or task["start_time"] >= existing_task["end_time"]):
+                        overlap = True
+                        break
+                if not overlap:
+                    # No overlap, assign task to this column
+                    task["column"] = col_idx
+                    column_tasks.append(task)
+                    assigned = True
+                    break
+            
+            if not assigned:
+                # If no suitable column found, create a new one
+                task["column"] = len(columns)
+                columns.append([task])
+        
+        # After assigning initial columns, determine total columns for each overlapping group
+        # This is a simplified approach; a more robust solution would involve interval trees or similar.
+        # For now, we'll just set total_columns to the max column index + 1 within any overlapping set.
+        for task in tasks:
+            # Find all tasks that overlap with the current task
+            overlapping_group = [t for t in tasks if not (task["end_time"] <= t["start_time"] or task["start_time"] >= t["end_time"])]
+            
+            if overlapping_group:
+                max_col_in_group = max(t["column"] for t in overlapping_group)
+                for t in overlapping_group:
+                    t["total_columns"] = max_col_in_group + 1
+            else:
+                task["total_columns"] = 1 # No overlap, so it takes 1 column
+
+        return tasks
+
+    parsed_calendar_tasks = assign_task_columns(parsed_calendar_tasks)
+    results["parsed_calendar_tasks"] = parsed_calendar_tasks
+
+    debug_print("--- Parsed Calendar Tasks Debug ---")
+    for task in results["parsed_calendar_tasks"]:
+        debug_print(f"Task: {task['name']} ({task['time']})")
+        debug_print(f"  Start Time: {task['start_time']}")
+        debug_print(f"  End Time: {task['end_time']}")
+        debug_print(f"  Duration (minutes): {task['duration_minutes']}")
+        debug_print(f"  Column: {task.get('column', 'N/A')}")
+        debug_print(f"  Total Columns: {task.get('total_columns', 'N/A')}")
+        debug_print(f"  Is Parallel Time: {task.get('is_parallel_time', False)}")
+    debug_print("-----------------------------------")
+
+    # --- Create Final Note ---
+    daily_note_filename = today.strftime(daily_note_filename_format)
+    daily_note_path = os.path.join(journal_folder, daily_note_filename)
+    os.makedirs(journal_folder, exist_ok=True)
+
+    final_note_details = {
+        "File Name": daily_note_filename,
+        "Path": daily_note_path,
+        "Content": "A + B"
+    }
+    results["final_note_details"] = final_note_details
+    results["final_note_content_str"] = final_note_content_str
+
+    if create_file:
+        print(f"✍️  Writing final file...")
+        try:
+            with open(daily_note_path, 'w') as f:
+                f.write(final_note_content_str)
+            print(f"🎉 Success! Daily note created.")
+            debug_print("File write operation successful.")
+            results["status"] = "created"
+
+            # Open the note in Obsidian
+            try:
+                encoded_path = urllib.parse.quote(daily_note_path)
+                obsidian_uri = f"obsidian://open?path={encoded_path}"
+                webbrowser.open(obsidian_uri)
+                debug_print(f"Opened Obsidian URI: {obsidian_uri}")
+            except Exception as e:
+                debug_print(f"Error opening Obsidian URI: {e}")
+        except Exception as e:
+            results["error_message"] = f"Error creating daily note: {e}"
+            results["status"] = "error"
+    else:
+        print("✅ Planning complete. Review the details below.")
+        results["status"] = "success"
+
+    print("\n--- Script Finished ---\n")
+    sys.stdout = sys.__stdout__ # Restore stdout
+    results["general_output"] = output_buffer.getvalue()
+    print(f"DEBUG: Final General Output:\n{results['general_output']}") # Added debug print
+    return results
+
+
+PIXELS_PER_MINUTE = 1 # Define a global constant for the calendar scale
+
+@app.route('/')
+def index():
+    config = load_config()
+    message = request.args.get('message') # Get message from query parameter
+
+    # Check if today's daily note exists
+    config = load_config()
+    journal_folder = config.get("journal_folder", "")
+    daily_note_filename_format = config.get("daily_note_filename_format", "%Y-%m-%d_TEST.md")
+    today = datetime.date.today()
+    daily_note_filename = today.strftime(daily_note_filename_format)
+    daily_note_path = os.path.join(journal_folder, daily_note_filename)
+    daily_note_exists = os.path.exists(daily_note_path)
+
+    return render_template('index.html', config=config, results=None, message=message, daily_note_exists=daily_note_exists, pixels_per_minute=PIXELS_PER_MINUTE)
+
+@app.route('/plan_note', methods=['POST'])
+def plan_note_route():
+    config = load_config()
+    results = plan_and_create_note(create_file=False, debug_mode=True)
+    daily_note_path = results.get('final_note_details', {}).get('Path')
+    daily_note_exists = os.path.exists(daily_note_path) if daily_note_path else False
+    return render_template('index.html', config=config, results=results, daily_note_exists=daily_note_exists, pixels_per_minute=PIXELS_PER_MINUTE)
+
+@app.route('/create_note', methods=['POST'])
+def create_note_route():
+    config = load_config()
+    results = plan_and_create_note(create_file=True, debug_mode=False)
+    # Redirect to the main page with a success message (or show a dedicated success page)
+    return redirect(url_for('index'))
+
+@app.route('/save_config', methods=['POST'])
+def save_config_route():
+    new_config = {
+        "template_folder": request.form.get('template_folder'),
+        "journal_folder": request.form.get('journal_folder'),
+        "default_template_filename": request.form.get('default_template_filename'),
+        "daily_note_filename_format": request.form.get('daily_note_filename_format')
+    }
+    save_config(new_config)
+    return redirect(url_for('index'))
+
+@app.route('/delete_note', methods=['POST'])
+def delete_note_route():
+    config = load_config()
+    journal_folder = config.get("journal_folder", "")
+    daily_note_filename_format = config.get("daily_note_filename_format", "%Y-%m-%d_TEST.md")
+
+    today = datetime.date.today()
+    daily_note_filename = today.strftime(daily_note_filename_format)
+    daily_note_path = os.path.join(journal_folder, daily_note_filename)
+
+    message = ""
+    if os.path.exists(daily_note_path):
+        try:
+            os.remove(daily_note_path)
+            message = f"✅ Successfully deleted: {daily_note_filename}"
+        except Exception as e:
+            message = f"❌ Error deleting note: {e}"
+    else:
+        message = f"ℹ️ Daily note not found: {daily_note_filename}"
+    
+    # For simplicity, we'll pass the message via query parameter. 
+    # In a real app, you might use Flask's flash messages.
+    return redirect(url_for('index', message=message))
+
+    return redirect(url_for('index', message=message))
+
+
+
+@app.route('/kill_processes', methods=['POST'])
+def kill_processes_route():
+    pids_to_kill = request.form.getlist('pid')
+    message = ""
+    killed_count = 0
+    for pid_str in pids_to_kill:
+        try:
+            pid = int(pid_str)
+            os.kill(pid, 9)  # SIGKILL
+            killed_count += 1
+        except ValueError:
+            message += f"Invalid PID: {pid_str}. "
+        except ProcessLookupError:
+            message += f"Process {pid_str} not found. "
+        except Exception as e:
+            message += f"Error killing process {pid_str}: {e}. "
+    
+    if killed_count > 0:
+        message = f"✅ Successfully killed {killed_count} process(es). " + message
+    elif not message:
+        message = "ℹ️ No processes selected to kill."
+
+    return redirect(url_for('index', message=message))
+
+import argparse
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Obsidian Daily Note Planner.')
+    parser.add_argument('--plan-only', action='store_true', help='Run planning function and print output, then exit.')
+    args = parser.parse_args()
+
+    if args.plan_only:
+        results = plan_and_create_note(create_file=False, debug_mode=True)
+        print(results['general_output'])
+    else:
+        webbrowser.open('http://127.0.0.1:5000/')
+        app.run(debug=True)
