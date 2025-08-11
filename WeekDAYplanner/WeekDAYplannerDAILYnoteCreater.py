@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 import os
 import datetime
 import re
@@ -42,7 +42,7 @@ def save_config(config):
     with open(CONFIG_FILE, 'w') as f:
         json.dump(config, f, indent=2)
 
-def plan_and_create_note(create_file=False, debug_mode=False):
+def plan_note(debug_mode=False):
     output_buffer = io.StringIO()
     sys.stdout = output_buffer
 
@@ -188,7 +188,8 @@ def plan_and_create_note(create_file=False, debug_mode=False):
                         "time": time_range,
                         "start_time": start_time_obj,
                         "end_time": end_time_obj,
-                        "duration_minutes": duration_minutes
+                        "duration_minutes": duration_minutes,
+                        "source": "default"
                     })
 
             # Sort scheduled_tasks by start_time
@@ -316,7 +317,8 @@ def plan_and_create_note(create_file=False, debug_mode=False):
                         "time": time_range,
                         "start_time": start_time_obj,
                         "end_time": end_time_obj,
-                        "duration_minutes": duration_minutes
+                        "duration_minutes": duration_minutes,
+                        "source": "day_specific"
                     })
             day_specific_details["ScheduledTasks"] = day_specific_scheduled_tasks
 
@@ -384,46 +386,9 @@ def plan_and_create_note(create_file=False, debug_mode=False):
     final_note_content_str = "\n".join(final_note_content)
     debug_print(f"Final note content length: {len(final_note_content_str)} characters.")
 
-    # --- Extract and Sort All Scheduled Tasks from Final Content ---
-    parsed_calendar_tasks = []
-    task_regex = re.compile(r"^- \[ ]\s*(.*?)((\d{2}:\d{2})\s*-\s*(\d{2}:\d{2}))")
-    for line in final_note_content_str.splitlines():
-        match = task_regex.search(line)
-        if match:
-            task_name_part = match.group(1).strip()
-            time_range = match.group(2).strip()
-            start_time_str = match.group(3)
-            end_time_str = match.group(4)
-
-            task_name = task_name_part.replace(time_range, "").strip()
-            if not task_name:
-                # If time range was at the beginning, task_name will be empty, so use the rest of the line
-                task_name = line.replace(match.group(0).strip(), "").replace(time_range, "").strip()
-
-            try:
-                start_hour, start_minute = map(int, start_time_str.split(':'))
-                # Create a dummy datetime object for sorting
-                start_time_obj = datetime.datetime(1, 1, 1, start_hour, start_minute)
-            except ValueError:
-                start_time_obj = None # Handle cases where time parsing fails
-
-            try:
-                end_hour, end_minute = map(int, end_time_str.split(':'))
-                end_time_obj = datetime.datetime(1, 1, 1, end_hour, end_minute)
-                duration = end_time_obj - start_time_obj
-                duration_minutes = duration.total_seconds() / 60
-            except ValueError:
-                end_time_obj = None
-                duration_minutes = 0
-
-            parsed_calendar_tasks.append({
-                "name": task_name,
-                "time": time_range,
-                "start_time": start_time_obj, # For sorting
-                "end_time": end_time_obj,
-                "duration_minutes": duration_minutes,
-                "id": f"{task_name}-{time_range}" # Add unique ID
-            })
+    # --- Combine, Sort, and Process All Scheduled Tasks ---
+    # Combine tasks from both default and day-specific templates
+    parsed_calendar_tasks = default_template_details.get("ScheduledTasks", []) + day_specific_details.get("ScheduledTasks", [])
 
     # Sort tasks by start time
     parsed_calendar_tasks.sort(key=lambda x: x["start_time"] if x["start_time"] else datetime.datetime.max)
@@ -451,14 +416,6 @@ def plan_and_create_note(create_file=False, debug_mode=False):
         else:
             task["color"] = None # No color for non-parallel tasks
 
-
-    # Update default_template_details.ScheduledTasks with is_parallel_time and unique IDs
-    for default_task in default_template_details["ScheduledTasks"]:
-        for parsed_task in parsed_calendar_tasks:
-            if default_task["name"] == parsed_task["name"] and default_task["time"] == parsed_task["time"]:
-                default_task["is_parallel_time"] = parsed_task["is_parallel_time"]
-                default_task["id"] = parsed_task["id"]
-                break
 
     def assign_task_columns(tasks):
         # Sort tasks by start time to process them in order
@@ -532,29 +489,8 @@ def plan_and_create_note(create_file=False, debug_mode=False):
     results["final_note_details"] = final_note_details
     results["final_note_content_str"] = final_note_content_str
 
-    if create_file:
-        print(f"✍️  Writing final file...")
-        try:
-            with open(daily_note_path, 'w') as f:
-                f.write(final_note_content_str)
-            print(f"🎉 Success! Daily note created.")
-            debug_print("File write operation successful.")
-            results["status"] = "created"
-
-            # Open the note in Obsidian
-            try:
-                encoded_path = urllib.parse.quote(daily_note_path)
-                obsidian_uri = f"obsidian://open?path={encoded_path}"
-                webbrowser.open(obsidian_uri)
-                debug_print(f"Opened Obsidian URI: {obsidian_uri}")
-            except Exception as e:
-                debug_print(f"Error opening Obsidian URI: {e}")
-        except Exception as e:
-            results["error_message"] = f"Error creating daily note: {e}"
-            results["status"] = "error"
-    else:
-        print("✅ Planning complete. Review the details below.")
-        results["status"] = "success"
+    print("✅ Planning complete. Review the details below.")
+    results["status"] = "success"
 
     print("\n--- Script Finished ---\n")
     sys.stdout = sys.__stdout__ # Restore stdout
@@ -584,17 +520,83 @@ def index():
 @app.route('/plan_note', methods=['POST'])
 def plan_note_route():
     config = load_config()
-    results = plan_and_create_note(create_file=False, debug_mode=True)
+    results = plan_note(debug_mode=True)
     daily_note_path = results.get('final_note_details', {}).get('Path')
     daily_note_exists = os.path.exists(daily_note_path) if daily_note_path else False
     return render_template('index.html', config=config, results=results, daily_note_exists=daily_note_exists, pixels_per_minute=PIXELS_PER_MINUTE)
 
+def generate_markdown_from_tasks(tasks, original_content):
+    """Generates a new markdown string from a list of task objects."""
+
+    # Regular expression to identify task lines, adjusted to be more general
+    task_line_regex = re.compile(r"^\s*-\s*\[\s*\]\s*.*(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2}).*")
+
+    # Filter out old task lines from the original content
+    non_task_lines = [line for line in original_content.splitlines() if not task_line_regex.search(line)]
+
+    # Create new task lines from the tasks data
+    new_task_lines = []
+    for task in tasks:
+        # Recreate the time string from start_time and end_time, which are now strings like 'HH:MM'
+        start_time_str = task['start_time']
+        end_time_str = task['end_time']
+        time_range = f"{start_time_str} - {end_time_str}"
+        new_task_lines.append(f"- [ ] {task['name']} {time_range}")
+
+    # For simplicity, let's find a common section to insert the tasks.
+    # A more robust solution might use markers, but for now, we'll find a header.
+    # Let's assume tasks are typically under a "## Schedule" or similar header.
+    # If not found, we'll append to the end.
+
+    # This is a placeholder for a more intelligent insertion logic.
+    # For now, we will just combine the non-task lines and the new task lines.
+    # This might not preserve the original structure perfectly, but it's a start.
+
+    # A simple approach: find the first task line in the original and replace the block.
+    # This is hard. Let's just append the tasks to the end of the non-task lines.
+
+    final_content_lines = non_task_lines + ["\n## Updated Schedule"] + new_task_lines
+
+    return "\n".join(final_content_lines)
+
+
 @app.route('/create_note', methods=['POST'])
 def create_note_route():
+    data = request.get_json()
+    tasks = data.get('tasks')
+    original_content = data.get('original_content')
+
+    if not tasks or not original_content:
+        return jsonify({"status": "error", "message": "Missing tasks or original content."}), 400
+
     config = load_config()
-    results = plan_and_create_note(create_file=True, debug_mode=False)
-    # Redirect to the main page with a success message (or show a dedicated success page)
-    return redirect(url_for('index'))
+    journal_folder = config.get("journal_folder", "")
+    daily_note_filename_format = config.get("daily_note_filename_format", "%Y-%m-%d_TEST.md")
+
+    today = datetime.date.today()
+    daily_note_filename = today.strftime(daily_note_filename_format)
+    daily_note_path = os.path.join(journal_folder, daily_note_filename)
+    os.makedirs(journal_folder, exist_ok=True)
+
+    # Generate the new markdown content
+    final_note_content_str = generate_markdown_from_tasks(tasks, original_content)
+
+    try:
+        with open(daily_note_path, 'w') as f:
+            f.write(final_note_content_str)
+
+        # Open the note in Obsidian
+        try:
+            encoded_path = urllib.parse.quote(daily_note_path)
+            obsidian_uri = f"obsidian://open?path={encoded_path}"
+            webbrowser.open(obsidian_uri)
+        except Exception as e:
+            # Non-critical error, just log it
+            print(f"DEBUG: Error opening Obsidian URI: {e}")
+
+        return jsonify({"status": "success", "message": f"Daily note created at {daily_note_path}"})
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"Error creating daily note: {e}"}), 500
 
 @app.route('/save_config', methods=['POST'])
 def save_config_route():
@@ -667,8 +669,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.plan_only:
-        results = plan_and_create_note(create_file=False, debug_mode=True)
+        results = plan_note(debug_mode=True)
         print(results['general_output'])
     else:
-        webbrowser.open('http://127.0.0.1:5000/')
-        app.run(debug=True)
+        # webbrowser.open('http://127.0.0.1:5000/')
+        app.run(debug=True, host='0.0.0.0')
