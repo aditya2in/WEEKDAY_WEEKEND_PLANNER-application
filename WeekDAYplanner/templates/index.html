@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Obsidian Daily Note Planner</title>
+    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -151,6 +152,7 @@
         }
         .sidebar {
             flex: 1; /* Takes up 1/4 of the space */
+            position: relative; /* Needed for child absolute positioning */
         }
         .box {
             border-radius: 8px;
@@ -431,14 +433,21 @@
                 </div>
             </div>
 
-            
+            <!-- Right Column -->
+            <div class="sidebar">
+                <div class="calendar-view" id="calendar-view">
+                    <div class="time-axis" id="time-axis"></div>
+                    <div class="calendar-grid" id="calendar-grid"></div>
+                    <!-- Calendar events will be injected here by JavaScript -->
+                </div>
+            </div>
         </div>
 
         <!-- Create Note Section (only shown after successful planning) -->
         {% if results.status == 'success' %}
         <div class="create-section">
             <h2>Create Daily Note</h2>
-            <form action="/create_note" method="post">
+            <form id="create-note-form" action="/create_note" method="post">
                 <button type="submit">Create Daily Note</button>
             </form>
             <form action="/delete_note" method="post" onsubmit="return confirm('Are you sure you want to delete today\'s daily note? This action cannot be undone.');" style="margin-top: 10px;">
@@ -500,6 +509,164 @@
                 }
             });
         });
+
+        {% if results and results.parsed_calendar_tasks %}
+        let calendarTasks = {{ results.parsed_calendar_tasks | tojson }};
+        const originalContent = {{ results.final_note_content_str | tojson }};
+        const pixelsPerMinute = {{ pixels_per_minute }};
+
+        // 1. Initial data processing
+        calendarTasks.forEach(task => {
+            const startTime = new Date(task.start_time);
+            const endTime = new Date(task.end_time);
+            task.startMinutes = startTime.getUTCHours() * 60 + startTime.getUTCMinutes();
+            task.endMinutes = endTime.getUTCHours() * 60 + endTime.getUTCMinutes();
+        });
+
+        function minutesToTime(minutes) {
+            const h = Math.floor(minutes / 60);
+            const m = minutes % 60;
+            return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+        }
+
+        function renderCalendar(tasks) {
+            const calendarView = document.getElementById('calendar-view');
+            const timeAxis = document.getElementById('time-axis');
+
+            timeAxis.innerHTML = '';
+            calendarView.querySelectorAll('.calendar-event').forEach(el => el.remove());
+
+            for (let hour = 0; hour < 24; hour++) {
+                const timeLabel = document.createElement('div');
+                timeLabel.style.top = `${hour * 60 * pixelsPerMinute}px`;
+                timeLabel.textContent = `${String(hour).padStart(2, '0')}:00`;
+                timeAxis.appendChild(timeLabel);
+            }
+
+            tasks.forEach((task, index) => {
+                const durationMinutes = task.endMinutes - task.startMinutes;
+                const eventDiv = document.createElement('div');
+                eventDiv.className = 'calendar-event';
+                eventDiv.setAttribute('data-id', index);
+                eventDiv.style.top = `${task.startMinutes * pixelsPerMinute}px`;
+                eventDiv.style.height = `${durationMinutes * pixelsPerMinute}px`;
+                eventDiv.setAttribute('data-y', 0); // Initialize y translation data
+
+                if (task.source === 'day_specific') {
+                    eventDiv.style.backgroundColor = '#baffc9';
+                    eventDiv.style.borderColor = '#28a745';
+                }
+
+                const startTimeStr = minutesToTime(task.startMinutes);
+                const endTimeStr = minutesToTime(task.endMinutes);
+
+                eventDiv.innerHTML = `<strong>${task.name}</strong><div class="time">${startTimeStr} - ${endTimeStr} (IST)</div>`;
+                calendarView.appendChild(eventDiv);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCalendar(calendarTasks);
+
+            interact('.calendar-event')
+                .draggable({
+                    listeners: {
+                        move(event) {
+                            const target = event.target;
+                            const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+                            target.style.transform = `translateY(${y}px)`;
+                            target.setAttribute('data-y', y);
+                        },
+                        end(event) {
+                            const target = event.target;
+                            const id = parseInt(target.getAttribute('data-id'));
+                            const task = calendarTasks[id];
+
+                            const y = parseFloat(target.getAttribute('data-y'));
+                            const newStartMinutes = Math.round((task.startMinutes + y / pixelsPerMinute) / 15) * 15; // Snap to 15 mins
+                            const duration = task.endMinutes - task.startMinutes;
+
+                            task.startMinutes = newStartMinutes;
+                            task.endMinutes = newStartMinutes + duration;
+
+                            renderCalendar(calendarTasks); // Re-render to snap and update
+                        }
+                    }
+                })
+                .resizable({
+                    edges: { top: true, bottom: true },
+                    listeners: {
+                        move(event) {
+                            const target = event.target;
+                            let y = parseFloat(target.getAttribute('data-y')) || 0;
+
+                            target.style.width = `${event.rect.width}px`;
+                            target.style.height = `${event.rect.height}px`;
+
+                            y += event.deltaRect.top;
+
+                            target.style.transform = `translateY(${y}px)`;
+                            target.setAttribute('data-y', y);
+                        },
+                        end(event) {
+                            const target = event.target;
+                            const id = parseInt(target.getAttribute('data-id'));
+                            const task = calendarTasks[id];
+
+                            const newHeight = event.rect.height;
+                            const newDuration = Math.round(newHeight / pixelsPerMinute / 15) * 15; // Snap to 15 mins
+
+                            const y = parseFloat(target.getAttribute('data-y'));
+                            const newStartMinutes = Math.round((task.startMinutes + y / pixelsPerMinute) / 15) * 15;
+
+                            task.startMinutes = newStartMinutes;
+                            task.endMinutes = newStartMinutes + newDuration;
+
+                            renderCalendar(calendarTasks); // Re-render to snap and update
+                        }
+                    }
+                });
+
+            const createNoteForm = document.getElementById('create-note-form');
+            if (createNoteForm) {
+                createNoteForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+
+                    const payload = {
+                        original_content: originalContent,
+                        tasks: calendarTasks.map(task => {
+                            return {
+                                name: task.name,
+                                start_time: minutesToTime(task.startMinutes),
+                                end_time: minutesToTime(task.endMinutes),
+                                source: task.source
+                            };
+                        })
+                    };
+
+                    fetch('/create_note', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(payload),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            window.location.href = '/?message=✅ ' + encodeURIComponent(data.message);
+                        } else {
+                            alert('Error creating note: ' + data.message);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                        alert('An unexpected error occurred.');
+                    });
+                });
+            }
+        });
+        {% endif %}
     </script>
 </body>
 </html>
