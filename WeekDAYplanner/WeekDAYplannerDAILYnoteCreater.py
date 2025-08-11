@@ -42,6 +42,87 @@ def save_config(config):
     with open(CONFIG_FILE, 'w') as f:
         json.dump(config, f, indent=2)
 
+def parse_default_scheduled_tasks(template_path):
+    """Parse scheduled tasks from the default template for UI/preset building (times as strings)."""
+    tasks = []
+    if not os.path.exists(template_path):
+        return tasks
+    try:
+        with open(template_path, 'r') as f:
+            content = f.read()
+        for line in content.splitlines():
+            if "- [ ]" not in line:
+                continue
+            time_match = re.search(r"(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})", line)
+            if not time_match:
+                continue
+            start_time_str = time_match.group(1).strip()
+            end_time_str = time_match.group(2).strip()
+            time_range = f"{start_time_str} - {end_time_str}"
+            task_name = line.replace(time_range, "").replace("- [ ]", "").strip()
+            task_id = f"{task_name}-{time_range}"
+            tasks.append({
+                "id": task_id,
+                "name": task_name,
+                "time": time_range
+            })
+        # Sort by start time string for stable UI ordering
+        def to_minutes(t):
+            try:
+                h, m = map(int, t.split(':'))
+                return h * 60 + m
+            except Exception:
+                return 99999
+        tasks.sort(key=lambda t: to_minutes(t["time"].split(' - ')[0]))
+    except Exception:
+        return []
+    return tasks
+
+def assign_task_columns(tasks):
+    # Sort tasks by start time to process them in order
+    tasks.sort(key=lambda x: x["start_time"])
+
+    # List of lists, where each inner list represents a column and contains tasks assigned to it
+    columns = []
+
+    for task in tasks:
+        assigned = False
+        # Try to place the task in an existing column
+        for col_idx, column_tasks in enumerate(columns):
+            # Check if this task overlaps with any task already in this column
+            overlap = False
+            for existing_task in column_tasks:
+                if not (task["end_time"] <= existing_task["start_time"] or task["start_time"] >= existing_task["end_time"]):
+                    overlap = True
+                    break
+            if not overlap:
+                # No overlap, assign task to this column
+                task["column"] = col_idx
+                column_tasks.append(task)
+                assigned = True
+                break
+        
+        if not assigned:
+            # If no suitable column found, create a new one
+            task["column"] = len(columns)
+            columns.append([task])
+    
+    # After assigning initial columns, determine total columns for each overlapping group
+    # This is a simplified approach; a more robust solution would involve interval trees or similar.
+    # For now, we'll just set total_columns to the max column index + 1 within any overlapping set.
+    for task in tasks:
+        # Find all tasks that overlap with the current task
+        overlapping_group = [t for t in tasks if not (task["end_time"] <= t["start_time"] or task["start_time"] >= t["end_time"])]
+        
+        if overlapping_group:
+            max_col_in_group = max(t["column"] for t in overlapping_group)
+            for t in overlapping_group:
+                t["total_columns"] = max_col_in_group + 1
+        else:
+            task["total_columns"] = 1 # No overlap, so it takes 1 column
+
+        return tasks
+
 def plan_note(debug_mode=False):
     output_buffer = io.StringIO()
     sys.stdout = output_buffer
@@ -231,7 +312,9 @@ def plan_note(debug_mode=False):
         results["general_output"] = output_buffer.getvalue()
         return results
     results["default_template_details"] = default_template_details
-    results["default_template_calendar_tasks"] = assign_task_columns(default_template_details["ScheduledTasks"].copy())
+    # This call is not strictly necessary as the final task list is what's used, but keeping it for now
+    # in case there's a use for it I'm not seeing.
+    # results["default_template_calendar_tasks"] = assign_task_columns(default_template_details["ScheduledTasks"].copy())
 
     # --- 2. Determine what day it is today ---
     today = datetime.date.today()
@@ -387,8 +470,9 @@ def plan_note(debug_mode=False):
     debug_print(f"Final note content length: {len(final_note_content_str)} characters.")
 
     # --- Combine, Sort, and Process All Scheduled Tasks ---
-    # Combine tasks from both default and day-specific templates
-    parsed_calendar_tasks = default_template_details.get("ScheduledTasks", []) + day_specific_details.get("ScheduledTasks", [])
+    # No preset filtering: include all default tasks; day-specific tasks are additions
+    default_tasks_all = default_template_details.get("ScheduledTasks", [])
+    parsed_calendar_tasks = default_tasks_all + day_specific_details.get("ScheduledTasks", [])
 
     # Sort tasks by start time
     parsed_calendar_tasks.sort(key=lambda x: x["start_time"] if x["start_time"] else datetime.datetime.max)
@@ -415,52 +499,6 @@ def plan_note(debug_mode=False):
             task["color"] = time_color_map[task["time"]]
         else:
             task["color"] = None # No color for non-parallel tasks
-
-
-    def assign_task_columns(tasks):
-        # Sort tasks by start time to process them in order
-        tasks.sort(key=lambda x: x["start_time"])
-
-        # List of lists, where each inner list represents a column and contains tasks assigned to it
-        columns = []
-
-        for task in tasks:
-            assigned = False
-            # Try to place the task in an existing column
-            for col_idx, column_tasks in enumerate(columns):
-                # Check if this task overlaps with any task already in this column
-                overlap = False
-                for existing_task in column_tasks:
-                    if not (task["end_time"] <= existing_task["start_time"] or task["start_time"] >= existing_task["end_time"]):
-                        overlap = True
-                        break
-                if not overlap:
-                    # No overlap, assign task to this column
-                    task["column"] = col_idx
-                    column_tasks.append(task)
-                    assigned = True
-                    break
-            
-            if not assigned:
-                # If no suitable column found, create a new one
-                task["column"] = len(columns)
-                columns.append([task])
-        
-        # After assigning initial columns, determine total columns for each overlapping group
-        # This is a simplified approach; a more robust solution would involve interval trees or similar.
-        # For now, we'll just set total_columns to the max column index + 1 within any overlapping set.
-        for task in tasks:
-            # Find all tasks that overlap with the current task
-            overlapping_group = [t for t in tasks if not (task["end_time"] <= t["start_time"] or task["start_time"] >= t["end_time"])]
-            
-            if overlapping_group:
-                max_col_in_group = max(t["column"] for t in overlapping_group)
-                for t in overlapping_group:
-                    t["total_columns"] = max_col_in_group + 1
-            else:
-                task["total_columns"] = 1 # No overlap, so it takes 1 column
-
-        return tasks
 
     parsed_calendar_tasks = assign_task_columns(parsed_calendar_tasks)
     results["parsed_calendar_tasks"] = parsed_calendar_tasks
@@ -515,7 +553,10 @@ def index():
     daily_note_path = os.path.join(journal_folder, daily_note_filename)
     daily_note_exists = os.path.exists(daily_note_path)
 
-    return render_template('index.html', config=config, results=None, message=message, daily_note_exists=daily_note_exists, pixels_per_minute=PIXELS_PER_MINUTE)
+    # Build default tasks list for UI toggles
+    default_template_path = os.path.join(config.get("template_folder", ""), config.get("default_template_filename", ""))
+    default_tasks_for_ui = parse_default_scheduled_tasks(default_template_path)
+    return render_template('index.html', config=config, results=None, message=message, daily_note_exists=daily_note_exists, pixels_per_minute=PIXELS_PER_MINUTE, default_tasks_for_ui=default_tasks_for_ui)
 
 @app.route('/plan_note', methods=['POST'])
 def plan_note_route():
@@ -523,7 +564,10 @@ def plan_note_route():
     results = plan_note(debug_mode=True)
     daily_note_path = results.get('final_note_details', {}).get('Path')
     daily_note_exists = os.path.exists(daily_note_path) if daily_note_path else False
-    return render_template('index.html', config=config, results=results, daily_note_exists=daily_note_exists, pixels_per_minute=PIXELS_PER_MINUTE)
+    # Build default tasks list for UI toggles
+    default_template_path = os.path.join(config.get("template_folder", ""), config.get("default_template_filename", ""))
+    default_tasks_for_ui = parse_default_scheduled_tasks(default_template_path)
+    return render_template('index.html', config=config, results=results, daily_note_exists=daily_note_exists, pixels_per_minute=PIXELS_PER_MINUTE, default_tasks_for_ui=default_tasks_for_ui)
 
 def generate_markdown_from_tasks(tasks, original_content):
     """Generates a new markdown string from a list of task objects."""
