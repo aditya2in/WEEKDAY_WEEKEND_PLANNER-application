@@ -358,7 +358,7 @@
                 <tr>
                   <th>Drag</th>
                   <th>Task</th>
-                  <th>Task/When/Weekly</th>
+                  <th>Task/WhenAndDuration/Weekly</th>
                   <th>Task/When/Whichday</th>
                   <th>Task/When/WhichWeek</th>
                   <th>Task/Priority</th>
@@ -374,7 +374,7 @@
                 <tr>
                   <th>Drag</th>
                   <th>Task</th>
-                  <th>Task/When/Monthly</th>
+                  <th>Task/WhenAndDuration/Monthly</th>
                   <th>Task/When/Whichday</th>
                   <th>Task/When/WhichWeek</th>
                   <th>Task/Priority</th>
@@ -685,8 +685,8 @@
                 const whichDay = (tv['Task/When/Whichday'] || []).join(', ');
                 const whichWeek = (tv['Task/When/WhichWeek'] || []).join(', ');
                 const priority = (tv['Task/Priority'] || []).join(', ');
-                const weekly = (tv['Task/When/Weekly'] || []).join(', ');
-                const monthly = (tv['Task/When/Monthly'] || []).join(', ');
+                const weekly = (tv['Task/WhenAndDuration/Weekly'] || tv['Task/When/Weekly'] || []).join(', ');
+                const monthly = (tv['Task/WhenAndDuration/Monthly'] || tv['Task/When/Monthly'] || []).join(', ');
                 const defaultDuration = (tv['Task/WhenAndDuration/DefaultDuration'] || []).join(', ');
                 const status = history.not_done_latest ? `Scheduled on ${history.not_done_latest} (not done)` : '';
 
@@ -1378,32 +1378,28 @@
                     window.allHistory = data.history || {};
 
                     // Initialize unscheduledTasksState AFTER we have allTasksData/history
-                    // Only include Weekly tasks that are exactly 1X (either explicit 1X or inferred count=1)
+                    // Weekly: include any task that has any Weekly value under Task/WhenAndDuration/Weekly or legacy Task/When/Weekly
                     data.weekly.forEach(task => {
                         const tv = (allTasksData[task.name] && allTasksData[task.name].tag_values) || {};
-                        const wvals = tv['Task/When/Weekly'] || [];
-                        let isOneX = false;
-                        if (wvals.length > 0) {
-                            // Accept forms like "1X", "1x Weekly"
-                            isOneX = /(\b|^)1\s*[xX]\b/.test(String(wvals[0]));
-                        } else {
-                            // If no explicit header value, rely on parsed frequency_count
-                            isOneX = (task.frequency_count === 1);
-                        }
-                        if (isOneX) {
-                            unscheduledTasksState.weekly[task.name] = { ...task, isFaded: false, frequency_count: 1, frequency_desc: '1X Weekly' };
+                        const wvals = tv['Task/WhenAndDuration/Weekly'] || tv['Task/When/Weekly'] || [];
+                        if ((wvals || []).length > 0) {
+                            unscheduledTasksState.weekly[task.name] = { ...task, isFaded: false };
                         }
                     });
                     data.monthly.forEach(task => {
-                        unscheduledTasksState.monthly[task.name] = { ...task, isFaded: false };
+                        const tv = (allTasksData[task.name] && allTasksData[task.name].tag_values) || {};
+                        const mvals = tv['Task/WhenAndDuration/Monthly'] || tv['Task/When/Monthly'] || [];
+                        if ((mvals || []).length > 0) {
+                            unscheduledTasksState.monthly[task.name] = { ...task, isFaded: false };
+                        }
                     });
 
-                    // Fallback: If weekly came back empty, infer from table_view tag values (but still only include 1X)
+                    // Fallback: If weekly came back empty, infer from table_view tag values (include any weekly recurrence)
                     if (Object.keys(unscheduledTasksState.weekly).length === 0) {
                         try {
                             (tasks || []).forEach(t => {
                                 const tv = t.tag_values || {};
-                                const weeklyVals = tv['Task/When/Weekly'] || [];
+                                const weeklyVals = tv['Task/WhenAndDuration/Weekly'] || tv['Task/When/Weekly'] || [];
                                 const whichdayVals = tv['Task/When/Whichday'] || [];
                                 const nameAndTypeVals = tv['Task/NameAndType'] || [];
                                 const whatTaskVals = tv['Task/WhatTASK'] || [];
@@ -1421,14 +1417,14 @@
                                 const isWeekendGroup = (nameAndTypeVals || []).some(v => /WeekendTASKgroup/i.test(String(v))) ||
                                                        (whatTaskVals || []).some(v => /WeekendTASKgroup/i.test(String(v)));
 
-                                // Only include when it is exactly 1X
+                                // Include any weekly recurrence (1X, 2X, ...), or inferred weekend tasks
                                 const count = inferredCount > 0 ? inferredCount : 1;
-                                if ((inferredCount > 0 || mentionsWeekendDay || isWeekendGroup) && count === 1) {
+                                if ((weeklyVals.length > 0) || mentionsWeekendDay || isWeekendGroup) {
                                     if (!unscheduledTasksState.weekly[t.name]) {
                                         unscheduledTasksState.weekly[t.name] = {
                                             name: t.name,
-                                            frequency_desc: `1X Weekly`,
-                                            frequency_count: 1,
+                                            frequency_desc: `${count}X Weekly`,
+                                            frequency_count: count,
                                             isFaded: false
                                         };
                                     }
