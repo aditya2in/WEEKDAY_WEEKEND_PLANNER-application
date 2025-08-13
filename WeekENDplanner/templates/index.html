@@ -37,7 +37,7 @@
         }
         .task-table-container {
             margin-bottom: 40px;
-            overflow-x: auto;
+            overflow-x: hidden; /* prevent horizontal scroll entirely */
         }
         table {
             width: 100%;
@@ -45,8 +45,8 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         /* Make the top overview table slightly smaller */
-        #task-table { font-size: 0.9rem; }
-        #task-table th, #task-table td { padding: 8px 10px; }
+        #task-table { font-size: 0.85rem; table-layout: fixed; width: 100%; }
+        #task-table th, #task-table td { padding: 8px 10px; white-space: normal; word-break: break-word; hyphens: auto; }
         th, td {
             padding: 12px 15px;
             border: 1px solid #ddd;
@@ -727,7 +727,7 @@
                 li.appendChild(closeBtn);
                 // no resize controls; default duration only
                 // Default duration visual for base chip
-                li.dataset.durationMins = String(task.duration_mins || 60);
+                li.dataset.durationMins = String(task.duration_mins || getDefaultDurationMinutes(task.name));
                 return li;
             }
 
@@ -748,6 +748,44 @@
             function getSlotMinutes() {
                 // Enable 30-minute snapping/continuations
                 return 30;
+            }
+
+            // Parse duration strings like "1h30m", "90m", "1:30", "2h", "45"
+            function parseDurationToMins(input) {
+                const s = String(input || '').trim().toLowerCase();
+                if (!s) return NaN;
+                const colon = s.match(/^(\d+)\s*:\s*(\d+)$/);
+                if (colon) {
+                    const hh = parseInt(colon[1], 10);
+                    const mm = parseInt(colon[2], 10);
+                    if (Number.isFinite(hh) && Number.isFinite(mm)) return hh * 60 + mm;
+                }
+                let total = 0;
+                let matched = false;
+                s.replace(/(\d+(?:\.\d+)?)\s*(h|hr|hrs|hour|hours|m|min|mins|minute|minutes)\b/g, (full, num, unit) => {
+                    matched = true;
+                    const val = parseFloat(num);
+                    if (!Number.isFinite(val)) return '';
+                    if (/^h/.test(unit)) total += Math.round(val * 60);
+                    else total += Math.round(val);
+                    return '';
+                });
+                if (matched) return total > 0 ? total : NaN;
+                const n = parseFloat(s);
+                if (Number.isFinite(n)) return Math.round(n);
+                return NaN;
+            }
+
+            function getDefaultDurationMinutes(taskName) {
+                try {
+                    const details = allTasksData[taskName] || { tag_values: {} };
+                    const tv = details.tag_values || {};
+                    const val = (tv['Task/WhenAndDuration/DefaultDuration'] || [])[0] || '';
+                    const mins = parseDurationToMins(val);
+                    return Number.isFinite(mins) && mins > 0 ? mins : 60;
+                } catch (_) {
+                    return 60;
+                }
             }
 
             function applyChipDuration(date, startTime, taskName, durationMins) {
@@ -1018,8 +1056,11 @@
                             scheduledTasksByDate[targetDate][targetTime].push({name: taskName, frequency_desc: frequencyDesc, frequency_count: 1}); // Use targetTime
                             console.log(`ScheduledTasksByDate updated for ${targetDate} ${targetTime}:`, scheduledTasksByDate[targetDate][targetTime]); // Use targetTime
 
-                            // Default to 1-hour duration (base + next 30-min slot)
-                            try { applyChipDuration(targetDate, targetTime, taskName, 60); } catch (_) {}
+                            // Apply default duration from master table
+                            try {
+                                const dropDurMins = getDefaultDurationMinutes(taskName);
+                                applyChipDuration(targetDate, targetTime, taskName, dropDurMins);
+                            } catch (_) {}
 
                             // Update live counters post-drop
                             if (frequencyDesc.includes('Weekly') && targetDateObj) {
@@ -1040,6 +1081,17 @@
                             const originalMinute = fromList.dataset.minute;
                             const originalTime = originalHour && originalMinute ? `${originalHour}:${originalMinute}` : null; // Combine hour and minute
                             const originalWeekNumber = fromList.closest('.day-column').dataset.weekNumber;
+
+                            // Capture existing duration if present at original slot; else fall back to master default
+                            let carryDuration = null;
+                            try {
+                                const lst = ((scheduledTasksByDate[originalDate] || {})[originalTime]) || [];
+                                const base = lst.find(x => x.name === taskName && !x.continued);
+                                if (base && base.duration_mins) carryDuration = parseInt(base.duration_mins, 10);
+                            } catch (_) { carryDuration = null; }
+                            if (!carryDuration || !Number.isFinite(carryDuration) || carryDuration <= 0) {
+                                carryDuration = getDefaultDurationMinutes(taskName);
+                            }
 
                             // Remove from scheduledTasksByDate
                             if (scheduledTasksByDate[originalDate] && scheduledTasksByDate[originalDate][originalTime]) { // Use originalTime
@@ -1148,8 +1200,8 @@
                             scheduledTasksByDate[newDate][newTime].push({name: taskName, frequency_desc: frequencyDesc, frequency_count: 1}); // Use newTime
                             console.log(`Added ${taskName} to scheduledTasksByDate for ${newDate} ${newTime}`); // Use newTime
 
-                            // Ensure default 1-hour duration at new slot
-                            try { applyChipDuration(newDate, newTime, taskName, 60); } catch (_) {}
+                            // Ensure duration at new slot (carry or default)
+                            try { applyChipDuration(newDate, newTime, taskName, carryDuration); } catch (_) {}
                             item.remove(); // Remove the original item from the DOM
                         }
                         renderUnscheduledTasks();
