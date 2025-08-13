@@ -45,8 +45,8 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         /* Make the top overview table slightly smaller */
-        #task-table { font-size: 0.85rem; table-layout: fixed; width: 100%; }
-        #task-table th, #task-table td { padding: 8px 10px; white-space: normal; word-break: break-word; hyphens: auto; }
+        .task-table-container table { font-size: 0.85rem; table-layout: fixed; width: 100%; }
+        .task-table-container table th, .task-table-container table td { padding: 8px 10px; white-space: normal; word-break: break-word; hyphens: auto; }
         th, td {
             padding: 12px 15px;
             border: 1px solid #ddd;
@@ -273,11 +273,7 @@
 
     <div class="task-table-container">
         <h2>All Tasks Overview</h2>
-        <div id="cols-nav" style="display:flex; justify-content:flex-end; align-items:center; gap:8px; margin: 6px 0;">
-            <button id="cols-prev" type="button" style="padding:4px 8px;">◀ Columns</button>
-            <span id="cols-range" style="font-size:0.85rem;color:#555;">0–0/0</span>
-            <button id="cols-next" type="button" style="padding:4px 8px;">Columns ▶</button>
-        </div>
+        <!-- Column window controls removed per request (show all columns on one page) -->
         <table id="task-table">
             <thead>
                 <tr>
@@ -477,19 +473,15 @@
             const taskTableHeader = document.querySelector('#task-table thead tr');
             const weeklyCalendarDiv = document.getElementById('weekly-calendar');
 
-            // --- Master table column windowing (no horizontal scroll) ---
+            // Render all columns (no horizontal scroll; content wraps)
             let masterHeaders = [];
             let masterTasks = [];
-            let colStart = 0;
-            const colWindow = 6; // visible dynamic columns at a time
-
             function renderMasterTable() {
-                // Header: fixed S.No., Task Name + windowed dynamic headers
+                // Header: fixed S.No., Task Name + all dynamic headers
                 taskTableHeader.innerHTML = '';
                 const thSN = document.createElement('th'); thSN.textContent = 'S.No.'; taskTableHeader.appendChild(thSN);
                 const thTN = document.createElement('th'); thTN.textContent = 'Task Name'; taskTableHeader.appendChild(thTN);
-                const visibleHeaders = masterHeaders.slice(colStart, colStart + colWindow);
-                visibleHeaders.forEach(h => { const th = document.createElement('th'); th.textContent = h; taskTableHeader.appendChild(th); });
+                masterHeaders.forEach(h => { const th = document.createElement('th'); th.textContent = h; taskTableHeader.appendChild(th); });
 
                 // Body
                 taskTableBody.innerHTML = '';
@@ -497,7 +489,7 @@
                     const row = document.createElement('tr');
                     const serialNoCell = document.createElement('td'); serialNoCell.textContent = String(index + 1); row.appendChild(serialNoCell);
                     const nameCell = document.createElement('td'); nameCell.textContent = task.name; row.appendChild(nameCell);
-                    visibleHeaders.forEach(header => {
+                    masterHeaders.forEach(header => {
                         const cell = document.createElement('td');
                         const vals = (task.tag_values && task.tag_values[header]) ? task.tag_values[header] : [];
                         cell.innerHTML = vals && vals.length ? vals.join('<br>') : '';
@@ -505,22 +497,6 @@
                     });
                     taskTableBody.appendChild(row);
                 });
-
-                // Update range label and button enablement
-                const range = document.getElementById('cols-range');
-                const total = masterHeaders.length;
-                const from = total === 0 ? 0 : (colStart + 1);
-                const to = Math.min(total, colStart + colWindow);
-                range.textContent = `${from}–${to}/${total}`;
-                document.getElementById('cols-prev').disabled = (colStart <= 0);
-                document.getElementById('cols-next').disabled = (colStart + colWindow >= total);
-            }
-
-            function wireColumnNavControls() {
-                const prev = document.getElementById('cols-prev');
-                const next = document.getElementById('cols-next');
-                prev.addEventListener('click', () => { colStart = Math.max(0, colStart - colWindow); renderMasterTable(); });
-                next.addEventListener('click', () => { const maxStart = Math.max(0, masterHeaders.length - colWindow); colStart = Math.min(maxStart, colStart + colWindow); renderMasterTable(); });
             }
 
             let scheduledWeeklyTasks = {}; // Tracks 1X weekly tasks scheduled per week number
@@ -1371,8 +1347,6 @@
                     masterTasks = tasks || [];
                     allTasksData = {};
                     masterTasks.forEach(t => { allTasksData[t.name] = t; });
-                    colStart = 0;
-                    wireColumnNavControls();
                     renderMasterTable();
                     // Store history for rule checks and status column
                     window.allHistory = data.history || {};
