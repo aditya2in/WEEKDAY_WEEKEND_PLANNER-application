@@ -62,7 +62,7 @@
             border: 1px solid #5c6370;
         }
         body.dark-mode .time-axis {
-            border-right: 1px solid #5c6370;
+            border-right: none;
         }
         body.dark-mode .time-axis div {
             color: #abb2bf;
@@ -70,13 +70,23 @@
         body.dark-mode .calendar-grid {
             background-image: linear-gradient(to bottom, #5c6370 1px, transparent 1px);
         }
-        body.dark-mode .calendar-event {
-            background-color: #61afef;
-            border: 1px solid #529dcf;
-            color: #282c34;
-        }
+        /* Tables and controls in dark mode */
+        body.dark-mode .task-table thead th { background: #2f343d; color: #e6edf3; }
+        body.dark-mode .task-table.b-table thead th { background: #234c2f; color: #d9f2e3; }
+        body.dark-mode .task-table th,
+        body.dark-mode .task-table td { border-color: #444c56; }
+        body.dark-mode .task-table tbody tr:hover { background: rgba(255,255,255,0.04); }
+        body.dark-mode .item-badge { background: #4b525d; color: #e6edf3; }
+        body.dark-mode .toggle-btn.add { background-color: #2e7d32; border: 1px solid #2e7d32; color: #fff; }
+        body.dark-mode .toggle-btn.remove { background-color: #8b2f2f; border: 1px solid #8b2f2f; color: #fff; }
+        body.dark-mode input[type="range"] { accent-color: #61afef; }
         body.dark-mode .calendar-event:hover {
-            background-color: #529dcf;
+            background-color: rgba(97, 175, 239, 0.45);
+        }
+        body.dark-mode .calendar-event {
+            background-color: rgba(97, 175, 239, 0.35);
+            border: 1px solid #61afef;
+            color: #e6edf3;
         }
         .dark-mode-toggle {
             position: absolute;
@@ -129,6 +139,24 @@
             border-top: 1px solid #eee;
             padding-top: 20px;
         }
+        /* Side-by-side layout for config + process management */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: start;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 980px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .settings-grid .config-section {
+            margin-top: 0;
+            border-top: none;
+            padding-top: 0;
+        }
         .config-form label {
             display: block;
             margin-bottom: 5px;
@@ -143,6 +171,27 @@
             border: 1px solid #ccc;
             box-sizing: border-box;
         }
+        /* Mode list styling */
+        .mode-list {
+            list-style: none;
+            padding: 0;
+            margin: 8px 0 0 0;
+        }
+        .mode-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 10px;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            background: #fafafa;
+            margin-top: 8px;
+        }
+        .mode-list li label { display: flex; gap: 10px; align-items: flex-start; width: 100%; cursor: pointer; }
+        .mode-title { font-weight: bold; }
+        .mode-desc { color: #555; font-size: 0.9em; }
+        body.dark-mode .mode-list li { background: #3a404a; border-color: #5c6370; }
+        body.dark-mode .mode-desc { color: #abb2bf; }
         .planner-container {
             display: flex;
             gap: 20px;
@@ -220,16 +269,20 @@
             border-radius: 8px;
             background-color: #fdfdfd;
             overflow: hidden;
-            padding-left: 50px; /* Space for time axis */
+            /* Left gutter for time labels */
+            --time-axis-width: 64px;
+            padding-left: var(--time-axis-width);
         }
         .time-axis {
             position: absolute;
             left: 0;
             top: 0;
-            width: 50px;
+            width: var(--time-axis-width);
             height: 100%;
-            border-right: 1px solid #eee;
+            /* Remove the harsh vertical separator line */
+            border-right: none;
             box-sizing: border-box;
+            z-index: 3; /* keep labels above events */
         }
         .time-axis div {
             position: absolute;
@@ -242,16 +295,18 @@
         }
         .calendar-grid {
             position: absolute;
-            left: 50px;
+            left: var(--time-axis-width);
             right: 0;
             top: 0;
             height: 100%;
             background-size: 100% 30px; /* Will be updated dynamically by JS */
-            background-image: linear-gradient(to bottom, #eee 1px, transparent 1px);
+            background-image: linear-gradient(to bottom, #ccc 1px, transparent 1px);
+            z-index: 1; /* grid under events */
+            pointer-events: none; /* don't block dragging */
         }
         .calendar-event {
             position: absolute;
-            background-color: #a8d8ff; /* Light blue */
+            background-color: rgba(168, 216, 255, 0.6); /* Light blue with transparency */
             border: 1px solid #007bff;
             border-radius: 4px;
             padding: 5px;
@@ -259,8 +314,11 @@
             overflow: hidden;
             box-sizing: border-box;
             color: #333;
-            cursor: pointer;
+            cursor: move; /* indicate draggable */
             transition: background-color 0.2s ease;
+            z-index: 2; /* above grid, below time labels */
+            user-select: none;
+            -webkit-user-select: none;
         }
         .calendar-event:hover {
             background-color: #8acaff;
@@ -272,8 +330,9 @@
 
         /* Final list + removed visuals */
         .removed-event {
-            opacity: 0.4;
+            opacity: 0.45;
             border-style: dashed;
+            filter: grayscale(80%);
         }
         .removed-item {
             color: #777;
@@ -286,19 +345,49 @@
             background: #eee;
             margin-left: 6px;
         }
-        .item-color {
-            display:inline-block;
-            width:10px; height:10px;
-            border:1px solid #999;
-            margin-right:6px;
-            vertical-align:middle;
-        }
+        
         /* Preset lists: compact rows */
         .preset-row {
             font-size: 12px;
             line-height: 1.2;
         }
         .preset-row .label { flex: 1; }
+        /* Table for scheduled tasks */
+        .task-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+        .task-table th, .task-table td {
+            border: 1px solid #ddd;
+            padding: 6px 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+        .task-table thead th {
+            background: #f7f7f7;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        /* Green-accented header for Day-Specific (B) table */
+        .task-table.b-table thead th {
+            background: #e9f9ef;
+        }
+        .item-color-b {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #28a745; /* green */
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        .task-table .col-num { width: 40px; text-align: center; }
+        .task-table .col-toggle { width: 60px; text-align: center; }
+        .task-table .col-tz { width: 80px; }
+        .task-table .col-tags { width: 20%; }
         .toggle-btn {
             min-width: 28px;
             padding: 2px 6px;
@@ -307,6 +396,8 @@
         .toggle-btn.add { background-color: #e6ffe6; border: 1px solid #4CAF50; }
         .toggle-btn.remove { background-color: #ffe6e6; border: 1px solid #f44336; }
         .excluded-item { color: #c0392b; text-decoration: line-through; }
+        /* Strike entire row label and dim when excluded */
+        tr .excluded-item { color: #c0392b; text-decoration: line-through; }
 
 
         @keyframes highlight-blink {
@@ -324,6 +415,37 @@
             animation: highlight-blink-dark 1s 3;
             background-color: #ffd700; /* Dark mode highlight color */
         }
+        /* Fullscreen button and state for calendar */
+        .calendar-fs-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            z-index: 3;
+            border: 1px solid #bbb;
+            background: #fff;
+            color: #333;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        body.dark-mode .calendar-fs-btn {
+            background: #4b525d;
+            color: #fff;
+            border-color: #5c6370;
+        }
+        .calendar-view.fullscreen {
+            position: fixed !important;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            border-radius: 0;
+            margin: 0;
+            background-color: #fdfdfd;
+        }
+        body.dark-mode .calendar-view.fullscreen { background-color: #3a404a; }
 
         @keyframes highlight-blink-dark {
             0% { background-color: #ffd700; }
@@ -342,7 +464,8 @@
         {% endif %}
         <h1><a href="/" style="text-decoration: none; color: inherit;">Obsidian Daily Note Planner</a></h1>
 
-        <!-- Configuration Section -->
+        <!-- Configuration + Process Management side-by-side -->
+        <div class="settings-grid">
         <div class="config-section">
             <h2>Existing Configuration</h2>
             <form action="/save_config" method="post" class="config-form">
@@ -378,7 +501,6 @@
             </form>
         </div>
 
-        <!-- Process Management Section -->
         <div class="config-section">
             <h2>Process Management</h2>
             {% if results and results.running_processes %}
@@ -401,6 +523,7 @@
                 <p>No running application processes found.</p>
             </div>
             {% endif %}
+        </div>
         </div>
 
         <!-- Planning Section -->
@@ -431,15 +554,72 @@
                     <p><strong>Path:</strong> {{ results.default_template_details.Path }}</p>
                     <p><strong>Status:</strong> {{ results.default_template_details.Status }}</p>
                     {% if results.default_template_details.ScheduledTasks %}
-                        <h4>Scheduled Tasks:</h4>
-                        <ol id="default-task-list">
-                            {% for task in results.default_template_details.ScheduledTasks %}
-                                <li id="task-{{ task.id | e }}" data-task-id="{{ task.id | e }}" data-task-name="{{ task.name | e }}" data-task-time="{{ task.time | e }}" class="preset-row">
-                                    <button type="button" class="toggle-btn add" data-role="toggle">+</button>
-                                    (<span {% if task.color %}style="background-color: {{ task.color }}; color: #333; padding: 2px 5px; border-radius: 3px;"{% endif %}>{{ task.time }}</span>) - <span class="label">{{ task.name }}</span>
+                        <div class="box box-info" id="work-mode-box" style="margin-bottom: 10px;">
+                            <strong>Day Mode:</strong>
+                            <ul class="mode-list">
+                                <li>
+                                    <label>
+                                        <input type="radio" name="workMode" value="WFO">
+                                        <div>
+                                            <div class="mode-title">WFO (Work related tasks included)</div>
+                                            <div class="mode-desc">tags: #WorkRelatedTask, #WorkRelatedTask/WorkFromOfficeDayTask, #WorkRelatedTask/WorkFromHomeDayTask</div>
+                                        </div>
+                                    </label>
                                 </li>
-                            {% endfor %}
-                        </ol>
+                                <li>
+                                    <label>
+                                        <input type="radio" name="workMode" value="WFH">
+                                        <div>
+                                            <div class="mode-title">WFH (All work from office tasks are removed)</div>
+                                            <div class="mode-desc">tags: #WorkRelatedTask/WorkFromOfficeDayTask</div>
+                                        </div>
+                                    </label>
+                                </li>
+                                <li>
+                                    <label>
+                                        <input type="radio" name="workMode" value="NoWork">
+                                        <div>
+                                            <div class="mode-title">NoWork (All work-related tasks removed)</div>
+                                            <div class="mode-desc">tags: #WorkRelatedTask, #WorkRelatedTask/WorkFromOfficeDayTask, #WorkRelatedTask/WorkFromHomeDayTask</div>
+                                        </div>
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                        <h4>Scheduled Tasks:</h4>
+                        <table class="task-table" id="default-task-table">
+                            <thead>
+                                <tr>
+                                    <th class="col-num">#</th>
+                                    <th class="col-toggle">+/−</th>
+                                    <th class="col-tz">Timezone</th>
+                                    <th>Task Name</th>
+                                    <th class="col-tags">Tags</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for task in results.default_template_details.ScheduledTasks %}
+                                <tr id="task-{{ task.id | e }}" data-task-id="{{ task.id | e }}" data-task-name="{{ task.name | e }}" data-task-time="{{ task.time | e }}" data-tags='{{ task.tags | default([]) | tojson }}' class="preset-row">
+                                    <td style="text-align:center;">{{ loop.index }}</td>
+                                    <td style="text-align:center;">
+                                        <button type="button" class="toggle-btn add" data-role="toggle">+</button>
+                                    </td>
+                                    <td>IST</td>
+                                    <td class="label">
+                                        {% if task.color %}<span class="item-color" style="background-color: {{ task.color }}"></span>{% endif %}
+                                        {{ task.name }} <span style="color:#888; font-weight: normal;">({{ task.time }})</span>
+                                    </td>
+                                    <td>
+                                        {% if task.tags %}
+                                            {% for tag in task.tags %}<span class="item-badge">{{ tag }}</span>{% endfor %}
+                                        {% else %}
+                                            <span style="color:#888;">—</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                         <p style="font-size: 12px; color: #666; margin-top: 6px;">Click +/− to include/exclude items from planning. Green + means included; Red − means excluded.</p>
                     {% else %}
                         <p>Scheduled Tasks: NONE</p>
@@ -454,13 +634,59 @@
                     <p><strong>Path:</strong> {{ results.day_specific_details.Path }}</p>
                     {% endif %}
                     <p><strong>Status:</strong> {{ results.day_specific_details.Status }}</p>
+                    {% if 'Found' in results.day_specific_details.Status and results.insertion_report %}
+                        <div class="box box-info" style="margin-top:10px;">
+                            <h3 style="margin-top:0;">Insertion outcome</h3>
+                            <p>
+                                <strong>Result:</strong> {{ results.insertion_report.Status }}
+                                {% if results.insertion_report.Location %}
+                                    <br><strong>Location:</strong> {{ results.insertion_report.Location }}
+                                {% endif %}
+                                {% if results.insertion_report['Search Keyword'] %}
+                                    <br><strong>Search Keyword:</strong> {{ results.insertion_report['Search Keyword'] }}
+                                {% endif %}
+                            </p>
+                            {% if results.insertion_report.Status and 'No match' in results.insertion_report.Status %}
+                                <p style="font-size: 12px; color: #666;">Day-Specific content could not be matched within Template A; it has been appended to the bottom of the final note.</p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
                     {% if results.day_specific_details.ScheduledTasks %}
                         <h4>Scheduled Tasks:</h4>
-                        <ol>
-                            {% for task in results.day_specific_details.ScheduledTasks %}
-                                <li>({{ task.time }}) - {{ task.name }}</li>
-                            {% endfor %}
-                        </ol>
+                        <table class="task-table b-table" id="day-specific-task-table">
+                            <thead>
+                                <tr>
+                                    <th class="col-num">#</th>
+                                    <th class="col-toggle">+/−</th>
+                                    <th class="col-tz">Timezone</th>
+                                    <th>Task Name</th>
+                                    <th class="col-tags">Tags</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for task in results.day_specific_details.ScheduledTasks %}
+                                <tr id="taskB-{{ task.id | e }}" data-task-id="{{ task.id | e }}" data-task-name="{{ task.name | e }}" data-task-time="{{ task.time | e }}" data-tags='{{ task.tags | default([]) | tojson }}' class="preset-row">
+                                    <td style="text-align:center;">{{ loop.index }}</td>
+                                    <td style="text-align:center;">
+                                        <button type="button" class="toggle-btn add" data-role="toggle">+</button>
+                                    </td>
+                                    <td>IST</td>
+                                    <td class="label">
+                                        <span class="item-color-b"></span>
+                                        {{ task.name }} <span style="color:#888; font-weight: normal;">({{ task.time }})</span>
+                                    </td>
+                                    <td>
+                                        {% if task.tags %}
+                                            {% for tag in task.tags %}<span class="item-badge">{{ tag }}</span>{% endfor %}
+                                        {% else %}
+                                            <span style="color:#888;">—</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <p style="font-size: 12px; color: #666; margin-top: 6px;">Click +/− to include/exclude items from planning.</p>
                     {% else %}
                         <p>Scheduled Tasks: NONE</p>
                     {% endif %}
@@ -503,6 +729,7 @@
                     <span id="zoomValue" style="font-size: 0.85em; color: #666;">180%</span>
                 </div>
                 <div class="calendar-view" id="calendar-view">
+                    <button type="button" class="calendar-fs-btn" id="calendarFsBtn" title="Toggle fullscreen">⤢ Fullscreen</button>
                     <div class="time-axis" id="time-axis"></div>
                     <div class="calendar-grid" id="calendar-grid"></div>
                     <!-- Calendar events will be injected here by JavaScript -->
@@ -553,7 +780,7 @@
 
         // Wire up controls once DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
-            const defaultTasks = {{ default_tasks_for_ui | tojson }};
+                        const defaultTasks = {{ default_tasks_for_ui | tojson }};
             // No preset data; toggling is handled directly in Default Template (A) list
         });
 
@@ -590,7 +817,7 @@
         let calendarTasks = {{ results.parsed_calendar_tasks | tojson }};
         const originalContent = {{ results.final_note_content_str | tojson }};
         let basePixelsPerMinute = {{ pixels_per_minute }}; // server default
-        let zoomFactor = 1.8; // user-controlled zoom multiplier (default 180%)
+        let zoomFactor = 2.0; // user-controlled zoom multiplier (default 200%)
         const getPixelsPerMinute = () => basePixelsPerMinute * zoomFactor;
 
         // 1. Initial data processing
@@ -612,6 +839,7 @@
             const timeAxis = document.getElementById('time-axis');
             const grid = document.getElementById('calendar-grid');
             const ppm = getPixelsPerMinute();
+            const removedIds = window.removedIds || new Set();
 
             timeAxis.innerHTML = '';
             calendarView.querySelectorAll('.calendar-event').forEach(el => el.remove());
@@ -634,53 +862,118 @@
             const availableWidth = calendarView.clientWidth - paddingLeft - paddingRight;
             const horizontalGap = 6; // gap between parallel events
 
-            tasks.forEach((task, index) => {
-                const durationMinutes = task.endMinutes - task.startMinutes;
-                const eventDiv = document.createElement('div');
-                eventDiv.className = 'calendar-event';
-                eventDiv.setAttribute('data-id', index);
-                if (task.id) {
-                    eventDiv.setAttribute('data-task-id', task.id);
+            // Build overlapping clusters (connected components over time overlaps)
+            const indices = tasks.map((_, i) => i).sort((a, b) => {
+                const sa = tasks[a].startMinutes, sb = tasks[b].startMinutes;
+                if (sa !== sb) return sa - sb;
+                return tasks[a].endMinutes - tasks[b].endMinutes;
+            });
+
+            const clusters = [];
+            let currentCluster = [];
+            let currentClusterEnd = -Infinity;
+            for (const idx of indices) {
+                const t = tasks[idx];
+                if (currentCluster.length === 0) {
+                    currentCluster.push(idx);
+                    currentClusterEnd = t.endMinutes;
+                } else if (t.startMinutes < currentClusterEnd) {
+                    // Overlaps with current cluster
+                    currentCluster.push(idx);
+                    currentClusterEnd = Math.max(currentClusterEnd, t.endMinutes);
+                } else {
+                    clusters.push(currentCluster);
+                    currentCluster = [idx];
+                    currentClusterEnd = t.endMinutes;
                 }
-                eventDiv.style.top = `${task.startMinutes * ppm}px`;
-                eventDiv.style.height = `${durationMinutes * ppm}px`;
-                eventDiv.setAttribute('data-y', 0); // Initialize y translation data
+            }
+            if (currentCluster.length) clusters.push(currentCluster);
 
-                if (task.source === 'day_specific') {
-                    eventDiv.style.backgroundColor = '#baffc9';
-                    eventDiv.style.borderColor = '#28a745';
-                }
+            // For each cluster, assign columns and render equally spaced horizontally
+            clusters.forEach(clusterIdxs => {
+                // Greedy column assignment within the cluster
+                const sorted = clusterIdxs.slice().sort((a, b) => {
+                    const sa = tasks[a].startMinutes, sb = tasks[b].startMinutes;
+                    if (sa !== sb) return sa - sb;
+                    return tasks[a].endMinutes - tasks[b].endMinutes;
+                });
+                const columnEndTimes = []; // per column, track last event end
+                const assignment = new Map(); // task index -> column index
 
-                // Place all events full width with no color indicators
-                const leftPx = 0;
-                const columnWidth = availableWidth;
-                eventDiv.style.left = `${leftPx}px`;
-                eventDiv.style.width = `${columnWidth}px`;
-
-                // Visual indication for removed default tasks under preset
-                if (task.source === 'default' && window.removedDefaultIds && window.removedDefaultIds.has(task.id)) {
-                    eventDiv.classList.add('removed-event');
-                }
-
-                const startTimeStr = minutesToTime(task.startMinutes);
-                const endTimeStr = minutesToTime(task.endMinutes);
-
-                eventDiv.innerHTML = `<strong>${task.name}</strong><div class="time">${startTimeStr} - ${endTimeStr} (IST)</div>`;
-                eventDiv.title = `${task.name} — ${startTimeStr} - ${endTimeStr}`;
-
-                // Click to highlight the corresponding task in the list
-                eventDiv.addEventListener('click', () => {
-                    const taskElementId = task.id ? `task-${task.id}` : null;
-                    if (!taskElementId) return;
-                    const correspondingTaskLi = document.getElementById(taskElementId);
-                    if (correspondingTaskLi) {
-                        document.querySelectorAll('.highlight-task').forEach(el => el.classList.remove('highlight-task'));
-                        correspondingTaskLi.classList.add('highlight-task');
-                        correspondingTaskLi.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        setTimeout(() => correspondingTaskLi.classList.remove('highlight-task'), 3000);
+                sorted.forEach(i => {
+                    const task = tasks[i];
+                    let placed = false;
+                    for (let col = 0; col < columnEndTimes.length; col++) {
+                        if (task.startMinutes >= columnEndTimes[col]) {
+                            columnEndTimes[col] = task.endMinutes;
+                            assignment.set(i, col);
+                            placed = true;
+                            break;
+                        }
+                    }
+                    if (!placed) {
+                        const newCol = columnEndTimes.length;
+                        columnEndTimes.push(task.endMinutes);
+                        assignment.set(i, newCol);
                     }
                 });
-                calendarView.appendChild(eventDiv);
+
+                const numCols = Math.max(1, columnEndTimes.length);
+                const columnWidth = (availableWidth - (numCols - 1) * horizontalGap) / numCols;
+
+                // Render tasks in this cluster
+                clusterIdxs.forEach(index => {
+                    const task = tasks[index];
+                    const isRemoved = removedIds && task && task.id && typeof removedIds.has === 'function' && removedIds.has(task.id);
+                    const durationMinutes = task.endMinutes - task.startMinutes;
+                    const eventDiv = document.createElement('div');
+                    eventDiv.className = 'calendar-event';
+                    if (isRemoved) eventDiv.classList.add('removed-event');
+                    eventDiv.setAttribute('data-id', index);
+                    if (task.id) {
+                        eventDiv.setAttribute('data-task-id', task.id);
+                    }
+                    eventDiv.style.top = `${task.startMinutes * ppm}px`;
+                    eventDiv.style.height = `${durationMinutes * ppm}px`;
+                    eventDiv.setAttribute('data-y', 0); // Initialize y translation data
+
+                    if (task.source === 'day_specific') {
+                        eventDiv.style.backgroundColor = '#baffc9';
+                        eventDiv.style.borderColor = '#28a745';
+                    }
+
+                    const col = assignment.get(index) || 0;
+                    const leftPx = col * (columnWidth + horizontalGap);
+                    eventDiv.style.left = `${leftPx}px`;
+                    eventDiv.style.width = `${columnWidth}px`;
+
+                    // Visual indication for removed default tasks under preset
+                    if (task.source === 'default' && window.removedDefaultIds && window.removedDefaultIds.has(task.id)) {
+                        eventDiv.classList.add('removed-event');
+                    }
+
+                    const startTimeStr = minutesToTime(task.startMinutes);
+                    const endTimeStr = minutesToTime(task.endMinutes);
+
+                    eventDiv.innerHTML = `<strong>${task.name}</strong><div class="time">${startTimeStr} - ${endTimeStr} (IST)</div>`;
+                    eventDiv.title = `${task.name} — ${startTimeStr} - ${endTimeStr}`;
+
+                    // Click to highlight the corresponding task in the list
+                    eventDiv.addEventListener('click', () => {
+                        if (!task.id) return;
+                        // Try to highlight in either A or B table
+                        const elA = document.getElementById(`task-${task.id}`);
+                        const elB = document.getElementById(`taskB-${task.id}`);
+                        const targetEl = elA || elB;
+                        if (targetEl) {
+                            document.querySelectorAll('.highlight-task').forEach(el => el.classList.remove('highlight-task'));
+                            targetEl.classList.add('highlight-task');
+                            targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            setTimeout(() => targetEl.classList.remove('highlight-task'), 3000);
+                        }
+                    });
+                    calendarView.appendChild(eventDiv);
+                });
             });
         }
 
@@ -762,6 +1055,44 @@
             }
 
             zoomSlider.addEventListener('input', (e) => updateZoom(parseFloat(e.target.value)));
+            // Initialize zoom UI to reflect default 200%
+            updateZoom(zoomFactor);
+
+            // Fullscreen toggling
+            const calendarViewEl = document.getElementById('calendar-view');
+            const calendarFsBtn = document.getElementById('calendarFsBtn');
+            if (calendarFsBtn && calendarViewEl) {
+                function toggleFullscreen() {
+                    calendarViewEl.classList.toggle('fullscreen');
+                    // When entering fullscreen, auto-adjust zoom so 24h fits viewport height
+                    if (calendarViewEl.classList.contains('fullscreen')) {
+                        const viewportH = window.innerHeight;
+                        const newPpm = viewportH / (24 * 60);
+                        // Update basePixelsPerMinute is fixed; adjust via zoomFactor only
+                        zoomFactor = Math.max(0.2, Math.min(4, newPpm / basePixelsPerMinute));
+                        zoomSlider.value = zoomFactor.toFixed(1);
+                        zoomValue.textContent = `${Math.round(zoomFactor * 100)}%`;
+                    }
+                    // Re-render to ensure dimensions recalc
+                    setTimeout(() => renderCalendar(calendarTasks), 0);
+                }
+                calendarFsBtn.addEventListener('click', toggleFullscreen);
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && calendarViewEl.classList.contains('fullscreen')) {
+                        toggleFullscreen();
+                    }
+                });
+                // Keep fitting on resize while in fullscreen
+                window.addEventListener('resize', () => {
+                    if (!calendarViewEl.classList.contains('fullscreen')) return;
+                    const viewportH = window.innerHeight;
+                    const newPpm = viewportH / (24 * 60);
+                    zoomFactor = Math.max(0.2, Math.min(4, newPpm / basePixelsPerMinute));
+                    zoomSlider.value = zoomFactor.toFixed(1);
+                    zoomValue.textContent = `${Math.round(zoomFactor * 100)}%`;
+                    renderCalendar(calendarTasks);
+                });
+            }
             zoomInBtn.addEventListener('click', () => updateZoom(zoomFactor + 0.1));
             zoomOutBtn.addEventListener('click', () => updateZoom(zoomFactor - 0.1));
 
@@ -776,7 +1107,8 @@
                 // Compute from current UI state (removedSet)
                 const defaultTasks = {{ default_tasks_for_ui | tojson }};
                 const removedIds = removedSet;
-                window.removedDefaultIds = removedIds; // expose for calendar rendering
+                window.removedDefaultIds = removedIds; // backward-compat
+                window.removedIds = removedIds; // used by calendar render
 
                 // Build lists
                 let html = '';
@@ -788,15 +1120,19 @@
                     const marker = isRemoved ? '− ' : '';
                     const badge = '<span class="item-badge">A</span>';
                     const cls = isRemoved ? 'removed-item' : '';
-                    html += `<li class="${cls}">${marker}(${t.time}) ${t.name} ${badge}</li>`;
+                    const tags = (t.tags && t.tags.length) ? ` ${t.tags.map(x => `<span class=\"item-badge\">${x}</span>`).join(' ')}` : '';
+                    html += `<li class="${cls}">${marker}(${t.time}) ${t.name} ${badge}${tags}</li>`;
                 });
 
-                // Day-specific tasks as additions (no color indicators)
-                calendarTasks.filter(t => t.source === 'day_specific').forEach(t => {
-                    const badge = '<span class="item-badge">B</span>';
-                    const timeStr = t.time || '';
-                    html += `<li>+ (${timeStr}) ${t.name} ${badge}</li>`;
-                });
+                // Day-specific tasks as additions (skip if removed)
+                calendarTasks
+                    .filter(t => t.source === 'day_specific' && !removedIds.has(t.id))
+                    .forEach(t => {
+                        const badge = '<span class="item-badge">B</span>';
+                        const timeStr = t.time || '';
+                        const tags = (t.tags && t.tags.length) ? ` ${t.tags.map(x => `<span class=\"item-badge\">${x}</span>`).join(' ')}` : '';
+                        html += `<li>+ (${timeStr}) ${t.name} ${badge}${tags}</li>`;
+                    });
 
                 html += '</ol>';
                 container.innerHTML = html;
@@ -808,26 +1144,94 @@
             buildFinalList();
 
             // Wire Default A toggles
-            const defaultList = document.getElementById('default-task-list');
-            if (defaultList) {
-                defaultList.querySelectorAll('[data-role="toggle"]').forEach(btn => {
+            // Work mode filtering
+            const WORK_TAG_ANY = '#WorkRelatedTask';
+            const WORK_TAG_WFO = '#WorkRelatedTask/WorkFromOfficeDayTask';
+            const WORK_TAG_WFH = '#WorkRelatedTask/WorkFromHomeDayTask';
+
+            function hasTag(tags, tag) {
+                return Array.isArray(tags) && tags.includes(tag);
+            }
+
+            function isWorkRelated(tags) {
+                return Array.isArray(tags) && tags.some(t => t === WORK_TAG_ANY || t === WORK_TAG_WFO || t === WORK_TAG_WFH);
+            }
+
+            function shouldHideByMode(tags, mode) {
+                if (!mode) return false;
+                if (mode === 'NoWork') return isWorkRelated(tags);
+                if (mode === 'WFH') return hasTag(tags, WORK_TAG_WFO);
+                if (mode === 'WFO') return false;
+                return false;
+            }
+
+            function applyWorkModeFilter(mode) {
+                const table = document.getElementById('default-task-table');
+                if (!table) return;
+                // Update removedSet to reflect filtering (excluded considered removed), but without hiding rows
+                removedSet.clear();
+                table.querySelectorAll('tbody tr').forEach(tr => {
+                    const id = tr.getAttribute('data-task-id');
+                    const tags = JSON.parse(tr.getAttribute('data-tags') || '[]');
+                    const toggleBtn = tr.querySelector('[data-role="toggle"]');
+                    const labelCell = tr.querySelector('.label');
+                    // strike the task name cell only; we keep row visible
+                    const isExcluded = shouldHideByMode(tags, mode);
+                    if (isExcluded) {
+                        removedSet.add(id);
+                        if (toggleBtn) { toggleBtn.classList.remove('add'); toggleBtn.classList.add('remove'); toggleBtn.textContent = '−'; }
+                        if (labelCell) labelCell.classList.add('excluded-item');
+                    } else {
+                        removedSet.delete(id);
+                        if (toggleBtn) { toggleBtn.classList.remove('remove'); toggleBtn.classList.add('add'); toggleBtn.textContent = '+'; }
+                        if (labelCell) labelCell.classList.remove('excluded-item');
+                    }
+                });
+
+                // Also apply filter to day-specific tasks
+                if (Array.isArray(calendarTasks)) {
+                    calendarTasks.forEach(t => {
+                        if (!t || !t.id) return;
+                        if (shouldHideByMode(t.tags || [], mode)) {
+                            removedSet.add(t.id);
+                        } else {
+                            removedSet.delete(t.id);
+                        }
+                    });
+                }
+
+                buildFinalList();
+            }
+
+            const workModeBox = document.getElementById('work-mode-box');
+            if (workModeBox) {
+                workModeBox.addEventListener('change', (e) => {
+                    if (e.target && e.target.name === 'workMode') {
+                        applyWorkModeFilter(e.target.value);
+                    }
+                });
+            }
+
+            // Wire toggles for table rows instead of list
+            function wireToggleHandlers(tableId) {
+                const table = document.getElementById(tableId);
+                if (!table) return;
+                table.querySelectorAll('[data-role="toggle"]').forEach(btn => {
                     btn.addEventListener('click', (e) => {
-                        const li = e.target.closest('li[data-task-id]');
-                        const id = li.getAttribute('data-task-id');
-                        const label = li.querySelector('.label');
+                        const tr = e.target.closest('tr[data-task-id]');
+                        const id = tr.getAttribute('data-task-id');
+                        const labelCell = tr.querySelector('.label');
                         if (btn.classList.contains('add')) {
-                            // currently included -> exclude
                             btn.classList.remove('add');
                             btn.classList.add('remove');
                             btn.textContent = '−';
-                            label.classList.add('excluded-item');
+                            if (labelCell) labelCell.classList.add('excluded-item');
                             removedSet.add(id);
                         } else {
-                            // currently excluded -> include
                             btn.classList.remove('remove');
                             btn.classList.add('add');
                             btn.textContent = '+';
-                            label.classList.remove('excluded-item');
+                            if (labelCell) labelCell.classList.remove('excluded-item');
                             removedSet.delete(id);
                         }
                         buildFinalList();
@@ -835,13 +1239,16 @@
                 });
             }
 
+            wireToggleHandlers('default-task-table');
+            wireToggleHandlers('day-specific-task-table');
+
             const createNoteForm = document.getElementById('create-note-form');
             if (createNoteForm) {
                 createNoteForm.addEventListener('submit', function(event) {
                     event.preventDefault();
 
-                    const removed = window.removedDefaultIds || new Set();
-                    const filteredTasks = calendarTasks.filter(t => !(t.source === 'default' && removed.has(t.id)));
+                    const removed = window.removedIds || new Set();
+                    const filteredTasks = calendarTasks.filter(t => !removed.has(t.id));
 
                     const payload = {
                         original_content: originalContent,

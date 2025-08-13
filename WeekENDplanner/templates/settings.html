@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weekend Planner Settings</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 20px; background: #f4f7f6; color: #333; }
+    .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+    h1 { color: #2a4d69; margin-top: 0; }
+    .row { display: flex; gap: 16px; }
+    .col { flex: 1; }
+    label { display: block; font-weight: 600; margin-bottom: 6px; }
+    input[type="text"], input[type="number"], input[type="url"] { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+    input[type="checkbox"] { transform: scale(1.2); margin-right: 8px; }
+    .field { margin-bottom: 16px; }
+    .actions { margin-top: 16px; display: flex; gap: 12px; align-items: center; }
+    button { background: #4b86b4; color: #fff; border: none; padding: 10px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; }
+    button.secondary { background: #adcbe3; color: #1d3f5e; }
+    .note { font-size: 13px; color: #666; }
+    .alert { padding: 10px 12px; border-radius: 6px; margin-bottom: 16px; }
+    .alert.success { background: #e6f4ea; color: #1e6f3d; border: 1px solid #b7e0c1; }
+    .alert.error { background: #fdecea; color: #b33030; border: 1px solid #f5c2c0; }
+    a { color: #2a4d69; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Weekend Planner Settings</h1>
+
+    {% if message %}
+    <div class="alert success">{{ message }}</div>
+    {% endif %}
+
+    {% if error %}
+    <div class="alert error">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST">
+      <div class="field">
+        <label for="markdown_relative_path">Markdown file path</label>
+        <input id="markdown_relative_path" name="markdown_relative_path" type="text" value="{{ config.markdown_relative_path }}" placeholder="1.5 Weekend Routine BLOCKS.md" />
+        <div class="note">Relative to the app folder, or absolute path.</div>
+      </div>
+
+      <div class="row">
+        <div class="col field">
+          <label for="host">Host</label>
+          <input id="host" name="host" type="text" value="{{ config.host }}" placeholder="127.0.0.1" />
+        </div>
+        <div class="col field">
+          <label for="port">Port</label>
+          <input id="port" name="port" type="number" value="{{ config.port }}" min="1" max="65535" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col field">
+          <label><input type="checkbox" name="debug" {% if config.debug %}checked{% endif %} /> Enable debug</label>
+        </div>
+        <div class="col field">
+          <label><input type="checkbox" name="open_browser" {% if config.open_browser %}checked{% endif %} /> Open browser on start</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="browser_open_delay_seconds">Browser open delay (seconds)</label>
+        <input id="browser_open_delay_seconds" name="browser_open_delay_seconds" type="number" value="{{ config.browser_open_delay_seconds }}" min="0" />
+      </div>
+
+      <div class="actions">
+        <button type="submit">Save Settings</button>
+        <a class="secondary" href="/">Back to Planner</a>
+      </div>
+
+      <div class="note">Host/Port/Debug changes require app restart.</div>
+    </form>
+  </div>
+</body>
+</html>

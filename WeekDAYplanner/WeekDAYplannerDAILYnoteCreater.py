@@ -21,6 +21,21 @@ DEFAULT_CONFIG = {
     "daily_note_filename_format": "%Y-%m-%d_TEST.md"
 }
 
+def extract_name_and_tags(raw_text: str):
+    """Extract hashtags from a task string and return (clean_name, tags_list).
+    Tags are tokens starting with '#' and continuing until whitespace.
+    """
+    try:
+        tag_pattern = re.compile(r"#[^\s]+")
+        tags = tag_pattern.findall(raw_text)
+        # Remove tags from the name and normalize spaces
+        name_clean = tag_pattern.sub("", raw_text).strip()
+        name_clean = re.sub(r"\s+", " ", name_clean)
+        # Normalize tags to display as-is (with '#')
+        return name_clean, tags
+    except Exception:
+        return raw_text.strip(), []
+
 def load_config():
     """Loads the configuration from config.json."""
     try:
@@ -60,11 +75,13 @@ def parse_default_scheduled_tasks(template_path):
             end_time_str = time_match.group(2).strip()
             time_range = f"{start_time_str} - {end_time_str}"
             task_name = line.replace(time_range, "").replace("- [ ]", "").strip()
-            task_id = f"{task_name}-{time_range}"
+            clean_name, tags = extract_name_and_tags(task_name)
+            task_id = f"{clean_name}-{time_range}"
             tasks.append({
                 "id": task_id,
-                "name": task_name,
-                "time": time_range
+                "name": clean_name,
+                "time": time_range,
+                "tags": tags
             })
         # Sort by start time string for stable UI ordering
         def to_minutes(t):
@@ -262,15 +279,17 @@ def plan_note(debug_mode=False):
                     except (ValueError, IndexError):
                         pass
 
-                    task_id = f"{task_name}-{time_range}"
+                    clean_name, tags = extract_name_and_tags(task_name)
+                    task_id = f"{clean_name}-{time_range}"
                     scheduled_tasks.append({
                         "id": task_id,
-                        "name": task_name,
+                        "name": clean_name,
                         "time": time_range,
                         "start_time": start_time_obj,
                         "end_time": end_time_obj,
                         "duration_minutes": duration_minutes,
-                        "source": "default"
+                        "source": "default",
+                        "tags": tags
                     })
 
             # Sort scheduled_tasks by start_time
@@ -393,15 +412,17 @@ def plan_note(debug_mode=False):
                     except (ValueError, IndexError):
                         pass
 
-                    task_id = f"{task_name}-{time_range}"
+                    clean_name, tags = extract_name_and_tags(task_name)
+                    task_id = f"{clean_name}-{time_range}"
                     day_specific_scheduled_tasks.append({
                         "id": task_id,
-                        "name": task_name,
+                        "name": clean_name,
                         "time": time_range,
                         "start_time": start_time_obj,
                         "end_time": end_time_obj,
                         "duration_minutes": duration_minutes,
-                        "source": "day_specific"
+                        "source": "day_specific",
+                        "tags": tags
                     })
             day_specific_details["ScheduledTasks"] = day_specific_scheduled_tasks
 

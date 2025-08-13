@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weekend Planner</title>
     <style>
+        :root { --slot-scale: 1; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             margin: 0;
@@ -13,6 +14,22 @@
             background-color: #f4f7f6;
             color: #333;
         }
+
+        /* Dark mode overrides */
+        body.dark { background-color: #0f172a; color: #e2e8f0; }
+        body.dark a { color: #93c5fd; }
+        body.dark thead { background-color: #334155; color: #e5e7eb; }
+        body.dark th, body.dark td { border-color: #334155; }
+        body.dark .task-list-container, body.dark .calendar-section { background-color: #111827; box-shadow: 0 2px 6px rgba(0,0,0,0.5); }
+        body.dark .calendar-grid { border-color: #334155; }
+        body.dark .time-column { background-color: #0b1220; border-right-color: #334155; }
+        body.dark .time-slot-label { border-bottom-color: #334155; color: #cbd5e1; }
+        body.dark .half-hour-line { border-bottom-color: #3a4b63; }
+        body.dark .day-header, body.dark .time-column-header { background-color: #1f2937; color: #e5e7eb; border-right-color: #374151; }
+        body.dark .task { background-color: #1e293b; color: #e2e8f0; border-color: #334155; }
+        body.dark #process-info { background-color: #1f2937; color: #e2e8f0; }
+        body.dark details { border-color: #334155 !important; }
+        body.dark .unscheduled-table { background-color: #0b1220; }
         h1, h2, h3, h4 {
             text-align: center;
             color: #2a4d69;
@@ -26,6 +43,9 @@
             border-collapse: collapse;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
+        /* Make the top overview table slightly smaller */
+        #task-table { font-size: 0.9rem; }
+        #task-table th, #task-table td { padding: 8px 10px; }
         th, td {
             padding: 12px 15px;
             border: 1px solid #ddd;
@@ -40,20 +60,42 @@
             background-color: #f2f2f2;
         }
         .planner-container {
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: minmax(360px, 520px) 1fr;
+            gap: 16px;
+            align-items: start;
             margin-top: 30px;
+            width: 100%;
         }
         .task-list-container {
-            width: 25%;
+            width: auto;
+            max-width: 520px;
+            min-width: 360px;
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             height: fit-content;
         }
+        .unscheduled-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1rem; /* Increase readability for Unscheduled Tasks */
+        }
+        .unscheduled-table th, .unscheduled-table td {
+            border: 1px solid #ddd;
+            padding: 8px 10px;
+            vertical-align: top;
+        }
+        .task-list-container h3,
+        .task-list-container h4 { margin: 8px 0; }
+        .drag-handle { cursor: grab; color: #555; }
+        body.dark .drag-handle { color: #cbd5e1; }
         .calendar-container {
-            width: 70%;
+            width: auto;
+            min-width: 720px;
+            overflow-x: auto;
+            justify-self: end; /* push calendar to the right edge */
         }
         .calendar-section {
             margin-bottom: 40px;
@@ -61,13 +103,15 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: fit-content; /* shrink to content width */
         }
         .calendar-grid {
             display: grid;
-            grid-template-columns: 60px repeat(auto-fill, minmax(200px, 1fr)); /* Time column + day columns */
+            grid-template-columns: 60px repeat(2, minmax(200px, 1fr)); /* Time + exactly 2 days: Sat, Sun */
             border: 1px solid #ddd;
             border-radius: 8px;
             overflow: hidden;
+            width: fit-content; /* do not stretch to container */
         }
         .calendar-header {
             display: contents; /* Allows children to be direct grid items */
@@ -97,7 +141,7 @@
             padding-top: 10px;
         }
         .time-slot-label {
-            height: 25px; /* Half height for half-hour slots */
+            height: calc(25px * var(--slot-scale)); /* base 25px scaled */
             display: flex;
             align-items: center;
             justify-content: flex-end;
@@ -115,7 +159,7 @@
             border-right: none;
         }
         .hour-slot {
-            min-height: 25px; /* Half height for half-hour slots */
+            min-height: calc(25px * var(--slot-scale)); /* base 25px scaled */
             border-bottom: 1px dashed #eee;
             padding: 2px 5px; /* Adjusted padding */
             list-style-type: none;
@@ -144,7 +188,36 @@
             cursor: grab;
             border: 1px solid #adcbe3;
             font-size: 0.85em; /* Smaller font size */
+            position: relative;
         }
+
+        /* Calendar chip colors */
+        .hour-slot-tasks .task { background-color: #dbeafe; border-color: #93c5fd; color: #1e3a8a; }
+        body.dark .hour-slot-tasks .task { background-color: #1e40af; border-color: #3b82f6; color: #e0e7ff; }
+
+        /* Continued segment styling: appear as one contiguous block */
+        .task.continued { 
+            color: transparent; /* hide text */
+            border-top-color: transparent;
+            border-left-color: transparent;
+            border-right-color: transparent;
+            border-bottom-color: transparent;
+        }
+        .hour-slot-tasks .task.continued { background-color: #bfdbfe; }
+        body.dark .hour-slot-tasks .task.continued { background-color: #1e3a8a; }
+        /* Remove dividing line under slots that continue a task */
+        .hour-slot:has(.task.continued) { border-bottom-color: transparent; padding-top: 0; }
+        .hour-slot.has-continuation { border-bottom-color: transparent; }
+
+        /* Resize edge and close button */
+        .resize-edge { position:absolute; left:0; right:0; bottom:-3px; height:6px; cursor:ns-resize; }
+        .task .close-btn {
+            position:absolute; top:2px; right:2px; cursor:pointer; background:transparent; color:#1e3a8a; border:none;
+            font-weight:700; line-height:1; padding:0 4px; border-radius:3px;
+        }
+        .task .close-btn:hover { background: rgba(30,58,138,0.1); }
+        body.dark .task .close-btn { color:#e0e7ff; }
+        body.dark .task .close-btn:hover { background: rgba(255,255,255,0.12); }
 
         .faded-task {
             opacity: 0.5;
@@ -169,16 +242,97 @@
     </div>
 
     <h1>Weekend Planner</h1>
+    <div style="position: sticky; top: 0; display:flex; justify-content:flex-end; gap: 8px; padding: 8px 0;">
+        <div id="process-info" style="font-size: 0.9em; color:#2a4d69; background:#eaf4fc; padding:6px 8px; border-radius:6px;">
+            PID: <span id="pi-pid">-</span> · Host: <span id="pi-host">-</span> · Port: <span id="pi-port">-</span> · Uptime: <span id="pi-uptime">-</span>
+            <button id="restart-btn" style="margin-left:8px;background:#4caf50;color:#fff;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-weight:600;">Restart</button>
+            <button id="kill-btn" style="margin-left:8px;background:#e57373;color:#fff;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;">Kill</button>
+            <details style="display:inline-block;margin-left:8px;">
+                <summary style="cursor:pointer;">More</summary>
+                <div id="proc-list" style="background:#fff;border:1px solid #adcbe3;border-radius:6px;padding:8px;min-width:480px;">
+                    <div style="font-weight:600; margin-bottom:6px;">Running Weekend processes</div>
+                    <div id="proc-rows" style="max-height:220px;overflow:auto;font-family:monospace;font-size:12px;"></div>
+                    <div style="margin-top:6px;">
+                        <button id="kill-selected" style="background:#dc3545;color:#fff;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;">Kill selected</button>
+                        <span id="kill-result" style="margin-left:8px;color:#2a4d69;"></span>
+                    </div>
+                </div>
+            </details>
+            <div class="zoom-control" title="Zoom calendar vertically" style="display:inline-flex; align-items:center; gap:6px; margin-left:8px;">
+              <span>Zoom</span>
+              <input id="zoom-slider" type="range" min="0.6" max="2.0" step="0.1" style="width:140px;">
+              <span id="zoom-value">100%</span>
+            </div>
+            <div class="dark-toggle" style="display:inline-flex; align-items:center; gap:6px; margin-left:12px;">
+              <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer;">
+                <input id="dark-toggle" type="checkbox">
+                <span>Dark</span>
+              </label>
+            </div>
+        </div>
+        <details style="background:#fff;border:1px solid #adcbe3;border-radius:8px;padding:8px;">
+          <summary style="cursor:pointer;color:#1d3f5e;font-weight:600;">Settings</summary>
+          <div style="margin-top:8px;max-width:420px;">
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <label style="font-weight:600;">Markdown file path
+                <input id="set-markdown" style="width:100%;padding:6px 8px;border:1px solid #ddd;border-radius:6px;"/>
+              </label>
+              <div style="display:flex; gap:8px;">
+                <label style="flex:1;font-weight:600;">Host
+                  <input id="set-host" style="width:100%;padding:6px 8px;border:1px solid #ddd;border-radius:6px;"/>
+                </label>
+                <label style="width:120px;font-weight:600;">Port
+                  <input id="set-port" type="number" min="1" max="65535" style="width:100%;padding:6px 8px;border:1px solid #ddd;border-radius:6px;"/>
+                </label>
+              </div>
+              <label style="font-weight:600;"><input id="set-debug" type="checkbox"/> Debug</label>
+              <label style="font-weight:600;"><input id="set-open-browser" type="checkbox"/> Open browser on start</label>
+              <label style="font-weight:600;">Browser open delay (s)
+                <input id="set-delay" type="number" min="0" style="width:120px;padding:6px 8px;border:1px solid #ddd;border-radius:6px;"/>
+              </label>
+              <div>
+                <button id="save-settings" style="background:#4b86b4;color:#fff;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;">Save</button>
+                <span id="save-result" style="margin-left:8px;font-size:0.9em;color:#2a4d69;"></span>
+              </div>
+              <div style="font-size:0.85em;color:#666;">Host/Port/Debug changes require restart.</div>
+            </div>
+          </div>
+        </details>
+    </div>
 
     <div class="planner-container">
         <div class="task-list-container">
             <h3>Unscheduled Tasks</h3>
             <h4>Weekly</h4>
-            <ul id="unscheduled-weekly-tasks" class="task-list">
-            </ul>
+            <table class="unscheduled-table">
+              <thead id="unscheduled-weekly-head">
+                <tr>
+                  <th>Drag</th>
+                  <th>Task</th>
+                  <th>Task/When/Weekly</th>
+                  <th>Task/When/Whichday</th>
+                  <th>Task/When/WhichWeek</th>
+                  <th>Task/Priority</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="unscheduled-weekly-tasks"></tbody>
+            </table>
             <h4>Monthly</h4>
-            <ul id="unscheduled-monthly-tasks" class="task-list">
-            </ul>
+            <table class="unscheduled-table">
+              <thead id="unscheduled-monthly-head">
+                <tr>
+                  <th>Drag</th>
+                  <th>Task</th>
+                  <th>Task/When/Monthly</th>
+                  <th>Task/When/Whichday</th>
+                  <th>Task/When/WhichWeek</th>
+                  <th>Task/Priority</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="unscheduled-monthly-tasks"></tbody>
+            </table>
         </div>
 
         <div class="calendar-container">
@@ -194,6 +348,44 @@
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // --- Zoom handling ---
+            function applyZoom(scale) {
+                const clamped = Math.max(0.5, Math.min(2.5, Number(scale) || 1));
+                document.documentElement.style.setProperty('--slot-scale', clamped);
+                const pct = Math.round(clamped * 100);
+                document.getElementById('zoom-value').textContent = pct + '%';
+                const slider = document.getElementById('zoom-slider');
+                if (slider) slider.value = clamped;
+            }
+
+            (function initZoom() {
+                const saved = localStorage.getItem('calendarZoom');
+                const initial = saved ? parseFloat(saved) : 1.0;
+                applyZoom(initial);
+                const slider = document.getElementById('zoom-slider');
+                slider.addEventListener('input', (e) => {
+                    const v = parseFloat(e.target.value);
+                    applyZoom(v);
+                });
+                slider.addEventListener('change', (e) => {
+                    const v = parseFloat(e.target.value);
+                    localStorage.setItem('calendarZoom', String(v));
+                });
+            })();
+
+            // --- Dark mode ---
+            (function initDark() {
+                const saved = localStorage.getItem('weekendDark') === '1';
+                document.body.classList.toggle('dark', saved);
+                const chk = document.getElementById('dark-toggle');
+                chk.checked = saved;
+                chk.addEventListener('change', () => {
+                    const on = chk.checked;
+                    document.body.classList.toggle('dark', on);
+                    localStorage.setItem('weekendDark', on ? '1' : '0');
+                });
+            })();
+
             const weeklyTasksList = document.getElementById('unscheduled-weekly-tasks');
             const monthlyTasksList = document.getElementById('unscheduled-monthly-tasks');
             const taskTableBody = document.querySelector('#task-table tbody');
@@ -205,31 +397,361 @@
             let unscheduledTasksState = { weekly: {}, monthly: {} }; // Stores original state of unscheduled tasks
             let allWeekendsData = []; // Store all weekend data from Flask
             let allTasksData = {}; // Store all tasks data including tags for validation
+            window.allHistory = window.allHistory || {}; // Safe default for history map
 
-            function createTaskElement(task, isScheduled = false, isFaded = false) {
+            async function fetchJson(url, opts = {}) {
+                const resp = await fetch(url, { headers: { 'Content-Type': 'application/json' }, ...opts });
+                if (!resp.ok) throw new Error(await resp.text());
+                return resp.json();
+            }
+
+            function startProcessInfoPolling() {
+                const pidEl = document.getElementById('pi-pid');
+                const hostEl = document.getElementById('pi-host');
+                const portEl = document.getElementById('pi-port');
+                const upEl = document.getElementById('pi-uptime');
+                const killBtn = document.getElementById('kill-btn');
+
+                function fmt(seconds) {
+                    const h = Math.floor(seconds / 3600);
+                    const m = Math.floor((seconds % 3600) / 60);
+                    const s = seconds % 60;
+                    return `${h}h ${m}m ${s}s`;
+                }
+
+                async function loadProcList() {
+                    try {
+                        const data = await fetchJson('/api/processes');
+                        const rows = document.getElementById('proc-rows');
+                        rows.innerHTML = '';
+                        (data.running_processes || []).forEach(p => {
+                            const row = document.createElement('div');
+                            row.innerHTML = `<label><input type="checkbox" class="proc-cb" value="${p.pid}"> PID ${p.pid} — ${p.command || ''}</label>`;
+                            rows.appendChild(row);
+                        });
+                    } catch (e) {}
+                }
+
+                function tick() {
+                    fetch('/api/process')
+                        .then(r => r.json())
+                        .then(data => {
+                            pidEl.textContent = data.pid;
+                            hostEl.textContent = data.host;
+                            portEl.textContent = data.port;
+                            upEl.textContent = fmt(data.uptime_seconds);
+                        })
+                        .catch(() => {});
+                    loadProcList();
+                }
+
+                const restartBtn = document.getElementById('restart-btn');
+
+                restartBtn.addEventListener('click', () => {
+                    if (!confirm('Restart the server now?')) return;
+                    const payload = new Blob(['{}'], { type: 'application/json' });
+                    if (navigator.sendBeacon) {
+                        navigator.sendBeacon('/api/process/restart', payload);
+                    } else {
+                        fetch('/api/process/restart', { method: 'POST', body: payload, keepalive: true }).catch(() => {});
+                    }
+                    // Attempt reloads while server restarts
+                    setTimeout(() => { window.location.reload(); }, 1200);
+                    setTimeout(() => { window.location.reload(); }, 3000);
+                });
+
+                killBtn.addEventListener('click', () => {
+                    if (!confirm('Kill the server process now?')) return;
+                    upEl.textContent = 'stopping...';
+                    const payload = new Blob(['{}'], { type: 'application/json' });
+                    if (navigator.sendBeacon) {
+                        navigator.sendBeacon('/api/process/kill', payload);
+                    } else {
+                        fetch('/api/process/kill', { method: 'POST', body: payload, keepalive: true }).catch(() => {});
+                    }
+                    // Try multiple reload attempts to improve reliability
+                    setTimeout(() => { window.location.reload(); }, 800);
+                    setTimeout(() => { window.location.reload(); }, 2000);
+                });
+
+                document.getElementById('kill-selected').addEventListener('click', async () => {
+                    const result = document.getElementById('kill-result');
+                    const pids = Array.from(document.querySelectorAll('.proc-cb:checked')).map(cb => parseInt(cb.value, 10));
+                    if (pids.length === 0) { result.textContent = 'No processes selected.'; return; }
+                    result.textContent = 'Killing...';
+                    try {
+                        const body = JSON.stringify({ pids });
+                        // If we are killing ourselves, fire-and-forget and schedule reloads
+                        const selfPid = parseInt(document.getElementById('pi-pid').textContent, 10);
+                        if (pids.includes(selfPid)) {
+                            if (navigator.sendBeacon) {
+                                navigator.sendBeacon('/api/processes/kill', new Blob([body], { type: 'application/json' }));
+                            } else {
+                                fetch('/api/processes/kill', { method: 'POST', body, keepalive: true }).catch(() => {});
+                            }
+                            result.textContent = 'Killing selected (including this server)...';
+                            setTimeout(() => { window.location.reload(); }, 800);
+                            setTimeout(() => { window.location.reload(); }, 2000);
+                            return;
+                        }
+                        // Otherwise, await result normally
+                        const r = await fetchJson('/api/processes/kill', { method: 'POST', body });
+                        result.textContent = `Killed ${r.killed}${r.errors && r.errors.length ? ', errors: ' + r.errors.length : ''}`;
+                        setTimeout(loadProcList, 1000);
+                    } catch (e) {
+                        result.textContent = 'Failed.';
+                    }
+                });
+
+                tick();
+                setInterval(tick, 1000);
+            }
+
+            async function loadSettingsIntoPanel() {
+                try {
+                    const cfg = await fetchJson('/api/settings');
+                    document.getElementById('set-markdown').value = cfg.markdown_relative_path || '';
+                    document.getElementById('set-host').value = cfg.host || '';
+                    document.getElementById('set-port').value = cfg.port || 5002;
+                    document.getElementById('set-debug').checked = !!cfg.debug;
+                    document.getElementById('set-open-browser').checked = !!cfg.open_browser;
+                    document.getElementById('set-delay').value = cfg.browser_open_delay_seconds ?? 1;
+                } catch (e) {}
+            }
+
+            function wireSettingsSave() {
+                const btn = document.getElementById('save-settings');
+                const result = document.getElementById('save-result');
+                btn.addEventListener('click', async () => {
+                    result.textContent = 'Saving...';
+                    try {
+                        const payload = {
+                            markdown_relative_path: document.getElementById('set-markdown').value,
+                            host: document.getElementById('set-host').value,
+                            port: parseInt(document.getElementById('set-port').value, 10),
+                            debug: document.getElementById('set-debug').checked,
+                            open_browser: document.getElementById('set-open-browser').checked,
+                            browser_open_delay_seconds: parseInt(document.getElementById('set-delay').value, 10),
+                        };
+                        const resp = await fetchJson('/api/settings', { method: 'POST', body: JSON.stringify(payload) });
+                        result.textContent = resp.message || 'Saved.';
+                    } catch (e) {
+                        result.textContent = 'Failed to save.';
+                    }
+                });
+            }
+
+            startProcessInfoPolling();
+            loadSettingsIntoPanel();
+            wireSettingsSave();
+
+            function createTaskRow(task, category, isFaded = false) {
+                const tr = document.createElement('tr');
+                const details = allTasksData[task.name] || { tag_values: {} };
+                const tv = details.tag_values || {};
+                const historyMap = window.allHistory || {};
+                const history = historyMap[task.name] || {};
+                const whichDay = (tv['Task/When/Whichday'] || []).join(', ');
+                const whichWeek = (tv['Task/When/WhichWeek'] || []).join(', ');
+                const priority = (tv['Task/Priority'] || []).join(', ');
+                const weekly = (tv['Task/When/Weekly'] || []).join(', ');
+                const monthly = (tv['Task/When/Monthly'] || []).join(', ');
+                const status = history.not_done_latest ? `Scheduled on ${history.not_done_latest} (not done)` : '';
+
+                const thirdCol = category === 'weekly'
+                  ? (weekly || task.frequency_desc || '')
+                  : (monthly || task.frequency_desc || '');
+
+                tr.innerHTML = `
+                  <td class="drag-handle" title="Drag to schedule">⠿</td>
+                  <td>${task.name}</td>
+                  <td>${thirdCol}</td>
+                  <td>${whichDay}</td>
+                  <td>${whichWeek}</td>
+                  <td>${priority}</td>
+                  <td>${status}</td>
+                `;
+
+                tr.classList.add('task');
+                if (isFaded) tr.classList.add('faded-task');
+
+                tr.dataset.taskName = task.name;
+                tr.dataset.frequencyDesc = task.frequency_desc;
+                tr.dataset.frequencyCount = task.frequency_count;
+                tr.draggable = true;
+                return tr;
+            }
+
+            function createTaskChip(task, opts = {}) {
                 const li = document.createElement('li');
                 li.className = 'task';
-                if (isFaded) {
-                    li.classList.add('faded-task');
-                    li.draggable = false; // Disable dragging for faded tasks
-                }
-                
-                let taskText = task.name;
-                if (!isScheduled) {
-                    taskText += ` (${task.frequency_desc}`;
-                    const fullTaskDetails = allTasksData[task.name];
-                    console.log(`createTaskElement: Task: ${task.name}, fullTaskDetails:`, fullTaskDetails);
-                    if (fullTaskDetails && fullTaskDetails.tag_values && fullTaskDetails.tag_values['When/Whichday'] && fullTaskDetails.tag_values['When/Whichday'].length > 0) {
-                        taskText += `, ${fullTaskDetails.tag_values['When/Whichday'].join(', ')}`;
-                    }
-                    taskText += `)`;
-                }
-                li.textContent = taskText;
-
                 li.dataset.taskName = task.name;
-                li.dataset.frequencyDesc = task.frequency_desc;
-                li.dataset.frequencyCount = task.frequency_count;
+                li.dataset.frequencyDesc = task.frequency_desc || '';
+                li.dataset.frequencyCount = task.frequency_count != null ? String(task.frequency_count) : '';
+                if (opts.continued) {
+                    li.dataset.continued = '1';
+                    li.classList.add('continued');
+                    // For continued segments, render as a blank block (no label/controls)
+                    return li;
+                }
+                const label = document.createElement('span');
+                label.textContent = task.name;
+                const closeBtn = document.createElement('button');
+                closeBtn.type = 'button';
+                closeBtn.className = 'close-btn';
+                closeBtn.textContent = '×';
+                closeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation(); e.preventDefault();
+                    try {
+                        const parentUl = li.closest('ul.hour-slot-tasks');
+                        const date = parentUl?.dataset.date;
+                        const hour = parentUl?.dataset.hour;
+                        const minute = parentUl?.dataset.minute;
+                        const startTime = `${hour}:${minute}`;
+                        // Remove all segments for this task on this date starting at startTime
+                        let t = startTime;
+                        for (let i = 0; i < 8; i++) {
+                            if (!scheduledTasksByDate[date] || !scheduledTasksByDate[date][t]) break;
+                            scheduledTasksByDate[date][t] = scheduledTasksByDate[date][t].filter(x => x.name !== task.name);
+                            if (scheduledTasksByDate[date][t].length === 0) delete scheduledTasksByDate[date][t];
+                            const ul = findSlotUl(date, t);
+                            if (ul) Array.from(ul.querySelectorAll('li.task')).forEach(node => { if (node.dataset.taskName === task.name) node.remove(); });
+                            t = timeAddMinutes(t, 30);
+                        }
+                        // Increase counts back and return to unscheduled pool
+                        const freq = li.dataset.frequencyDesc || task.frequency_desc || '';
+                        if (freq.includes('Weekly')) {
+                            const wkey = isoWeekKey(new Date(date));
+                            if (scheduledWeeklyCounts[wkey] && scheduledWeeklyCounts[wkey][task.name] > 0) scheduledWeeklyCounts[wkey][task.name] -= 1;
+                        }
+                        if (freq.includes('Monthly')) {
+                            const mkey = monthKeyFromDate(new Date(date));
+                            if (scheduledMonthlyCounts[mkey] && scheduledMonthlyCounts[mkey][task.name] > 0) scheduledMonthlyCounts[mkey][task.name] -= 1;
+                        }
+                        // Restore into unscheduled state
+                        const bucket = (freq.includes('Weekly')) ? unscheduledTasksState.weekly : unscheduledTasksState.monthly;
+                        if (!bucket[task.name]) {
+                            bucket[task.name] = { name: task.name, frequency_desc: freq || task.frequency_desc || '1X', frequency_count: 1, isFaded: false };
+                        } else {
+                            bucket[task.name].frequency_count += 1;
+                            const parts = bucket[task.name].frequency_desc.split(' ');
+                            bucket[task.name].frequency_desc = `${bucket[task.name].frequency_count}X ${parts[1] || 'Weekly'}`;
+                            bucket[task.name].isFaded = false;
+                        }
+                        renderUnscheduledTasks();
+                    } catch (_) {}
+                });
+                li.appendChild(label);
+                li.appendChild(closeBtn);
+                // no resize controls; default duration only
+                // Default duration visual for base chip
+                li.dataset.durationMins = String(task.duration_mins || 60);
                 return li;
+            }
+
+            function timeAddMinutes(hhmm, delta) {
+                const [h, m] = hhmm.split(':').map(x => parseInt(x, 10));
+                const d = new Date(2000,0,1,h,m,0,0);
+                d.setMinutes(d.getMinutes() + delta);
+                const hh = String(d.getHours()).padStart(2,'0');
+                const mm = String(d.getMinutes()).padStart(2,'0');
+                return `${hh}:${mm}`;
+            }
+
+            function findSlotUl(date, hhmm) {
+                const [hh, mm] = hhmm.split(':');
+                return document.querySelector(`.hour-slot-tasks[data-date="${date}"][data-hour="${hh}"][data-minute="${mm}"]`);
+            }
+
+            function applyChipDuration(date, startTime, taskName, durationMins) {
+                // Data-only: clear existing continued segments for this task across the day,
+                // remove stray base entries outside startTime, rebuild continued entries.
+                try {
+                    const times = Object.keys(scheduledTasksByDate[date] || {});
+                    times.forEach(t => {
+                        // Remove continued entries of this task
+                        scheduledTasksByDate[date][t] = (scheduledTasksByDate[date][t] || []).filter(x => x.name !== taskName || !x.continued);
+                        // Remove base entries in other slots
+                        if (t !== startTime) {
+                            scheduledTasksByDate[date][t] = (scheduledTasksByDate[date][t] || []).filter(x => !(x.name === taskName && !x.continued));
+                        }
+                        if (scheduledTasksByDate[date][t] && scheduledTasksByDate[date][t].length === 0) delete scheduledTasksByDate[date][t];
+                    });
+                } catch (_) {}
+
+                const extraSlots = Math.max(0, Math.round(durationMins/30) - 1);
+                let t2 = startTime;
+                for (let k = 0; k < extraSlots; k++) {
+                    t2 = timeAddMinutes(t2, 30);
+                    if (!scheduledTasksByDate[date]) scheduledTasksByDate[date] = {};
+                    if (!scheduledTasksByDate[date][t2]) scheduledTasksByDate[date][t2] = [];
+                    const entry = { name: taskName, frequency_desc: '', frequency_count: 1, continued: true };
+                    scheduledTasksByDate[date][t2].push(entry);
+                }
+                const baseList = (scheduledTasksByDate[date] && scheduledTasksByDate[date][startTime]) || [];
+                baseList.forEach(e => { if (e.name === taskName && !e.continued) e.duration_mins = durationMins; });
+            }
+
+            function getISOWeek(d) {
+                const date = new Date(d.getTime());
+                date.setHours(0,0,0,0);
+                // Thursday in current week decides the year.
+                date.setDate(date.getDate() + 4 - (date.getDay() || 7));
+                const yearStart = new Date(date.getFullYear(),0,1);
+                const weekNo = Math.ceil((((date - yearStart) / 86400000) + 1)/7);
+                return { year: date.getFullYear(), week: weekNo };
+            }
+
+            function monthKeyFromDate(date) {
+                const y = date.getFullYear();
+                const m = (date.getMonth() + 1).toString().padStart(2, '0');
+                return `${y}-${m}`;
+            }
+
+            function isoWeekKey(date) {
+                const iw = getISOWeek(date);
+                const w = iw.week.toString().padStart(2, '0');
+                return `${iw.year}-W${w}`;
+            }
+
+            function isSameISOWeek(dateA, dateB) {
+                const a = getISOWeek(dateA);
+                const b = getISOWeek(dateB);
+                return a.year === b.year && a.week === b.week;
+            }
+
+            function allowedDaysFromWhichday(values) {
+                const out = new Set();
+                (values || []).forEach(v => {
+                    const s = (v || '').toLowerCase();
+                    if (s.includes('friday')) out.add('friday');
+                    if (s.includes('saturday')) out.add('saturday');
+                    if (s.includes('sunday')) out.add('sunday');
+                });
+                return out;
+            }
+
+            function weekOfMonthLabel(date) {
+                const day = date.getDate();
+                if (day <= 7) return 'Week1';
+                if (day <= 14) return 'Week2';
+                if (day <= 21) return 'Week3';
+                if (day <= 28) return 'Week4';
+                return 'Week5';
+            }
+
+            function isAllowedWhichWeek(tvValues, date) {
+                const vals = tvValues || [];
+                if (vals.length === 0) return true;
+                const label = weekOfMonthLabel(date);
+                // Accept explicit WeekN labels, and common combined tags like Week1AndWeek3
+                if (vals.some(v => v.includes(label))) return true;
+                // If values contain multiple WeekN, allow if any match
+                const weekNs = vals.filter(v => /Week[1-5]/i.test(v));
+                if (weekNs.length > 0) {
+                    return weekNs.some(v => v.toLowerCase().includes(label.toLowerCase()));
+                }
+                return true;
             }
 
             function renderUnscheduledTasks() {
@@ -239,18 +761,51 @@
 
                 for (const taskName in unscheduledTasksState.weekly) {
                     const task = unscheduledTasksState.weekly[taskName];
-                    weeklyTasksList.appendChild(createTaskElement(task, false, task.isFaded));
+                    weeklyTasksList.appendChild(createTaskRow(task, 'weekly', task.isFaded));
                 }
                 for (const taskName in unscheduledTasksState.monthly) {
                     const task = unscheduledTasksState.monthly[taskName];
-                    monthlyTasksList.appendChild(createTaskElement(task, false, task.isFaded));
+                    monthlyTasksList.appendChild(createTaskRow(task, 'monthly', task.isFaded));
                 }
             }
 
+            // Sorting for unscheduled tables
+            function enableUnscheduledSort(headSelector, bodySelector) {
+                const head = document.querySelector(headSelector);
+                const body = document.querySelector(bodySelector);
+                head.addEventListener('click', (e) => {
+                    const ths = Array.from(head.querySelectorAll('th'));
+                    const th = e.target.closest('th');
+                    if (!th) return;
+                    const idx = ths.indexOf(th);
+                    if (idx <= 0) return; // skip Drag column
+                    const rows = Array.from(body.querySelectorAll('tr'));
+                    const dir = head.dataset.sortDir === 'asc' ? 'desc' : 'asc';
+                    rows.sort((a,b) => {
+                        const av = (a.children[idx]?.textContent || '').trim().toLowerCase();
+                        const bv = (b.children[idx]?.textContent || '').trim().toLowerCase();
+                        return av.localeCompare(bv);
+                    });
+                    if (dir === 'desc') rows.reverse();
+                    body.innerHTML = '';
+                    rows.forEach(r => body.appendChild(r));
+                    head.dataset.sortDir = dir;
+                });
+            }
+
+            enableUnscheduledSort('#unscheduled-weekly-head', '#unscheduled-weekly-tasks');
+            enableUnscheduledSort('#unscheduled-monthly-head', '#unscheduled-monthly-tasks');
+
+            const scheduledMonthlyCounts = {}; // { 'YYYY-MM': { taskName: count } }
+            const scheduledWeeklyCounts = {}; // { 'YYYY-Www': { taskName: count } }
+
             function setupSortable(listElement) {
+                const isCalendar = listElement.classList.contains('hour-slot-tasks');
                 new Sortable(listElement, {
                     group: 'shared',
                     animation: 150,
+                    handle: isCalendar ? undefined : '.drag-handle',
+                    draggable: isCalendar ? 'li.task' : 'tr.task',
                     onEnd: function (evt) {
                         const item = evt.item;
                         const fromList = evt.from;
@@ -264,12 +819,16 @@
                         const targetMinute = toList.dataset.minute;
                         const targetTime = targetHour && targetMinute ? `${targetHour}:${targetMinute}` : null; // Combine hour and minute
                         const targetWeekNumber = toList.closest('.day-column') ? toList.closest('.day-column').dataset.weekNumber : null;
+                        const targetDateObj = targetDate ? new Date(targetDate) : null;
 
                         console.log(`Drag ended: ${taskName} from ${fromList.id} to ${toList.id}`);
 
                         // Get the full task details from allTasksData for tag validation
                         const fullTaskDetails = allTasksData[taskName];
-                        const taskWhichday = fullTaskDetails && fullTaskDetails.tag_values['When/Whichday'] ? fullTaskDetails.tag_values['When/Whichday'][0] : null;
+                        const tv = (fullTaskDetails && fullTaskDetails.tag_values) || {};
+                        const whichdays = tv['Task/When/Whichday'] || [];
+                        const allowedDays = allowedDaysFromWhichday(whichdays);
+                        const taskWhichday = whichdays[0] || null;
                         const targetDayName = targetDate ? new Date(targetDate).toLocaleString('en-us', { weekday: 'long' }) : null;
 
                         console.log(`Task: ${taskName}, Preferred Day: ${taskWhichday}, Target Day: ${targetDayName}`);
@@ -278,44 +837,63 @@
                         if (fromList.id.includes('unscheduled') && toList.classList.contains('hour-slot-tasks')) {
                             console.log("Scenario 1: Unscheduled to Calendar");
                             // Enforce When/Whichday rule
-                            if (taskWhichday) {
-                                const requiredDay = taskWhichday.toLowerCase();
-                                const actualDay = targetDayName.toLowerCase();
-                                
-                                // Check if the task is specifically for Saturday or Sunday
-                                const isSaturdayTask = requiredDay.includes('saturday');
-                                const isSundayTask = requiredDay.includes('sunday');
-
-                                if (isSaturdayTask && !actualDay.includes('saturday')) {
-                                    console.log(`Cannot drop ${taskName} on ${targetDayName}. It's a Saturday task.`);
-                                    toList.removeChild(item); // Revert the drag
-                                    renderUnscheduledTasks();
-                                    renderCalendar();
-                                    return;
-                                } else if (isSundayTask && !actualDay.includes('sunday')) {
-                                    console.log(`Cannot drop ${taskName} on ${targetDayName}. It's a Sunday task.`);
-                                    toList.removeChild(item); // Revert the drag
+                            if (allowedDays.size > 0) {
+                                const actualDay = (targetDayName || '').toLowerCase();
+                                if (!allowedDays.has(actualDay)) {
+                                    console.log(`Cannot drop ${taskName} on ${targetDayName}. Allowed: ${Array.from(allowedDays).join(', ')}`);
+                                    toList.removeChild(item);
                                     renderUnscheduledTasks();
                                     renderCalendar();
                                     return;
                                 }
                             }
 
-                            // Enforce 1X Weekly rule
-                            if (frequencyDesc.includes('Weekly') && frequencyDesc.startsWith('1X')) {
-                                if (!scheduledWeeklyTasks[targetWeekNumber]) {
-                                    scheduledWeeklyTasks[targetWeekNumber] = {};
-                                }
-                                if (scheduledWeeklyTasks[targetWeekNumber][taskName]) {
-                                    // Task already scheduled in this week, revert the drag
-                                    console.log("1X Weekly task already scheduled this week. Reverting.");
-                                    toList.removeChild(item); // Remove from target
-                                    renderUnscheduledTasks(); // Re-render unscheduled list to restore original
+                            // Enforce WhichWeek if present
+                            if (targetDateObj && !isAllowedWhichWeek(tv['Task/When/WhichWeek'], targetDateObj)) {
+                                console.log(`Cannot drop ${taskName} on ${targetDate}. Violates WhichWeek restriction.`);
+                                toList.removeChild(item);
+                                renderUnscheduledTasks();
+                                renderCalendar();
+                                return;
+                            }
+
+                            // Enforce Weekly N× rule (uses frequency_count and history)
+                            if (frequencyDesc.includes('Weekly') && targetDateObj) {
+                                const weekKey = isoWeekKey(targetDateObj);
+                                if (!scheduledWeeklyCounts[weekKey]) scheduledWeeklyCounts[weekKey] = {};
+                                const allowed = parseInt(item.dataset.frequencyCount, 10) || 1;
+                                let alreadyDone = 0;
+                                try {
+                                    const occ = (window.allHistory[taskName] || {}).occurrences || [];
+                                    alreadyDone = occ.filter(o => o.done && isSameISOWeek(new Date(o.date), targetDateObj)).length;
+                                } catch (e) { alreadyDone = 0; }
+                                const current = (scheduledWeeklyCounts[weekKey][taskName] || 0) + alreadyDone;
+                                if (current >= allowed) {
+                                    console.log(`Weekly limit reached for ${taskName}: ${current}/${allowed}`);
+                                    toList.removeChild(item);
+                                    renderUnscheduledTasks();
                                     renderCalendar();
                                     return;
-                                } else {
-                                    // Mark as scheduled for this week
-                                    scheduledWeeklyTasks[targetWeekNumber][taskName] = true;
+                                }
+                            }
+
+                            // Enforce Monthly N× rule (uses frequency_count and history)
+                            if (frequencyDesc.includes('Monthly') && targetDateObj) {
+                                const mkey = monthKeyFromDate(targetDateObj);
+                                if (!scheduledMonthlyCounts[mkey]) scheduledMonthlyCounts[mkey] = {};
+                                const allowed = parseInt(item.dataset.frequencyCount, 10) || 1;
+                                let alreadyDone = 0;
+                                try {
+                                    const occ = (window.allHistory[taskName] || {}).occurrences || [];
+                                    alreadyDone = occ.filter(o => o.done && o.date.slice(0,7) === mkey).length;
+                                } catch (e) { alreadyDone = 0; }
+                                const current = (scheduledMonthlyCounts[mkey][taskName] || 0) + alreadyDone;
+                                if (current >= allowed) {
+                                    console.log(`Monthly limit reached for ${taskName}: ${current}/${allowed}`);
+                                    toList.removeChild(item);
+                                    renderUnscheduledTasks();
+                                    renderCalendar();
+                                    return;
                                 }
                             }
 
@@ -344,6 +922,16 @@
                             scheduledTasksByDate[targetDate][targetTime].push({name: taskName, frequency_desc: frequencyDesc, frequency_count: 1}); // Use targetTime
                             console.log(`ScheduledTasksByDate updated for ${targetDate} ${targetTime}:`, scheduledTasksByDate[targetDate][targetTime]); // Use targetTime
 
+                            // Update live counters post-drop
+                            if (frequencyDesc.includes('Weekly') && targetDateObj) {
+                                const weekKey = isoWeekKey(targetDateObj);
+                                scheduledWeeklyCounts[weekKey][taskName] = (scheduledWeeklyCounts[weekKey][taskName] || 0) + 1;
+                            }
+                            if (frequencyDesc.includes('Monthly') && targetDateObj) {
+                                const mkey = monthKeyFromDate(targetDateObj);
+                                scheduledMonthlyCounts[mkey][taskName] = (scheduledMonthlyCounts[mkey][taskName] || 0) + 1;
+                            }
+
                             item.remove(); // Remove the original item from the DOM
                         }
                         // Scenario 2: Dragging from calendar to unscheduled list
@@ -366,10 +954,11 @@
                                 console.log(`Removed ${taskName} from scheduledTasksByDate for ${originalDate} ${originalTime}`); // Use originalTime
                             }
 
-                            // Unmark 1X Weekly task
-                            if (frequencyDesc.includes('Weekly') && frequencyDesc.startsWith('1X')) {
-                                if (scheduledWeeklyTasks[originalWeekNumber]) {
-                                    delete scheduledWeeklyTasks[originalWeekNumber][taskName];
+                            // Decrement live counters on return
+                            if (frequencyDesc.includes('Weekly')) {
+                                const wkey = isoWeekKey(new Date(originalDate));
+                                if (scheduledWeeklyCounts[wkey] && scheduledWeeklyCounts[wkey][taskName] > 0) {
+                                    scheduledWeeklyCounts[wkey][taskName] -= 1;
                                 }
                             }
 
@@ -385,6 +974,12 @@
                                 targetState[taskName] = { name: taskName, frequency_desc: frequencyDesc, frequency_count: 1, isFaded: false };
                                 console.log(`Restored ${taskName} to unscheduled state:`, targetState[taskName]);
                             }
+                            if (frequencyDesc.includes('Monthly')) {
+                                const mkey = monthKeyFromDate(new Date(originalDate));
+                                if (scheduledMonthlyCounts[mkey] && scheduledMonthlyCounts[mkey][taskName] > 0) {
+                                    scheduledMonthlyCounts[mkey][taskName] -= 1;
+                                }
+                            }
                             item.remove(); // Remove the original item from the DOM
                         }
                         // Scenario 3: Dragging within calendar (from one hour slot to another)
@@ -398,16 +993,21 @@
                             const newMinute = toList.dataset.minute;
                             const newTime = newHour && newMinute ? `${newHour}:${newMinute}` : null; // Combine hour and minute
 
-                            // Remove from old slot
-                            if (scheduledTasksByDate[originalDate] && scheduledTasksByDate[originalDate][originalTime]) { // Use originalTime
-                                scheduledTasksByDate[originalDate][originalTime] = scheduledTasksByDate[originalDate][originalTime].filter(t => t.name !== taskName); // Use originalTime
-                                if (scheduledTasksByDate[originalDate][originalTime].length === 0) { // Use originalTime
-                                    delete scheduledTasksByDate[originalDate][originalTime]; // Use originalTime
+                            // Remove the moved block (base + continued) from the old timeline, starting at originalTime
+                            if (scheduledTasksByDate[originalDate]) {
+                                let tcur = originalTime;
+                                for (let i = 0; i < 10; i++) { // max 5 hours window
+                                    const lst = scheduledTasksByDate[originalDate][tcur] || [];
+                                    const hadAny = lst.some(x => x.name === taskName);
+                                    if (!hadAny) break;
+                                    scheduledTasksByDate[originalDate][tcur] = lst.filter(x => x.name !== taskName);
+                                    if (scheduledTasksByDate[originalDate][tcur].length === 0) delete scheduledTasksByDate[originalDate][tcur];
+                                    // Remove DOM nodes for this slot
+                                    const ul = findSlotUl(originalDate, tcur);
+                                    if (ul) Array.from(ul.querySelectorAll('li.task')).forEach(node => { if (node.dataset.taskName === taskName) node.remove(); });
+                                    tcur = timeAddMinutes(tcur, 30);
                                 }
-                                if (Object.keys(scheduledTasksByDate[originalDate]).length === 0) {
-                                    delete scheduledTasksByDate[originalDate];
-                                }
-                                console.log(`Removed ${taskName} from scheduledTasksByDate for ${originalDate} ${originalTime}`); // Use originalTime
+                                if (Object.keys(scheduledTasksByDate[originalDate]).length === 0) delete scheduledTasksByDate[originalDate];
                             }
 
                             // Add to new slot
@@ -420,6 +1020,8 @@
                             scheduledTasksByDate[newDate][newTime].push({name: taskName, frequency_desc: frequencyDesc, frequency_count: 1}); // Use newTime
                             console.log(`Added ${taskName} to scheduledTasksByDate for ${newDate} ${newTime}`); // Use newTime
 
+                            // Ensure default 1-hour duration at new slot
+                            try { applyChipDuration(newDate, newTime, taskName, 60); } catch (_) {}
                             item.remove(); // Remove the original item from the DOM
                         }
                         renderUnscheduledTasks();
@@ -463,7 +1065,7 @@
                     dayColumns[weekend.date] = dayCol;
                 });
 
-                for (let i = 6; i <= 22; i++) { // Hours from 06:00 to 22:00
+                for (let i = 4; i <= 22; i++) { // Hours from 04:00 to 22:00
                     const hour = i < 10 ? '0' + i : i;
 
                     // Full hour slot
@@ -483,7 +1085,7 @@
 
                         if (scheduledTasksByDate[weekend.date] && scheduledTasksByDate[weekend.date][`${hour}:00`]) {
                             scheduledTasksByDate[weekend.date][`${hour}:00`].forEach(task => {
-                                hourSlotUlFull.appendChild(createTaskElement(task, true));
+                                hourSlotUlFull.appendChild(createTaskChip(task));
                             });
                         }
                     });
@@ -505,7 +1107,7 @@
 
                         if (scheduledTasksByDate[weekend.date] && scheduledTasksByDate[weekend.date][`${hour}:30`]) {
                             scheduledTasksByDate[weekend.date][`${hour}:30`].forEach(task => {
-                                hourSlotUlHalf.appendChild(createTaskElement(task, true));
+                                hourSlotUlHalf.appendChild(createTaskChip(task));
                             });
                         }
                     });
@@ -514,50 +1116,69 @@
                 document.querySelectorAll('.hour-slot-tasks').forEach(col => setupSortable(col));
             }
 
+            // Table header sorting for master table
+            (function enableMasterSort() {
+                const headerRow = document.querySelector('#task-table thead tr');
+                const body = document.querySelector('#task-table tbody');
+                headerRow.addEventListener('click', (e) => {
+                    const ths = Array.from(headerRow.children);
+                    const idx = ths.indexOf(e.target.closest('th'));
+                    if (idx < 0) return;
+                    const rows = Array.from(body.querySelectorAll('tr'));
+                    const numeric = false;
+                    const dir = headerRow.dataset.sortDir === 'asc' ? 'desc' : 'asc';
+                    rows.sort((a,b) => {
+                        const av = (a.children[idx]?.textContent || '').trim().toLowerCase();
+                        const bv = (b.children[idx]?.textContent || '').trim().toLowerCase();
+                        if (numeric) return (parseFloat(av)||0) - (parseFloat(bv)||0);
+                        return av.localeCompare(bv);
+                    });
+                    if (dir === 'desc') rows.reverse();
+                    body.innerHTML = '';
+                    rows.forEach(r => body.appendChild(r));
+                    headerRow.dataset.sortDir = dir;
+                });
+            })();
+
             // Fetch tasks and populate lists and table
             fetch('/api/tasks')
                 .then(response => response.json())
                 .then(data => {
-                    // Initialize unscheduledTasksState
-                    data.weekly.forEach(task => {
-                        unscheduledTasksState.weekly[task.name] = { ...task, isFaded: false };
-                    });
-                    data.monthly.forEach(task => {
-                        unscheduledTasksState.monthly[task.name] = { ...task, isFaded: false };
-                    });
-                    renderUnscheduledTasks(); // Initial render of unscheduled tasks
-
-                    // Populate the final, clean task table
+                    // Populate master table first
                     const { headers, tasks } = data.table_view;
-                    
                     headers.forEach(header => {
                         const th = document.createElement('th');
                         th.textContent = header;
                         taskTableHeader.appendChild(th);
                     });
-
                     tasks.forEach((task, index) => {
                         const row = document.createElement('tr');
                         const serialNoCell = document.createElement('td');
                         serialNoCell.textContent = index + 1;
                         row.appendChild(serialNoCell);
-
                         const nameCell = document.createElement('td');
                         nameCell.textContent = task.name;
                         row.appendChild(nameCell);
-
                         headers.forEach(header => {
                             const cell = document.createElement('td');
                             cell.innerHTML = task.tag_values[header] ? task.tag_values[header].join('<br>') : '';
                             row.appendChild(cell);
                         });
                         taskTableBody.appendChild(row);
-                    });
-
-                    // Store all tasks data for validation
-                    data.table_view.tasks.forEach(task => {
+                        // Index tasks for later lookup
                         allTasksData[task.name] = task;
                     });
+                    // Store history for rule checks and status column
+                    window.allHistory = data.history || {};
+
+                    // Initialize unscheduledTasksState AFTER we have allTasksData/history
+                    data.weekly.forEach(task => {
+                        unscheduledTasksState.weekly[task.name] = { ...task, isFaded: false };
+                    });
+                    data.monthly.forEach(task => {
+                        unscheduledTasksState.monthly[task.name] = { ...task, isFaded: false };
+                    });
+                    renderUnscheduledTasks();
                 });
             
             // Initial render of calendars
