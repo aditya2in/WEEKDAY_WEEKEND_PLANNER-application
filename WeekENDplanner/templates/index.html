@@ -273,6 +273,11 @@
 
     <div class="task-table-container">
         <h2>All Tasks Overview</h2>
+        <div id="cols-nav" style="display:flex; justify-content:flex-end; align-items:center; gap:8px; margin: 6px 0;">
+            <button id="cols-prev" type="button" style="padding:4px 8px;">◀ Columns</button>
+            <span id="cols-range" style="font-size:0.85rem;color:#555;">0–0/0</span>
+            <button id="cols-next" type="button" style="padding:4px 8px;">Columns ▶</button>
+        </div>
         <table id="task-table">
             <thead>
                 <tr>
@@ -471,6 +476,52 @@
             const taskTableBody = document.querySelector('#task-table tbody');
             const taskTableHeader = document.querySelector('#task-table thead tr');
             const weeklyCalendarDiv = document.getElementById('weekly-calendar');
+
+            // --- Master table column windowing (no horizontal scroll) ---
+            let masterHeaders = [];
+            let masterTasks = [];
+            let colStart = 0;
+            const colWindow = 6; // visible dynamic columns at a time
+
+            function renderMasterTable() {
+                // Header: fixed S.No., Task Name + windowed dynamic headers
+                taskTableHeader.innerHTML = '';
+                const thSN = document.createElement('th'); thSN.textContent = 'S.No.'; taskTableHeader.appendChild(thSN);
+                const thTN = document.createElement('th'); thTN.textContent = 'Task Name'; taskTableHeader.appendChild(thTN);
+                const visibleHeaders = masterHeaders.slice(colStart, colStart + colWindow);
+                visibleHeaders.forEach(h => { const th = document.createElement('th'); th.textContent = h; taskTableHeader.appendChild(th); });
+
+                // Body
+                taskTableBody.innerHTML = '';
+                masterTasks.forEach((task, index) => {
+                    const row = document.createElement('tr');
+                    const serialNoCell = document.createElement('td'); serialNoCell.textContent = String(index + 1); row.appendChild(serialNoCell);
+                    const nameCell = document.createElement('td'); nameCell.textContent = task.name; row.appendChild(nameCell);
+                    visibleHeaders.forEach(header => {
+                        const cell = document.createElement('td');
+                        const vals = (task.tag_values && task.tag_values[header]) ? task.tag_values[header] : [];
+                        cell.innerHTML = vals && vals.length ? vals.join('<br>') : '';
+                        row.appendChild(cell);
+                    });
+                    taskTableBody.appendChild(row);
+                });
+
+                // Update range label and button enablement
+                const range = document.getElementById('cols-range');
+                const total = masterHeaders.length;
+                const from = total === 0 ? 0 : (colStart + 1);
+                const to = Math.min(total, colStart + colWindow);
+                range.textContent = `${from}–${to}/${total}`;
+                document.getElementById('cols-prev').disabled = (colStart <= 0);
+                document.getElementById('cols-next').disabled = (colStart + colWindow >= total);
+            }
+
+            function wireColumnNavControls() {
+                const prev = document.getElementById('cols-prev');
+                const next = document.getElementById('cols-next');
+                prev.addEventListener('click', () => { colStart = Math.max(0, colStart - colWindow); renderMasterTable(); });
+                next.addEventListener('click', () => { const maxStart = Math.max(0, masterHeaders.length - colWindow); colStart = Math.min(maxStart, colStart + colWindow); renderMasterTable(); });
+            }
 
             let scheduledWeeklyTasks = {}; // Tracks 1X weekly tasks scheduled per week number
             let scheduledTasksByDate = {}; // Stores all scheduled tasks by date and hour
@@ -1314,42 +1365,40 @@
             fetch('/api/tasks')
                 .then(response => response.json())
                 .then(data => {
-                    // Populate master table first
+                    // Populate master table first (windowed rendering)
                     const { headers, tasks } = data.table_view;
-                    headers.forEach(header => {
-                        const th = document.createElement('th');
-                        th.textContent = header;
-                        taskTableHeader.appendChild(th);
-                    });
-                    tasks.forEach((task, index) => {
-                        const row = document.createElement('tr');
-                        const serialNoCell = document.createElement('td');
-                        serialNoCell.textContent = index + 1;
-                        row.appendChild(serialNoCell);
-                        const nameCell = document.createElement('td');
-                        nameCell.textContent = task.name;
-                        row.appendChild(nameCell);
-                        headers.forEach(header => {
-                            const cell = document.createElement('td');
-                            cell.innerHTML = task.tag_values[header] ? task.tag_values[header].join('<br>') : '';
-                            row.appendChild(cell);
-                        });
-                        taskTableBody.appendChild(row);
-                        // Index tasks for later lookup
-                        allTasksData[task.name] = task;
-                    });
+                    masterHeaders = headers || [];
+                    masterTasks = tasks || [];
+                    allTasksData = {};
+                    masterTasks.forEach(t => { allTasksData[t.name] = t; });
+                    colStart = 0;
+                    wireColumnNavControls();
+                    renderMasterTable();
                     // Store history for rule checks and status column
                     window.allHistory = data.history || {};
 
                     // Initialize unscheduledTasksState AFTER we have allTasksData/history
+                    // Only include Weekly tasks that are exactly 1X (either explicit 1X or inferred count=1)
                     data.weekly.forEach(task => {
-                        unscheduledTasksState.weekly[task.name] = { ...task, isFaded: false };
+                        const tv = (allTasksData[task.name] && allTasksData[task.name].tag_values) || {};
+                        const wvals = tv['Task/When/Weekly'] || [];
+                        let isOneX = false;
+                        if (wvals.length > 0) {
+                            // Accept forms like "1X", "1x Weekly"
+                            isOneX = /(\b|^)1\s*[xX]\b/.test(String(wvals[0]));
+                        } else {
+                            // If no explicit header value, rely on parsed frequency_count
+                            isOneX = (task.frequency_count === 1);
+                        }
+                        if (isOneX) {
+                            unscheduledTasksState.weekly[task.name] = { ...task, isFaded: false, frequency_count: 1, frequency_desc: '1X Weekly' };
+                        }
                     });
                     data.monthly.forEach(task => {
                         unscheduledTasksState.monthly[task.name] = { ...task, isFaded: false };
                     });
 
-                    // Fallback: If weekly came back empty, infer from table_view tag values
+                    // Fallback: If weekly came back empty, infer from table_view tag values (but still only include 1X)
                     if (Object.keys(unscheduledTasksState.weekly).length === 0) {
                         try {
                             (tasks || []).forEach(t => {
@@ -1372,13 +1421,14 @@
                                 const isWeekendGroup = (nameAndTypeVals || []).some(v => /WeekendTASKgroup/i.test(String(v))) ||
                                                        (whatTaskVals || []).some(v => /WeekendTASKgroup/i.test(String(v)));
 
-                                if (inferredCount > 0 || mentionsWeekendDay || isWeekendGroup) {
-                                    const count = inferredCount > 0 ? inferredCount : 1;
+                                // Only include when it is exactly 1X
+                                const count = inferredCount > 0 ? inferredCount : 1;
+                                if ((inferredCount > 0 || mentionsWeekendDay || isWeekendGroup) && count === 1) {
                                     if (!unscheduledTasksState.weekly[t.name]) {
                                         unscheduledTasksState.weekly[t.name] = {
                                             name: t.name,
-                                            frequency_desc: `${count}X Weekly`,
-                                            frequency_count: count,
+                                            frequency_desc: `1X Weekly`,
+                                            frequency_count: 1,
                                             isFaded: false
                                         };
                                     }
