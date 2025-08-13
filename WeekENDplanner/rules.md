@@ -30,18 +30,16 @@ This document describes how tasks are parsed, displayed, and enforced in the Wee
 ## Unscheduled Lists (Weekly and Monthly)
 
 - Weekly unscheduled list shows tasks that are weekly-recurring:
-  - Primary check: `Task/WhenAndDuration/Weekly` has a value (e.g., `1X`, `2X`, ...).
-  - Legacy fallback: `Task/When/Weekly` if the newer key is absent.
-  - If backend `weekly` is empty, the UI infers weekly tasks from the master table rows with the above keys. It also infers weekend tasks if `Task/When/Whichday` mentions Saturday/Sunday or the task is in a `WeekendTASKgroup`.
+  - Check: `Task/WhenAndDuration/Weekly` has a value (e.g., `1X`, `2X`, ...). No legacy fallback is used anymore.
+  - If backend `weekly` is empty, the UI infers weekly tasks strictly from the master table rows with `Task/WhenAndDuration/Weekly` values.
 - Monthly unscheduled list shows tasks that are monthly-recurring:
-  - Primary check: `Task/WhenAndDuration/Monthly` has a value.
-  - Legacy fallback: `Task/When/Monthly`.
+  - Check: `Task/WhenAndDuration/Monthly` has a value. No legacy fallback is used anymore.
 
 ## Frequencies and Counts
 
 - Frequency descriptors are read from tags:
-  - Weekly: `Task/WhenAndDuration/Weekly` or `Task/When/Weekly`, expecting values like `1X`, `2X`, etc. If missing but inferred, default to `1X Weekly`.
-  - Monthly: `Task/WhenAndDuration/Monthly` or `Task/When/Monthly` with `1X`, `2X`, etc.
+  - Weekly: `Task/WhenAndDuration/Weekly`, values like `1X`, `2X`, etc. If inference is needed, default to `1X Weekly`.
+  - Monthly: `Task/WhenAndDuration/Monthly` with `1X`, `2X`, etc.
 - When scheduling in the calendar, live counters ensure you cannot exceed the allowed count within a week or a month. Previously completed occurrences (from `history`) are considered toward limits.
 
 ## Default Duration

@@ -661,8 +661,8 @@
                 const whichDay = (tv['Task/When/Whichday'] || []).join(', ');
                 const whichWeek = (tv['Task/When/WhichWeek'] || []).join(', ');
                 const priority = (tv['Task/Priority'] || []).join(', ');
-                const weekly = (tv['Task/WhenAndDuration/Weekly'] || tv['Task/When/Weekly'] || []).join(', ');
-                const monthly = (tv['Task/WhenAndDuration/Monthly'] || tv['Task/When/Monthly'] || []).join(', ');
+                const weekly = (tv['Task/WhenAndDuration/Weekly'] || []).join(', ');
+                const monthly = (tv['Task/WhenAndDuration/Monthly'] || []).join(', ');
                 const defaultDuration = (tv['Task/WhenAndDuration/DefaultDuration'] || []).join(', ');
                 const status = history.not_done_latest ? `Scheduled on ${history.not_done_latest} (not done)` : '';
 
@@ -1352,28 +1352,28 @@
                     window.allHistory = data.history || {};
 
                     // Initialize unscheduledTasksState AFTER we have allTasksData/history
-                    // Weekly: include any task that has any Weekly value under Task/WhenAndDuration/Weekly or legacy Task/When/Weekly
+                    // Weekly: include any task that has any Weekly value under Task/WhenAndDuration/Weekly
                     data.weekly.forEach(task => {
                         const tv = (allTasksData[task.name] && allTasksData[task.name].tag_values) || {};
-                        const wvals = tv['Task/WhenAndDuration/Weekly'] || tv['Task/When/Weekly'] || [];
+                        const wvals = tv['Task/WhenAndDuration/Weekly'] || [];
                         if ((wvals || []).length > 0) {
                             unscheduledTasksState.weekly[task.name] = { ...task, isFaded: false };
                         }
                     });
                     data.monthly.forEach(task => {
                         const tv = (allTasksData[task.name] && allTasksData[task.name].tag_values) || {};
-                        const mvals = tv['Task/WhenAndDuration/Monthly'] || tv['Task/When/Monthly'] || [];
+                        const mvals = tv['Task/WhenAndDuration/Monthly'] || [];
                         if ((mvals || []).length > 0) {
                             unscheduledTasksState.monthly[task.name] = { ...task, isFaded: false };
                         }
                     });
 
-                    // Fallback: If weekly came back empty, infer from table_view tag values (include any weekly recurrence)
+                    // Fallback: If weekly came back empty, infer from table_view tag values (include any weekly recurrence) using WhenAndDuration only
                     if (Object.keys(unscheduledTasksState.weekly).length === 0) {
                         try {
                             (tasks || []).forEach(t => {
                                 const tv = t.tag_values || {};
-                                const weeklyVals = tv['Task/WhenAndDuration/Weekly'] || tv['Task/When/Weekly'] || [];
+                                const weeklyVals = tv['Task/WhenAndDuration/Weekly'] || [];
                                 const whichdayVals = tv['Task/When/Whichday'] || [];
                                 const nameAndTypeVals = tv['Task/NameAndType'] || [];
                                 const whatTaskVals = tv['Task/WhatTASK'] || [];
