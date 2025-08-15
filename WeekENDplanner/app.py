@@ -218,20 +218,25 @@ def extract_tasks_from_markdown(file_path):
                             tag_path = '/'.join(parts[:-1])
                             all_tag_paths.add(tag_path)
 
-        # Custom sort key for headers
+        # Custom sort key for headers (prefer Task/WhenAndDuration family)
         def custom_sort_key(tag_path):
+            if tag_path.startswith('Task/WhenAndDuration'):
+                order_map = {
+                    'Task/WhenAndDuration/Weekly': (0, 0),
+                    'Task/WhenAndDuration/Whichday': (0, 1),
+                    'Task/WhenAndDuration/Monthly': (0, 2),
+                    'Task/WhenAndDuration/WhichWeek': (0, 3),
+                    'Task/WhenAndDuration/DefaultDuration': (0, 4),
+                }
+                return order_map.get(tag_path, (0, 99,)) + (tag_path,)
             if tag_path.startswith('Task/When'):
-                # Specific order for 'When' tags
-                if tag_path == 'Task/When/Weekly':
-                    return (0, 0, tag_path)
-                elif tag_path == 'Task/When/Whichday':
-                    return (0, 1, tag_path)
-                elif tag_path == 'Task/When/Monthly':
-                    return (0, 2, tag_path)
-                elif tag_path == 'Task/When/WhichWeek':
-                    return (0, 3, tag_path)
-                else:
-                    return (0, 99, tag_path) # Other 'When' tags last in this group
+                order_map_legacy = {
+                    'Task/When/Weekly': (1, 0),
+                    'Task/When/Whichday': (1, 1),
+                    'Task/When/Monthly': (1, 2),
+                    'Task/When/WhichWeek': (1, 3),
+                }
+                return order_map_legacy.get(tag_path, (1, 99,)) + (tag_path,)
             elif tag_path.startswith('Task/Action'):
                 return (1, tag_path) # 'Task/Action' tags come second
             else:
@@ -265,10 +270,12 @@ def extract_tasks_from_markdown(file_path):
             
             table_tasks.append({"name": task_name, "tag_values": dict(task_tag_values)})
 
-            # Logic for draggable tasks (unchanged)
-            weekly_match = re.search(r'#Task/When/Weekly/(\d+)X', line)
-            # Monthly can be written as 1X, 2X etc, or sometimes just tagged as Monthly without count
-            monthly_match = re.search(r'#Task/When/Monthly/(\d+)X', line)
+            # Logic for draggable tasks
+            # Prefer WhenAndDuration family; accept legacy as fallback
+            weekly_match = re.search(r'#Task/WhenAndDuration/Weekly/(\d+)[xX]', line, flags=re.IGNORECASE) or \
+                           re.search(r'#Task/When/Weekly/(\d+)[xX]', line, flags=re.IGNORECASE)
+            monthly_match = re.search(r'#Task/WhenAndDuration/Monthly/(\d+)[xX]', line, flags=re.IGNORECASE) or \
+                            re.search(r'#Task/When/Monthly/(\d+)[xX]', line, flags=re.IGNORECASE)
             frequency_count = 1
             
             if weekly_match:
@@ -302,6 +309,134 @@ def extract_tasks_from_markdown(file_path):
     except Exception as e:
         print(f"An error occurred: {e}")
     return tasks_data
+
+def _update_line_tags(line: str, updates: dict) -> str:
+    """Given a markdown line and a mapping tag_path -> [values],
+    remove existing tags for provided paths (and legacy When/* for WhenAndDuration/*),
+    then append new tags at the end in a stable order."""
+    try:
+        tokens = line.split()
+        # Build set of paths to remove
+        remove_prefixes = set(updates.keys())
+        # Also remove legacy When/* variants for WhenAndDuration/* paths
+        for p in list(remove_prefixes):
+            if p.startswith('Task/WhenAndDuration/'):
+                legacy = p.replace('Task/WhenAndDuration/', 'Task/When/')
+                remove_prefixes.add(legacy)
+
+        def keep_token(tok: str) -> bool:
+            if not tok.startswith('#'):
+                return True
+            body = tok[1:]
+            # Token shape: Path/Value (no spaces)
+            # Remove if body starts with any remove_prefix
+            for pref in remove_prefixes:
+                if body.startswith(pref + '/') or body == pref:
+                    return False
+            return True
+
+        kept = [t for t in tokens if keep_token(t)]
+
+        # Append new tags (skip empty values)
+        new_tags = []
+        def add_tags_for(path: str, values: list):
+            for v in values or []:
+                v = str(v).strip()
+                if not v:
+                    continue
+                new_tags.append(f"#{path}/{v}")
+
+        # Stable order: WhenAndDuration first, then everything else alpha
+        wad = {k: v for k, v in updates.items() if k.startswith('Task/WhenAndDuration/')}
+        other = {k: v for k, v in updates.items() if k not in wad}
+        for k in sorted(wad.keys()):
+            add_tags_for(k, wad[k])
+        for k in sorted(other.keys()):
+            add_tags_for(k, other[k])
+
+        # Rebuild line: preserve original non-tag spacing by joining with single spaces
+        result = ' '.join([t for t in kept if t])
+        if new_tags:
+            result = (result + ' ' + ' '.join(new_tags)).strip()
+        return result
+    except Exception:
+        return line
+
+@app.route('/api/tasks/save', methods=['POST'])
+def api_tasks_save():
+    """Save edits from the master table back to the markdown file.
+    Expected JSON: { tasks: [ { name: str, tag_values: { path: [values...] } }, ... ] }
+    Only provided tag paths are updated for each task; other tags remain untouched."""
+    try:
+        payload = request.get_json(force=True, silent=False)
+        if not isinstance(payload, dict) or not isinstance(payload.get('tasks'), list):
+            return jsonify({"error": "Invalid payload"}), 400
+
+        cfg = load_config()
+        md_path = get_markdown_file_path_from_config(cfg)
+        if not os.path.isfile(md_path):
+            return jsonify({"error": f"Markdown not found: {md_path}"}), 404
+
+        with open(md_path, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+
+        # Index task lines by name occurrence (bold **name**)
+        name_to_idx = {}
+        for idx, line in enumerate(lines):
+            m = re.search(r"\*\*(.*?)\*\*", line)
+            if m:
+                name = m.group(1).strip()
+                # First occurrence wins
+                if name not in name_to_idx:
+                    name_to_idx[name] = idx
+
+        changed = 0
+        for item in payload['tasks']:
+            name = (item.get('name') or '').strip()
+            tv = item.get('tag_values') or {}
+            if not name or not isinstance(tv, dict):
+                continue
+            idx = name_to_idx.get(name)
+            if idx is None:
+                # Skip unknown tasks (not found in file)
+                continue
+            # Normalize tv values to lists of strings
+            normalized = {}
+            for path, vals in tv.items():
+                if not path or not isinstance(path, str):
+                    continue
+                if vals is None:
+                    vals = []
+                if isinstance(vals, str):
+                    vals = [vals]
+                vals2 = []
+                for v in vals:
+                    if v is None:
+                        continue
+                    s = str(v).strip()
+                    if s:
+                        vals2.append(s)
+                normalized[path] = vals2
+            new_line = _update_line_tags(lines[idx].rstrip('\n'), normalized)
+            if new_line != lines[idx].rstrip('\n'):
+                lines[idx] = new_line + "\n"
+                changed += 1
+
+        if changed > 0:
+            # Backup
+            try:
+                backup_path = md_path + ".bak"
+                if not os.path.exists(backup_path):
+                    with open(backup_path, 'w', encoding='utf-8') as bf:
+                        bf.writelines(lines)
+            except Exception:
+                pass
+            with open(md_path, 'w', encoding='utf-8') as f:
+                f.writelines(lines)
+
+        return jsonify({"ok": True, "updated": changed})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 @app.route("/")
 def home():

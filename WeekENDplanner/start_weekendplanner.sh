@@ -15,7 +15,6 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 VENV_DIR="${VENV_DIR:-$SCRIPT_DIR/venv}"
 PY="$VENV_DIR/bin/python"
 PIP="$VENV_DIR/bin/pip"
-FLASK_BIN="$VENV_DIR/bin/flask"
 APP_MODULE="${APP_MODULE:-$SCRIPT_DIR/app.py}"
 REQ="$SCRIPT_DIR/requirements.txt"
 OPEN_BROWSER="${OPEN_BROWSER:-1}"
@@ -72,4 +71,5 @@ if [ "$OPEN_BROWSER" = "1" ] || [ "$OPEN_BROWSER" = "true" ] || [ "$OPEN_BROWSER
   fi
 fi
 
-exec "$FLASK_BIN" run --no-reload
+# Run Flask via the venv's Python to avoid stale shebangs in the flask entrypoint
+exec "$PY" -m flask run --no-reload

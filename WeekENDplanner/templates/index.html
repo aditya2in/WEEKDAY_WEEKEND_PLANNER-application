@@ -31,6 +31,13 @@
         body.dark #process-info { background-color: #1f2937; color: #e2e8f0; }
         body.dark details { border-color: #334155 !important; }
         body.dark .unscheduled-table { background-color: #0b1220; }
+        /* Dark mode: tables and zebra striping */
+        body.dark table { background-color: #0b1220; }
+        body.dark tbody tr:nth-child(odd) { background-color: #0b1220; }
+        body.dark tbody tr:nth-child(even) { background-color: #111827; }
+        /* Dark mode: override inline white backgrounds in details/panels */
+        body.dark details { background-color: #0b1220 !important; color: #e2e8f0; }
+        body.dark #proc-list { background-color: #0b1220 !important; border-color: #334155 !important; }
         h1, h2, h3, h4 {
             text-align: center;
             color: #2a4d69;
@@ -272,7 +279,66 @@
 <body>
 
     <div class="task-table-container">
-        <h2>All Tasks Overview</h2>
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:8px;">
+            <h2 style="margin:0;">All Tasks Overview</h2>
+            <div style="display:flex; align-items:flex-start; gap:8px;">
+                <div id="process-info" style="font-size: 0.9em; color:#2a4d69; background:#eaf4fc; padding:6px 8px; border-radius:6px;">
+                    PID: <span id="pi-pid">-</span> · Host: <span id="pi-host">-</span> · Port: <span id="pi-port">-</span> · Uptime: <span id="pi-uptime">-</span>
+                    <button id="restart-btn" style="margin-left:8px;background:#4caf50;color:#fff;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-weight:600;">Restart</button>
+                    <button id="kill-btn" style="margin-left:8px;background:#e57373;color:#fff;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;">Kill</button>
+                    <details style="display:inline-block;margin-left:8px;">
+                        <summary style="cursor:pointer;">More</summary>
+                        <div id="proc-list" style="background:#fff;border:1px solid #adcbe3;border-radius:6px;padding:8px;min-width:480px;">
+                            <div style="font-weight:600; margin-bottom:6px;">Running Weekend processes</div>
+                            <div id="proc-rows" style="max-height:220px;overflow:auto;font-family:monospace;font-size:12px;"></div>
+                            <div style="margin-top:6px;">
+                                <button id="kill-selected" style="background:#dc3545;color:#fff;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;">Kill selected</button>
+                                <span id="kill-result" style="margin-left:8px;color:#2a4d69;"></span>
+                            </div>
+                        </div>
+                    </details>
+                    <div class="zoom-control" title="Zoom calendar vertically" style="display:inline-flex; align-items:center; gap:6px; margin-left:8px;">
+                      <span>Zoom</span>
+                      <input id="zoom-slider" type="range" min="0.6" max="2.0" step="0.1" style="width:140px;">
+                      <span id="zoom-value">100%</span>
+                    </div>
+                    <div class="dark-toggle" style="display:inline-flex; align-items:center; gap:6px; margin-left:12px;">
+                      <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer;">
+                        <input id="dark-toggle" type="checkbox">
+                        <span>Dark</span>
+                      </label>
+                    </div>
+                </div>
+                <details style="background:#fff;border:1px solid #adcbe3;border-radius:8px;padding:8px;">
+                  <summary style="cursor:pointer;color:#1d3f5e;font-weight:600;">Settings</summary>
+                  <div style="margin-top:8px;max-width:420px;">
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                      <label style="font-weight:600;">Markdown file path
+                        <input id="set-markdown" style="width:100%;padding:6px 8px;border:1px solid #ddd;border-radius:6px;"/>
+                      </label>
+                      <div style="display:flex; gap:8px;">
+                        <label style="flex:1;font-weight:600;">Host
+                          <input id="set-host" style="width:100%;padding:6px 8px;border:1px solid #ddd;border-radius:6px;"/>
+                        </label>
+                        <label style="width:120px;font-weight:600;">Port
+                          <input id="set-port" type="number" min="1" max="65535" style="width:100%;padding:6px 8px;border:1px solid #ddd;border-radius:6px;"/>
+                        </label>
+                      </div>
+                      <label style="font-weight:600;"><input id="set-debug" type="checkbox"/> Debug</label>
+                      <label style="font-weight:600;"><input id="set-open-browser" type="checkbox"/> Open browser on start</label>
+                      <label style="font-weight:600;">Browser open delay (s)
+                        <input id="set-delay" type="number" min="0" style="width:120px;padding:6px 8px;border:1px solid #ddd;border-radius:6px;"/>
+                      </label>
+                      <div>
+                        <button id="save-settings" style="background:#4b86b4;color:#fff;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;">Save</button>
+                        <span id="save-result" style="margin-left:8px;font-size:0.9em;color:#2a4d69;"></span>
+                      </div>
+                      <div style="font-size:0.85em;color:#666;">Host/Port/Debug changes require restart.</div>
+                    </div>
+                  </div>
+                </details>
+            </div>
+        </div>
         <!-- Column window controls removed per request (show all columns on one page) -->
         <table id="task-table">
             <thead>
@@ -287,63 +353,6 @@
     </div>
 
     <h1>Weekend Planner</h1>
-    <div style="position: sticky; top: 0; display:flex; justify-content:flex-end; gap: 8px; padding: 8px 0;">
-        <div id="process-info" style="font-size: 0.9em; color:#2a4d69; background:#eaf4fc; padding:6px 8px; border-radius:6px;">
-            PID: <span id="pi-pid">-</span> · Host: <span id="pi-host">-</span> · Port: <span id="pi-port">-</span> · Uptime: <span id="pi-uptime">-</span>
-            <button id="restart-btn" style="margin-left:8px;background:#4caf50;color:#fff;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-weight:600;">Restart</button>
-            <button id="kill-btn" style="margin-left:8px;background:#e57373;color:#fff;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;">Kill</button>
-            <details style="display:inline-block;margin-left:8px;">
-                <summary style="cursor:pointer;">More</summary>
-                <div id="proc-list" style="background:#fff;border:1px solid #adcbe3;border-radius:6px;padding:8px;min-width:480px;">
-                    <div style="font-weight:600; margin-bottom:6px;">Running Weekend processes</div>
-                    <div id="proc-rows" style="max-height:220px;overflow:auto;font-family:monospace;font-size:12px;"></div>
-                    <div style="margin-top:6px;">
-                        <button id="kill-selected" style="background:#dc3545;color:#fff;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;">Kill selected</button>
-                        <span id="kill-result" style="margin-left:8px;color:#2a4d69;"></span>
-                    </div>
-                </div>
-            </details>
-            <div class="zoom-control" title="Zoom calendar vertically" style="display:inline-flex; align-items:center; gap:6px; margin-left:8px;">
-              <span>Zoom</span>
-              <input id="zoom-slider" type="range" min="0.6" max="2.0" step="0.1" style="width:140px;">
-              <span id="zoom-value">100%</span>
-            </div>
-            <div class="dark-toggle" style="display:inline-flex; align-items:center; gap:6px; margin-left:12px;">
-              <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer;">
-                <input id="dark-toggle" type="checkbox">
-                <span>Dark</span>
-              </label>
-            </div>
-        </div>
-        <details style="background:#fff;border:1px solid #adcbe3;border-radius:8px;padding:8px;">
-          <summary style="cursor:pointer;color:#1d3f5e;font-weight:600;">Settings</summary>
-          <div style="margin-top:8px;max-width:420px;">
-            <div style="display:flex; flex-direction:column; gap:8px;">
-              <label style="font-weight:600;">Markdown file path
-                <input id="set-markdown" style="width:100%;padding:6px 8px;border:1px solid #ddd;border-radius:6px;"/>
-              </label>
-              <div style="display:flex; gap:8px;">
-                <label style="flex:1;font-weight:600;">Host
-                  <input id="set-host" style="width:100%;padding:6px 8px;border:1px solid #ddd;border-radius:6px;"/>
-                </label>
-                <label style="width:120px;font-weight:600;">Port
-                  <input id="set-port" type="number" min="1" max="65535" style="width:100%;padding:6px 8px;border:1px solid #ddd;border-radius:6px;"/>
-                </label>
-              </div>
-              <label style="font-weight:600;"><input id="set-debug" type="checkbox"/> Debug</label>
-              <label style="font-weight:600;"><input id="set-open-browser" type="checkbox"/> Open browser on start</label>
-              <label style="font-weight:600;">Browser open delay (s)
-                <input id="set-delay" type="number" min="0" style="width:120px;padding:6px 8px;border:1px solid #ddd;border-radius:6px;"/>
-              </label>
-              <div>
-                <button id="save-settings" style="background:#4b86b4;color:#fff;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;">Save</button>
-                <span id="save-result" style="margin-left:8px;font-size:0.9em;color:#2a4d69;"></span>
-              </div>
-              <div style="font-size:0.85em;color:#666;">Host/Port/Debug changes require restart.</div>
-            </div>
-          </div>
-        </details>
-    </div>
 
     <div class="planner-container">
         <div class="task-list-container">
@@ -355,8 +364,8 @@
                   <th>Drag</th>
                   <th>Task</th>
                   <th>Task/WhenAndDuration/Weekly</th>
-                  <th>Task/When/Whichday</th>
-                  <th>Task/When/WhichWeek</th>
+                  <th>Task/WhenAndDuration/Whichday</th>
+                  <th>Task/WhenAndDuration/WhichWeek</th>
                   <th>Task/Priority</th>
                   <th>Task/WhenAndDuration/DefaultDuration</th>
                   <th>Status</th>
@@ -371,8 +380,8 @@
                   <th>Drag</th>
                   <th>Task</th>
                   <th>Task/WhenAndDuration/Monthly</th>
-                  <th>Task/When/Whichday</th>
-                  <th>Task/When/WhichWeek</th>
+                  <th>Task/WhenAndDuration/Whichday</th>
+                  <th>Task/WhenAndDuration/WhichWeek</th>
                   <th>Task/Priority</th>
                   <th>Task/WhenAndDuration/DefaultDuration</th>
                   <th>Status</th>
@@ -472,6 +481,8 @@
             const taskTableBody = document.querySelector('#task-table tbody');
             const taskTableHeader = document.querySelector('#task-table thead tr');
             const weeklyCalendarDiv = document.getElementById('weekly-calendar');
+            // Dynamic header keys resolved from master table
+            let hdrKeys = { weekly: 'Task/WhenAndDuration/Weekly', monthly: 'Task/WhenAndDuration/Monthly', whichday: 'Task/When/Whichday', whichweek: 'Task/When/WhichWeek', priority: 'Task/Priority', defaultDuration: 'Task/WhenAndDuration/DefaultDuration' };
 
             // Render all columns (no horizontal scroll; content wraps)
             let masterHeaders = [];
@@ -482,6 +493,8 @@
                 const thSN = document.createElement('th'); thSN.textContent = 'S.No.'; taskTableHeader.appendChild(thSN);
                 const thTN = document.createElement('th'); thTN.textContent = 'Task Name'; taskTableHeader.appendChild(thTN);
                 masterHeaders.forEach(h => { const th = document.createElement('th'); th.textContent = h; taskTableHeader.appendChild(th); });
+                // Extra custom column (kept empty for now)
+                const thPref = document.createElement('th'); thPref.textContent = 'Preferred Times'; taskTableHeader.appendChild(thPref);
 
                 // Body
                 taskTableBody.innerHTML = '';
@@ -495,6 +508,8 @@
                         cell.innerHTML = vals && vals.length ? vals.join('<br>') : '';
                         row.appendChild(cell);
                     });
+                    // Preferred Times cell (empty by request)
+                    const prefCell = document.createElement('td'); prefCell.textContent = ''; row.appendChild(prefCell);
                     taskTableBody.appendChild(row);
                 });
             }
@@ -658,12 +673,12 @@
                 const tv = details.tag_values || {};
                 const historyMap = window.allHistory || {};
                 const history = historyMap[task.name] || {};
-                const whichDay = (tv['Task/When/Whichday'] || []).join(', ');
-                const whichWeek = (tv['Task/When/WhichWeek'] || []).join(', ');
-                const priority = (tv['Task/Priority'] || []).join(', ');
-                const weekly = (tv['Task/WhenAndDuration/Weekly'] || []).join(', ');
-                const monthly = (tv['Task/WhenAndDuration/Monthly'] || []).join(', ');
-                const defaultDuration = (tv['Task/WhenAndDuration/DefaultDuration'] || []).join(', ');
+                const whichDay = (tv[hdrKeys.whichday] || []).join(', ');
+                const whichWeek = (tv[hdrKeys.whichweek] || []).join(', ');
+                const priority = (tv[hdrKeys.priority] || []).join(', ');
+                const weekly = (tv[hdrKeys.weekly] || []).join(', ');
+                const monthly = (tv[hdrKeys.monthly] || []).join(', ');
+                const defaultDuration = (tv[hdrKeys.defaultDuration] || []).join(', ');
                 const status = history.not_done_latest ? `Scheduled on ${history.not_done_latest} (not done)` : '';
 
                 const thirdCol = category === 'weekly'
@@ -986,7 +1001,7 @@
                         // Get the full task details from allTasksData for tag validation
                         const fullTaskDetails = allTasksData[taskName];
                         const tv = (fullTaskDetails && fullTaskDetails.tag_values) || {};
-                        const whichdays = tv['Task/When/Whichday'] || [];
+                        const whichdays = tv[hdrKeys.whichday] || tv['Task/When/Whichday'] || tv['Task/WhenAndDuration/Whichday'] || [];
                         const allowedDays = allowedDaysFromWhichday(whichdays);
                         const taskWhichday = whichdays[0] || null;
                         const targetDayName = targetDate ? new Date(targetDate).toLocaleString('en-us', { weekday: 'long' }) : null;
@@ -1009,7 +1024,7 @@
                             }
 
                             // Enforce WhichWeek if present
-                            if (targetDateObj && !isAllowedWhichWeek(tv['Task/When/WhichWeek'], targetDateObj)) {
+                            if (targetDateObj && !isAllowedWhichWeek(tv[hdrKeys.whichweek] || tv['Task/When/WhichWeek'] || tv['Task/WhenAndDuration/WhichWeek'], targetDateObj)) {
                                 console.log(`Cannot drop ${taskName} on ${targetDate}. Violates WhichWeek restriction.`);
                                 toList.removeChild(item);
                                 renderUnscheduledTasks();
@@ -1175,7 +1190,7 @@
                             try {
                                 const newDateObj = new Date(newDate);
                                 const targetDayName2 = newDateObj.toLocaleString('en-us', { weekday: 'long' });
-                                const whichdays2 = tv['Task/When/Whichday'] || [];
+                                const whichdays2 = tv[hdrKeys.whichday] || tv['Task/When/Whichday'] || tv['Task/WhenAndDuration/Whichday'] || [];
                                 const allowedDays2 = allowedDaysFromWhichday(whichdays2);
                                 if (allowedDays2.size > 0) {
                                     const actualDay2 = (targetDayName2 || '').toLowerCase();
@@ -1186,7 +1201,7 @@
                                         return;
                                     }
                                 }
-                                if (!isAllowedWhichWeek(tv['Task/When/WhichWeek'], newDateObj)) {
+                                if (!isAllowedWhichWeek(tv[hdrKeys.whichweek] || tv['Task/When/WhichWeek'] || tv['Task/WhenAndDuration/WhichWeek'], newDateObj)) {
                                     toList.removeChild(item);
                                     renderCalendar();
                                     return;
@@ -1196,6 +1211,17 @@
                                 try { toList.removeChild(item); } catch (_) {}
                                 renderCalendar();
                                 return;
+                            }
+
+                            // Capture existing duration from original slot before removal; fallback to default
+                            let carryDuration = null;
+                            try {
+                                const lst = ((scheduledTasksByDate[originalDate] || {})[originalTime]) || [];
+                                const baseEntry = lst.find(x => x.name === taskName && !x.continued);
+                                if (baseEntry && baseEntry.duration_mins) carryDuration = parseInt(baseEntry.duration_mins, 10);
+                            } catch (_) { carryDuration = null; }
+                            if (!Number.isFinite(carryDuration) || carryDuration <= 0) {
+                                carryDuration = getDefaultDurationMinutes(taskName);
                             }
 
                             // Remove the moved block (base + continued) from the old timeline, starting at originalTime
@@ -1348,6 +1374,36 @@
                     allTasksData = {};
                     masterTasks.forEach(t => { allTasksData[t.name] = t; });
                     renderMasterTable();
+                    // Resolve canonical header keys from master
+                    try {
+                        const findFirst = (pred) => masterHeaders.find(pred);
+                        const endsWith = (suf) => (h) => typeof h === 'string' && h.endsWith(suf);
+                        hdrKeys.weekly = findFirst(h => h === 'Task/WhenAndDuration/Weekly') || hdrKeys.weekly;
+                        hdrKeys.monthly = findFirst(h => h === 'Task/WhenAndDuration/Monthly') || hdrKeys.monthly;
+                        hdrKeys.defaultDuration = findFirst(h => h === 'Task/WhenAndDuration/DefaultDuration') || hdrKeys.defaultDuration;
+                        hdrKeys.whichday = findFirst(h => /Task\/When(?:AndDuration)?\/Whichday$/i.test(h)) || hdrKeys.whichday;
+                        hdrKeys.whichweek = findFirst(h => /Task\/When(?:AndDuration)?\/WhichWeek$/i.test(h)) || hdrKeys.whichweek;
+                        hdrKeys.priority = findFirst(h => h === 'Task/Priority') || hdrKeys.priority;
+                        // Update unscheduled table header labels to exactly match master headers
+                        const uwHead = document.querySelector('#unscheduled-weekly-head tr');
+                        const umHead = document.querySelector('#unscheduled-monthly-head tr');
+                        if (uwHead) {
+                            const cells = uwHead.querySelectorAll('th');
+                            if (cells[2]) cells[2].textContent = hdrKeys.weekly;
+                            if (cells[3]) cells[3].textContent = hdrKeys.whichday;
+                            if (cells[4]) cells[4].textContent = hdrKeys.whichweek;
+                            if (cells[5]) cells[5].textContent = hdrKeys.priority;
+                            if (cells[6]) cells[6].textContent = hdrKeys.defaultDuration;
+                        }
+                        if (umHead) {
+                            const cells = umHead.querySelectorAll('th');
+                            if (cells[2]) cells[2].textContent = hdrKeys.monthly;
+                            if (cells[3]) cells[3].textContent = hdrKeys.whichday;
+                            if (cells[4]) cells[4].textContent = hdrKeys.whichweek;
+                            if (cells[5]) cells[5].textContent = hdrKeys.priority;
+                            if (cells[6]) cells[6].textContent = hdrKeys.defaultDuration;
+                        }
+                    } catch (_) {}
                     // Store history for rule checks and status column
                     window.allHistory = data.history || {};
 
@@ -1374,9 +1430,6 @@
                             (tasks || []).forEach(t => {
                                 const tv = t.tag_values || {};
                                 const weeklyVals = tv['Task/WhenAndDuration/Weekly'] || [];
-                                const whichdayVals = tv['Task/When/Whichday'] || [];
-                                const nameAndTypeVals = tv['Task/NameAndType'] || [];
-                                const whatTaskVals = tv['Task/WhatTASK'] || [];
 
                                 // Detect explicit Weekly counts like "2X"
                                 let inferredCount = 0;
@@ -1386,14 +1439,9 @@
                                     else inferredCount = 1;
                                 }
 
-                                // If no explicit Weekly, infer weekly when Whichday mentions Saturday/Sunday or weekend group tag present
-                                const mentionsWeekendDay = (whichdayVals || []).some(v => /sat(urday)?|sun(day)?|weekend/i.test(String(v)));
-                                const isWeekendGroup = (nameAndTypeVals || []).some(v => /WeekendTASKgroup/i.test(String(v))) ||
-                                                       (whatTaskVals || []).some(v => /WeekendTASKgroup/i.test(String(v)));
-
-                                // Include any weekly recurrence (1X, 2X, ...), or inferred weekend tasks
+                                // Include any weekly recurrence (1X, 2X, ...)
                                 const count = inferredCount > 0 ? inferredCount : 1;
-                                if ((weeklyVals.length > 0) || mentionsWeekendDay || isWeekendGroup) {
+                                if (weeklyVals.length > 0) {
                                     if (!unscheduledTasksState.weekly[t.name]) {
                                         unscheduledTasksState.weekly[t.name] = {
                                             name: t.name,
@@ -1406,6 +1454,15 @@
                             });
                         } catch (_) {}
                     }
+                    // Final strict filter: ensure Weekly list only includes tasks with WhenAndDuration/Weekly values
+                    try {
+                        Object.keys(unscheduledTasksState.weekly).forEach(name => {
+                            const tv = (allTasksData[name] && allTasksData[name].tag_values) || {};
+                            if (!((tv['Task/WhenAndDuration/Weekly'] || []).length)) {
+                                delete unscheduledTasksState.weekly[name];
+                            }
+                        });
+                    } catch (_) {}
                     renderUnscheduledTasks();
                 });
             
