@@ -65,24 +65,37 @@ def parse_default_scheduled_tasks(template_path):
     try:
         with open(template_path, 'r') as f:
             content = f.read()
+        current_main_task_index = -1 # To track the index of the last main task
         for line in content.splitlines():
-            if "- [ ]" not in line:
-                continue
-            time_match = re.search(r"(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})", line)
-            if not time_match:
-                continue
-            start_time_str = time_match.group(1).strip()
-            end_time_str = time_match.group(2).strip()
-            time_range = f"{start_time_str} - {end_time_str}"
-            task_name = line.replace(time_range, "").replace("- [ ]", "").strip()
-            clean_name, tags = extract_name_and_tags(task_name)
-            task_id = f"{clean_name}-{time_range}"
-            tasks.append({
-                "id": task_id,
-                "name": clean_name,
-                "time": time_range,
-                "tags": tags
-            })
+            # Check for main task with time range
+            time_match = re.search(r"^\s*-\s*\[\s*\]\s*.*(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2}).*", line)
+
+            if time_match:
+                # This is a main task
+                start_time_str = time_match.group(1).strip()
+                end_time_str = time_match.group(2).strip()
+                time_range = f"{start_time_str} - {end_time_str}"
+                # Extract the task name by removing the time range and "- [ ]"
+                task_name_raw = line.replace(time_range, "").replace("- [ ]", "").strip()
+
+                clean_name, tags = extract_name_and_tags(task_name_raw)
+                task_id = f"{clean_name}-{time_range}"
+                tasks.append({
+                    "id": task_id,
+                    "name": clean_name,
+                    "time": time_range,
+                    "tags": tags,
+                    "subtasks": [] # Initialize an empty list for subtasks
+                })
+                current_main_task_index = len(tasks) - 1
+            elif current_main_task_index != -1 and (line.strip().startswith('-') or line.strip().startswith('*')) and line.startswith(' '):
+                # This is a potential subtask (indented and starts with - or *)
+                # A simple check for now: if it starts with a space, consider it a subtask
+                tasks[current_main_task_index]["subtasks"].append(line.strip())
+            else:
+                # Not a main task or a subtask, reset current_main_task_index
+                current_main_task_index = -1
+
         # Sort by start time string for stable UI ordering
         def to_minutes(t):
             try:
@@ -255,31 +268,30 @@ def plan_note(debug_mode=False):
                 template_content = f.read()
 
             scheduled_tasks = []
+            current_main_task_index = -1 # To track the index of the last main task
             for line in template_content.splitlines():
-                if "- [ ]" not in line:
-                    continue
-
-                time_match = re.search(r"(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})", line)
+                # Check for main task with time range
+                time_match = re.search(r"^\s*-\s*\[\s*\]\s*.*(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2}).*", line)
 
                 if time_match:
-                    # Corrected: Directly use captured groups for start and end times
+                    # This is a main task
                     start_time_str = time_match.group(1).strip()
                     end_time_str = time_match.group(2).strip()
-                    time_range = f"{start_time_str} - {end_time_str}" # Reconstruct time_range if needed
-                    task_name = line.replace(time_range, "").replace("- [ ]", "").strip()
+                    time_range = f"{start_time_str} - {end_time_str}"
+                    # Extract the task name by removing the time range and "- [ ]"
+                    task_name_raw = line.replace(time_range, "").replace("- [ ]", "").strip()
 
                     start_time_obj, end_time_obj, duration_minutes = None, None, 0
                     try:
                         start_hour, start_minute = map(int, start_time_str.split(':'))
-                        start_time_obj = datetime.datetime(1, 1, 1, start_hour, start_minute)
                         end_hour, end_minute = map(int, end_time_str.split(':'))
+                        start_time_obj = datetime.datetime(1, 1, 1, start_hour, start_minute)
                         end_time_obj = datetime.datetime(1, 1, 1, end_hour, end_minute)
-                        duration = end_time_obj - start_time_obj
-                        duration_minutes = duration.total_seconds() / 60
-                    except (ValueError, IndexError):
+                        duration_minutes = (end_time_obj - start_time_obj).total_seconds() / 60
+                    except (ValueError, IndexError, TypeError):
                         pass
 
-                    clean_name, tags = extract_name_and_tags(task_name)
+                    clean_name, tags = extract_name_and_tags(task_name_raw)
                     task_id = f"{clean_name}-{time_range}"
                     scheduled_tasks.append({
                         "id": task_id,
@@ -289,8 +301,18 @@ def plan_note(debug_mode=False):
                         "end_time": end_time_obj,
                         "duration_minutes": duration_minutes,
                         "source": "default",
-                        "tags": tags
+                        "tags": tags,
+                        "subtasks": [] # Initialize an empty list for subtasks
                     })
+                    current_main_task_index = len(scheduled_tasks) - 1
+                elif current_main_task_index != -1 and (line.strip().startswith('-') or line.strip().startswith('*')) and line.startswith(' '):
+                    # This is a potential subtask (indented and starts with - or *)
+                    # Check if it's actually indented more than the parent task
+                    # A simple check for now: if it starts with a space, consider it a subtask
+                    scheduled_tasks[current_main_task_index]["subtasks"].append(line.strip())
+                else:
+                    # Not a main task or a subtask, reset current_main_task_index
+                    current_main_task_index = -1
 
             # Sort scheduled_tasks by start_time
             scheduled_tasks.sort(key=lambda x: x["start_time"] if x["start_time"] else datetime.datetime.max)
@@ -389,30 +411,30 @@ def plan_note(debug_mode=False):
 
             # Extract scheduled tasks from day-specific template
             day_specific_scheduled_tasks = []
+            current_main_task_index = -1 # To track the index of the last main task
             for line in day_specific_template_content.splitlines():
-                if "- [ ]" not in line:
-                    continue
-
-                time_match = re.search(r"(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})", line)
+                # Check for main task with time range
+                time_match = re.search(r"^\s*-\s*\[\s*\]\s*.*(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2}).*", line)
 
                 if time_match:
+                    # This is a main task
                     start_time_str = time_match.group(1).strip()
                     end_time_str = time_match.group(2).strip()
                     time_range = f"{start_time_str} - {end_time_str}"
-                    task_name = line.replace(time_range, "").replace("- [ ]", "").strip()
+                    # Extract the task name by removing the time range and "- [ ]"
+                    task_name_raw = line.replace(time_range, "").replace("- [ ]", "").strip()
 
                     start_time_obj, end_time_obj, duration_minutes = None, None, 0
                     try:
                         start_hour, start_minute = map(int, start_time_str.split(':'))
-                        start_time_obj = datetime.datetime(1, 1, 1, start_hour, start_minute)
                         end_hour, end_minute = map(int, end_time_str.split(':'))
+                        start_time_obj = datetime.datetime(1, 1, 1, start_hour, start_minute)
                         end_time_obj = datetime.datetime(1, 1, 1, end_hour, end_minute)
-                        duration = end_time_obj - start_time_obj
-                        duration_minutes = duration.total_seconds() / 60
-                    except (ValueError, IndexError):
+                        duration_minutes = (end_time_obj - start_time_obj).total_seconds() / 60
+                    except (ValueError, IndexError, TypeError):
                         pass
 
-                    clean_name, tags = extract_name_and_tags(task_name)
+                    clean_name, tags = extract_name_and_tags(task_name_raw)
                     task_id = f"{clean_name}-{time_range}"
                     day_specific_scheduled_tasks.append({
                         "id": task_id,
@@ -422,8 +444,18 @@ def plan_note(debug_mode=False):
                         "end_time": end_time_obj,
                         "duration_minutes": duration_minutes,
                         "source": "day_specific",
-                        "tags": tags
+                        "tags": tags,
+                        "subtasks": [] # Initialize an empty list for subtasks
                     })
+                    current_main_task_index = len(day_specific_scheduled_tasks) - 1
+                elif current_main_task_index != -1 and (line.strip().startswith('-') or line.strip().startswith('*')) and line.startswith(' '):
+                    # This is a potential subtask (indented and starts with - or *)
+                    # Check if it's actually indented more than the parent task
+                    # A simple check for now: if it starts with a space, consider it a subtask
+                    day_specific_scheduled_tasks[current_main_task_index]["subtasks"].append(line.strip())
+                else:
+                    # Not a main task or a subtask, reset current_main_task_index
+                    current_main_task_index = -1
             day_specific_details["ScheduledTasks"] = day_specific_scheduled_tasks
 
         except Exception as e:
@@ -591,44 +623,63 @@ def plan_note_route():
     return render_template('index.html', config=config, results=results, daily_note_exists=daily_note_exists, pixels_per_minute=PIXELS_PER_MINUTE, default_tasks_for_ui=default_tasks_for_ui)
 
 def generate_markdown_from_tasks(tasks, original_content):
-    """Generates a new markdown string from a list of task objects."""
+    """Generates a new markdown string from a list of task objects, including subtasks."""
 
-    # Regular expression to identify task lines, adjusted to be more general
-    task_line_regex = re.compile(r"^\s*-\s*\[\s*\]\s*.*(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2}).*")
-
-    # Filter out old task lines from the original content
-    non_task_lines = [line for line in original_content.splitlines() if not task_line_regex.search(line)]
-
-    # Create new task lines from the tasks data
-    new_task_lines = []
+    generated_task_lines = []
     for task in tasks:
-        # Recreate the time string from start_time and end_time, which are now strings like 'HH:MM'
-        start_time_str = task['start_time']
-        end_time_str = task['end_time']
+        # Main task line
+        # Ensure start_time and end_time are strings for formatting
+        start_time_str = task['start_time'].strftime('%H:%M') if isinstance(task['start_time'], datetime.datetime) else task['time'].split(' - ')[0]
+        end_time_str = task['end_time'].strftime('%H:%M') if isinstance(task['end_time'], datetime.datetime) else task['time'].split(' - ')[1]
+
         time_range = f"{start_time_str} - {end_time_str}"
-        new_task_lines.append(f"- [ ] {task['name']} {time_range}")
+        generated_task_lines.append(f"- [ ] {task['name']} {time_range}")
 
-    # For simplicity, let's find a common section to insert the tasks.
-    # A more robust solution might use markers, but for now, we'll find a header.
-    # Let's assume tasks are typically under a "## Schedule" or similar header.
-    # If not found, we'll append to the end.
+        # Add subtasks with indentation
+        for subtask_line in task.get('subtasks', []):
+            # Preserve original indentation of subtask if it exists, otherwise add 4 spaces
+            if subtask_line.startswith(' '):
+                generated_task_lines.append(subtask_line)
+            else:
+                generated_task_lines.append(f"    {subtask_line}") # Default indentation
 
-    # This is a placeholder for a more intelligent insertion logic.
-    # For now, we will just combine the non-task lines and the new task lines.
-    # This might not preserve the original structure perfectly, but it's a start.
+    # Find insertion point in original_content
+    original_lines = original_content.splitlines()
+    insertion_point = -1
+    schedule_header_found = False
 
-    # A simple approach: find the first task line in the original and replace the block.
-    # This is hard. Let's just append the tasks to the end of the non-task lines.
-
-    final_content_lines = non_task_lines + ["\n## Updated Schedule"] + new_task_lines
+    # Look for common schedule headers
+    for i, line in enumerate(original_lines):
+        if line.strip().lower() == "## schedule" or line.strip().lower() == "## daily plan":
+            insertion_point = i + 1 # Insert after the header
+            schedule_header_found = True
+            break
+    
+    # If a schedule header is found, replace existing task lines under it
+    if schedule_header_found:
+        # Find the end of the schedule section (next header or end of file)
+        end_of_schedule_section = len(original_lines)
+        for i in range(insertion_point, len(original_lines)):
+            if original_lines[i].strip().startswith('#'): # Found another header
+                end_of_schedule_section = i
+                break
+        
+        # Reconstruct content: before schedule, new schedule, after schedule
+        final_content_lines = original_lines[:insertion_point] + generated_task_lines + original_lines[end_of_schedule_section:]
+    else:
+        # If no specific schedule header, append to the end with a new top-level header
+        final_content_lines = original_lines + ["\n# Daily Schedule"] + generated_task_lines
 
     return "\n".join(final_content_lines)
 
 
 @app.route('/create_note', methods=['POST'])
 def create_note_route():
-    data = request.get_json()
-    tasks = data.get('tasks')
+    # We no longer rely on frontend to send tasks, we re-plan to get full data
+    results = plan_note(debug_mode=False) # Run plan_note to get the latest parsed tasks
+    tasks = results.get('parsed_calendar_tasks', []) # Get tasks with subtasks
+
+    data = request.get_json() # Still need original_content from frontend
     original_content = data.get('original_content')
 
     if not tasks or not original_content:
