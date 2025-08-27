@@ -673,17 +673,147 @@ def generate_markdown_from_tasks(tasks, original_content):
     return "\n".join(final_content_lines)
 
 
+def remove_excluded_tasks_from_content(original_content: str, all_tasks: list, excluded_ids: set) -> str:
+    """Remove lines for excluded tasks (and their indented subtasks) from the original content.
+    A task line is identified by presence of '- [ ]', the cleaned task name, and its time range.
+    Subsequent indented bullet lines are treated as subtasks and removed together.
+    """
+    if not original_content or not excluded_ids:
+        return original_content
+
+    # Build quick lookup of tasks to remove by id
+    tasks_by_id = {t.get('id'): t for t in all_tasks if t.get('id') in excluded_ids}
+
+    lines = original_content.splitlines()
+    new_lines = []
+    i = 0
+
+    def leading_spaces(s: str) -> int:
+        # Treat tabs as 4 spaces for indentation calculation
+        count = 0
+        for ch in s:
+            if ch == ' ':
+                count += 1
+            elif ch == '\t':
+                count += 4
+            else:
+                break
+        return count
+
+    while i < len(lines):
+        line = lines[i]
+
+        def is_main_task_line_for(task, text: str) -> bool:
+            if not task:
+                return False
+            # Expect a checklist bullet line
+            if '- [ ]' not in text:
+                return False
+            # Match by name and explicit time range tokens
+            name = task.get('name') or ''
+            time_range = task.get('time') or ''
+            if not name or not time_range:
+                return False
+            try:
+                start_tok, end_tok = [s.strip() for s in time_range.split('-')]
+            except Exception:
+                return False
+            return (name in text) and (start_tok in text) and (end_tok in text)
+
+        matched_task_id = None
+        for tid, task in tasks_by_id.items():
+            if is_main_task_line_for(task, line):
+                matched_task_id = tid
+                break
+
+        if matched_task_id:
+            # Compute base indentation of the matched main task line
+            base_indent = leading_spaces(line)
+            # Skip the main task line itself
+            i += 1
+            # Skip all following lines that are more indented than the main line
+            while i < len(lines):
+                nxt = lines[i]
+                # Always remove blank lines immediately following within the block
+                if nxt.strip() == '':
+                    i += 1
+                    continue
+                if leading_spaces(nxt) > base_indent:
+                    i += 1
+                    continue
+                # Reached next task or higher/equal indentation level -> stop
+                break
+            continue  # Do not add removed lines
+        else:
+            new_lines.append(line)
+            i += 1
+
+    return "\n".join(new_lines)
+
 @app.route('/create_note', methods=['POST'])
 def create_note_route():
-    # We no longer rely on frontend to send tasks, we re-plan to get full data
-    results = plan_note(debug_mode=False) # Run plan_note to get the latest parsed tasks
-    tasks = results.get('parsed_calendar_tasks', []) # Get tasks with subtasks
+    # Re-plan to get full tasks (including subtasks) then honor client plan
+    results = plan_note(debug_mode=False)
+    all_tasks = results.get('parsed_calendar_tasks', [])
 
-    data = request.get_json() # Still need original_content from frontend
+    data = request.get_json(silent=True) or {}
     original_content = data.get('original_content')
+    removed_ids = set(data.get('removed_ids') or [])
+    overrides = {o.get('id'): o for o in (data.get('overrides') or []) if o and o.get('id')}
+    mode = data.get('mode')  # Optional: 'WFO' | 'WFH' | 'NoWork'
 
-    if not tasks or not original_content:
+    if not all_tasks or not original_content:
         return jsonify({"status": "error", "message": "Missing tasks or original content."}), 400
+
+    # Filter out removed tasks (subtasks are attached to tasks; removing a task removes its subtasks)
+    filtered_tasks = [t for t in all_tasks if t.get('id') not in removed_ids]
+
+    # Server-side safety: also enforce mode-based filtering to avoid client mismatches
+    def has_tag(tags_list, tag_value: str):
+        return isinstance(tags_list, list) and tag_value in tags_list
+
+    def is_work_related(tags_list):
+        return isinstance(tags_list, list) and any(t in tags_list for t in [
+            '#WorkRelatedTask', '#WorkRelatedTask/WorkFromOfficeDayTask', '#WorkRelatedTask/WorkFromHomeDayTask'])
+
+    def should_hide_by_mode(tags_list, current_mode: str):
+        if not current_mode:
+            return False
+        if current_mode == 'NoWork':
+            return is_work_related(tags_list)
+        if current_mode == 'WFH':
+            return has_tag(tags_list, '#WorkRelatedTask/WorkFromOfficeDayTask')
+        if current_mode == 'WFO':
+            return has_tag(tags_list, '#WorkRelatedTask/WorkFromHomeDayTask')
+        return False
+
+    if mode in ('WFH', 'NoWork', 'WFO'):
+        filtered_tasks = [t for t in filtered_tasks if not should_hide_by_mode(t.get('tags', []), mode)]
+
+    # Apply time overrides (keep order by start time after override)
+    def parse_hhmm(hhmm: str):
+        try:
+            hours, minutes = map(int, hhmm.split(':'))
+            return datetime.datetime(1, 1, 1, hours, minutes)
+        except Exception:
+            return None
+
+    for task in filtered_tasks:
+        oid = task.get('id')
+        if not oid:
+            continue
+        ov = overrides.get(oid)
+        if not ov:
+            continue
+        start_obj = parse_hhmm(ov.get('start_time', ''))
+        end_obj = parse_hhmm(ov.get('end_time', ''))
+        if start_obj and end_obj:
+            task['start_time'] = start_obj
+            task['end_time'] = end_obj
+            task['time'] = f"{start_obj.strftime('%H:%M')} - {end_obj.strftime('%H:%M')}"
+
+    # Re-sort by start_time
+    filtered_tasks.sort(key=lambda x: x.get('start_time') if x.get('start_time') else datetime.datetime.max)
 
     config = load_config()
     journal_folder = config.get("journal_folder", "")
@@ -694,20 +824,23 @@ def create_note_route():
     daily_note_path = os.path.join(journal_folder, daily_note_filename)
     os.makedirs(journal_folder, exist_ok=True)
 
-    # Generate the new markdown content
-    final_note_content_str = generate_markdown_from_tasks(tasks, original_content)
+    # Remove excluded tasks (and their subtasks) from the original content first
+    excluded_by_filter = set(t.get('id') for t in all_tasks) - set(t.get('id') for t in filtered_tasks)
+    cleaned_original_content = remove_excluded_tasks_from_content(original_content, all_tasks, excluded_by_filter)
+
+    # Generate the new markdown content from filtered and overridden tasks
+    final_note_content_str = generate_markdown_from_tasks(filtered_tasks, cleaned_original_content)
 
     try:
         with open(daily_note_path, 'w') as f:
             f.write(final_note_content_str)
 
-        # Open the note in Obsidian
+        # Attempt to open in Obsidian (best effort)
         try:
             encoded_path = urllib.parse.quote(daily_note_path)
             obsidian_uri = f"obsidian://open?path={encoded_path}"
             webbrowser.open(obsidian_uri)
         except Exception as e:
-            # Non-critical error, just log it
             print(f"DEBUG: Error opening Obsidian URI: {e}")
 
         return jsonify({"status": "success", "message": f"Daily note created at {daily_note_path}"})

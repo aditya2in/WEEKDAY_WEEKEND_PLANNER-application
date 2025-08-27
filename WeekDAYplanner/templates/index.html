@@ -561,8 +561,8 @@
                                     <label>
                                         <input type="radio" name="workMode" value="WFO">
                                         <div>
-                                            <div class="mode-title">WFO (Work related tasks included)</div>
-                                            <div class="mode-desc">tags: #WorkRelatedTask, #WorkRelatedTask/WorkFromOfficeDayTask, #WorkRelatedTask/WorkFromHomeDayTask</div>
+                                            <div class="mode-title">WFO (All work from home tasks are removed)</div>
+                                            <div class="mode-desc">removed tags: #WorkRelatedTask/WorkFromHomeDayTask</div>
                                         </div>
                                     </label>
                                 </li>
@@ -571,7 +571,7 @@
                                         <input type="radio" name="workMode" value="WFH">
                                         <div>
                                             <div class="mode-title">WFH (All work from office tasks are removed)</div>
-                                            <div class="mode-desc">tags: #WorkRelatedTask/WorkFromOfficeDayTask</div>
+                                            <div class="mode-desc">removed tags: #WorkRelatedTask/WorkFromOfficeDayTask</div>
                                         </div>
                                     </label>
                                 </li>
@@ -580,7 +580,7 @@
                                         <input type="radio" name="workMode" value="NoWork">
                                         <div>
                                             <div class="mode-title">NoWork (All work-related tasks removed)</div>
-                                            <div class="mode-desc">tags: #WorkRelatedTask, #WorkRelatedTask/WorkFromOfficeDayTask, #WorkRelatedTask/WorkFromHomeDayTask</div>
+                                            <div class="mode-desc">removed tags: #WorkRelatedTask, #WorkRelatedTask/WorkFromOfficeDayTask, #WorkRelatedTask/WorkFromHomeDayTask</div>
                                         </div>
                                     </label>
                                 </li>
@@ -742,6 +742,11 @@
         <div class="create-section">
             <h2>Final Planned List</h2>
             <div id="final-list" class="box box-info"></div>
+
+            <h2>Removed Content</h2>
+            <div id="removed-content" class="box box-info">
+                <pre id="removed-content-pre" style="white-space: pre-wrap; margin: 0;"></pre>
+            </div>
 
             <h2>Create Daily Note</h2>
             <form id="create-note-form" action="/create_note" method="post">
@@ -1100,6 +1105,90 @@
             const removedSet = new Set();
 
             // Build Final Planned List with diff markers
+            function buildRemovedContentPreview() {
+                const pre = document.getElementById('removed-content-pre');
+                const container = document.getElementById('removed-content');
+                if (!pre || !container) return;
+
+                const removedIds = window.removedIds || new Set();
+                if (!(removedIds instanceof Set)) {
+                    // normalize plain arrays to Set
+                    try { window.removedIds = new Set(removedIds); } catch (e) { /* noop */ }
+                }
+
+                const allTasks = [];
+                // Default A tasks
+                try { (defaultTasks || []).forEach(t => allTasks.push(t)); } catch (_) {}
+                // Day-specific tasks
+                try {
+                    (calendarTasks || []).forEach(t => {
+                        if (!t) return;
+                        // Ensure we have an id, name, and time string
+                        const timeStr = t.time || `${minutesToTime(t.startMinutes)} - ${minutesToTime(t.endMinutes)}`;
+                        allTasks.push({ id: t.id, name: t.name, time: timeStr });
+                    });
+                } catch (_) {}
+
+                // Fast lookup by id
+                const byId = new Map(allTasks.filter(t => t && t.id).map(t => [String(t.id), t]));
+
+                // Prepare to scan original content lines and capture removed blocks
+                const lines = (originalContent || '').split(/\r?\n/);
+
+                function leadingSpaces(s) {
+                    let count = 0; for (let ch of s) { if (ch === ' ') count++; else if (ch === '\t') count += 4; else break; }
+                    return count;
+                }
+                function isMainTaskLineFor(task, text) {
+                    if (!task || !text) return false;
+                    if (text.indexOf('- [ ]') === -1) return false;
+                    const name = task.name || '';
+                    const timeRange = task.time || '';
+                    if (!name || !timeRange) return false;
+                    const parts = timeRange.split('-');
+                    if (parts.length < 2) return false;
+                    const startTok = parts[0].trim();
+                    const endTok = parts[1].trim();
+                    return text.includes(name) && text.includes(startTok) && text.includes(endTok);
+                }
+
+                const removedBlocks = [];
+                const removedIdsSet = window.removedIds || new Set();
+                const remainingToMatch = new Set(Array.from(removedIdsSet).map(String));
+
+                let i = 0;
+                while (i < lines.length && remainingToMatch.size > 0) {
+                    const line = lines[i];
+                    let matchId = null;
+                    for (const id of remainingToMatch) {
+                        const task = byId.get(id);
+                        if (isMainTaskLineFor(task, line)) { matchId = id; break; }
+                    }
+                    if (matchId) {
+                        const baseIndent = leadingSpaces(line);
+                        const block = [line];
+                        i += 1;
+                        while (i < lines.length) {
+                            const nxt = lines[i];
+                            if (nxt.trim() === '') { block.push(nxt); i += 1; continue; }
+                            if (leadingSpaces(nxt) > baseIndent) { block.push(nxt); i += 1; continue; }
+                            break;
+                        }
+                        removedBlocks.push(block.join('\n'));
+                        remainingToMatch.delete(matchId);
+                        continue;
+                    } else {
+                        i += 1;
+                    }
+                }
+
+                if (removedBlocks.length === 0) {
+                    pre.textContent = '(nothing removed)';
+                } else {
+                    pre.textContent = removedBlocks.join('\n\n---\n\n');
+                }
+            }
+
             function buildFinalList() {
                 const container = document.getElementById('final-list');
                 if (!container) return;
@@ -1139,6 +1228,9 @@
 
                 // Re-render calendar to reflect removal styling
                 renderCalendar(calendarTasks);
+
+                // Update Removed Content preview
+                buildRemovedContentPreview();
             }
 
             buildFinalList();
@@ -1161,7 +1253,7 @@
                 if (!mode) return false;
                 if (mode === 'NoWork') return isWorkRelated(tags);
                 if (mode === 'WFH') return hasTag(tags, WORK_TAG_WFO);
-                if (mode === 'WFO') return false;
+                if (mode === 'WFO') return hasTag(tags, WORK_TAG_WFH);
                 return false;
             }
 
@@ -1248,18 +1340,26 @@
                     event.preventDefault();
 
                     const removed = window.removedIds || new Set();
-                    const filteredTasks = calendarTasks.filter(t => !removed.has(t.id));
+                    const removedIds = Array.from(removed);
+
+                    // Collect final times seen on calendar for tasks that are NOT removed
+                    const overrides = (Array.isArray(calendarTasks) ? calendarTasks : [])
+                        .filter(t => t && t.id && !removed.has(t.id))
+                        .map(t => ({
+                            id: t.id,
+                            start_time: minutesToTime(t.startMinutes),
+                            end_time: minutesToTime(t.endMinutes)
+                        }));
+
+                    // Capture selected work mode (if any)
+                    const selectedModeEl = document.querySelector('input[name="workMode"]:checked');
+                    const mode = selectedModeEl ? selectedModeEl.value : null;
 
                     const payload = {
                         original_content: originalContent,
-                        tasks: filteredTasks.map(task => {
-                            return {
-                                name: task.name,
-                                start_time: minutesToTime(task.startMinutes),
-                                end_time: minutesToTime(task.endMinutes),
-                                source: task.source
-                            };
-                        })
+                        removed_ids: removedIds,
+                        overrides: overrides,
+                        mode: mode
                     };
 
                     fetch('/create_note', {
