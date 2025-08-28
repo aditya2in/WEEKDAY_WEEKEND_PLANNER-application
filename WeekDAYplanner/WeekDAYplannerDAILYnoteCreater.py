@@ -269,7 +269,7 @@ def plan_note(debug_mode=False):
 
             scheduled_tasks = []
             current_main_task_index = -1 # To track the index of the last main task
-            for line in template_content.splitlines():
+            for line_num, line in enumerate(template_content.splitlines(), start=1):
                 # Check for main task with time range
                 time_match = re.search(r"^\s*-\s*\[\s*\]\s*.*(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2}).*", line)
 
@@ -302,7 +302,8 @@ def plan_note(debug_mode=False):
                         "duration_minutes": duration_minutes,
                         "source": "default",
                         "tags": tags,
-                        "subtasks": [] # Initialize an empty list for subtasks
+                        "subtasks": [], # Initialize an empty list for subtasks
+                        "line_number": line_num
                     })
                     current_main_task_index = len(scheduled_tasks) - 1
                 elif current_main_task_index != -1 and (line.strip().startswith('-') or line.strip().startswith('*')) and line.startswith(' '):
@@ -470,6 +471,7 @@ def plan_note(debug_mode=False):
 
     # --- Concatenating Logic ---
     final_note_content = default_template_content.splitlines()
+    inserted_line_numbers_for_preview = []  # 1-based line numbers in preview content
     debug_print(f"Default template has {len(final_note_content)} lines.")
 
     def clean_for_comparison(text):
@@ -493,7 +495,12 @@ def plan_note(debug_mode=False):
                         insertion_details["Search Keyword"] = search_keyword
                         insertion_details["Matched Line"] = line.strip()
                         insertion_details["Line Number"] = i + 1
+                        # Insert all lines from the day-specific template except the first header line
                         final_note_content[i+1:i+1] = day_specific_lines[1:]
+                        # Track inserted line numbers for preview highlighting (1-based)
+                        insert_start = i + 1  # 0-based index of first inserted line
+                        insert_len = max(0, len(day_specific_lines) - 1)
+                        inserted_line_numbers_for_preview = [n + 1 for n in range(insert_start, insert_start + insert_len)]
                         inserted = True
                         break
 
@@ -515,12 +522,31 @@ def plan_note(debug_mode=False):
                 insertion_details["Location"] = "Appended to the end of the file."
                 insertion_details["Search Keyword"] = cleaned_search_keyword
                 insertion_details["Context Snippet"] = "No specific insertion context available (content appended)."
-                final_note_content.append("\n\n--- Day Specific Additions ---\n")
+                # Append a clear single-line marker, then the day-specific lines
+                # Avoid embedding newlines inside a single list element so line numbers are accurate
+                final_note_content.append("")
+                final_note_content.append("--- Day Specific Additions ---")
+                final_note_content.append("")
+                append_start_idx = len(final_note_content)  # index where day-specific lines will start
                 final_note_content.extend(day_specific_lines)
+                # Compute inserted line numbers for preview (marker + blank lines + appended day-specific lines)
+                # We'll highlight only the day-specific lines (not the blank lines), and the marker for clarity
+                # Build a temporary joined view to count lines accurately
+                joined = "\n".join(final_note_content)
+                all_lines = joined.splitlines()
+                # Find the marker line index (0-based) in the splitlines view
+                try:
+                    marker_idx = next(idx for idx, ln in enumerate(all_lines) if ln.strip() == "--- Day Specific Additions ---")
+                except StopIteration:
+                    marker_idx = None
+                if marker_idx is not None:
+                    # Highlight marker and all following lines that came from day-specific content
+                    inserted_line_numbers_for_preview = list(range(marker_idx + 1, len(all_lines) + 1))
     results["insertion_report"] = insertion_details
 
     final_note_content_str = "\n".join(final_note_content)
     debug_print(f"Final note content length: {len(final_note_content_str)} characters.")
+    results["final_note_inserted_line_numbers"] = inserted_line_numbers_for_preview
 
     # --- Combine, Sort, and Process All Scheduled Tasks ---
     # No preset filtering: include all default tasks; day-specific tasks are additions
@@ -645,30 +671,86 @@ def generate_markdown_from_tasks(tasks, original_content):
 
     # Find insertion point in original_content
     original_lines = original_content.splitlines()
+
+    # 1) Priority: insert under an existing schedule header (accept common variants)
+    def is_schedule_header(text: str) -> bool:
+        if not isinstance(text, str):
+            return False
+        stripped = text.strip()
+        if not stripped.startswith('#'):
+            return False
+        # Only consider level 2 or 3 headers for placement
+        if not (stripped.startswith('##') or stripped.startswith('###')):
+            return False
+        # Normalize header content
+        header_text = stripped.lstrip('#').strip().lower()
+        # Accept common variants
+        accepted = {
+            'schedule',
+            'daily plan',
+            'daily schedule',
+            'day planner',
+            'daily planner',
+        }
+        return header_text in accepted
+
     insertion_point = -1
     schedule_header_found = False
-
-    # Look for common schedule headers
     for i, line in enumerate(original_lines):
-        if line.strip().lower() == "## schedule" or line.strip().lower() == "## daily plan":
-            insertion_point = i + 1 # Insert after the header
+        if is_schedule_header(line):
+            insertion_point = i + 1
             schedule_header_found = True
             break
-    
-    # If a schedule header is found, replace existing task lines under it
+
     if schedule_header_found:
-        # Find the end of the schedule section (next header or end of file)
+        # Replace existing content under the header up to the next header
         end_of_schedule_section = len(original_lines)
-        for i in range(insertion_point, len(original_lines)):
-            if original_lines[i].strip().startswith('#'): # Found another header
-                end_of_schedule_section = i
+        for j in range(insertion_point, len(original_lines)):
+            if original_lines[j].strip().startswith('#'):
+                end_of_schedule_section = j
                 break
-        
-        # Reconstruct content: before schedule, new schedule, after schedule
         final_content_lines = original_lines[:insertion_point] + generated_task_lines + original_lines[end_of_schedule_section:]
+        return "\n".join(final_content_lines)
+
+    # 2) Else: replace the first detected time-block of checklist tasks (with subtasks)
+    time_task_re = re.compile(r"^\s*-\s*\[\s*\]\s*.*\b\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2}\b")
+    def is_main_time_task_line(text: str) -> bool:
+        return bool(time_task_re.search(text or ""))
+
+    def is_indented_bullet(text: str) -> bool:
+        if not text:
+            return False
+        # Indented list items like "    - something" or "    * something"
+        return bool(re.match(r"^\s+[-*]\s+", text))
+
+    start_idx = -1
+    for i, line in enumerate(original_lines):
+        if is_main_time_task_line(line):
+            start_idx = i
+            break
+
+    if start_idx != -1:
+        end_idx = start_idx + 1
+        while end_idx < len(original_lines):
+            cur = original_lines[end_idx]
+            if cur.strip().startswith('#'):
+                break
+            if cur.strip() == "":
+                end_idx += 1
+                continue
+            if is_main_time_task_line(cur) or is_indented_bullet(cur):
+                end_idx += 1
+                continue
+            # Any other non-blank, non-subtask, non-time-task line ends the block
+            break
+        final_content_lines = original_lines[:start_idx] + generated_task_lines + original_lines[end_idx:]
+        return "\n".join(final_content_lines)
+
+    # 3) Else: insert at end with no heading
+    if original_lines and original_lines[-1].strip() != "":
+        final_content_lines = original_lines + [""] + generated_task_lines
     else:
-        # If no specific schedule header, append to the end with a new top-level header
-        final_content_lines = original_lines + ["\n# Daily Schedule"] + generated_task_lines
+        final_content_lines = original_lines + generated_task_lines
 
     return "\n".join(final_content_lines)
 
@@ -759,61 +841,14 @@ def create_note_route():
     data = request.get_json(silent=True) or {}
     original_content = data.get('original_content')
     removed_ids = set(data.get('removed_ids') or [])
-    overrides = {o.get('id'): o for o in (data.get('overrides') or []) if o and o.get('id')}
-    mode = data.get('mode')  # Optional: 'WFO' | 'WFH' | 'NoWork'
+    # Simplified flow per user intent: ignore overrides and mode; just delete red (removed) blocks
+    overrides = {}
+    mode = None
 
     if not all_tasks or not original_content:
         return jsonify({"status": "error", "message": "Missing tasks or original content."}), 400
 
-    # Filter out removed tasks (subtasks are attached to tasks; removing a task removes its subtasks)
-    filtered_tasks = [t for t in all_tasks if t.get('id') not in removed_ids]
-
-    # Server-side safety: also enforce mode-based filtering to avoid client mismatches
-    def has_tag(tags_list, tag_value: str):
-        return isinstance(tags_list, list) and tag_value in tags_list
-
-    def is_work_related(tags_list):
-        return isinstance(tags_list, list) and any(t in tags_list for t in [
-            '#WorkRelatedTask', '#WorkRelatedTask/WorkFromOfficeDayTask', '#WorkRelatedTask/WorkFromHomeDayTask'])
-
-    def should_hide_by_mode(tags_list, current_mode: str):
-        if not current_mode:
-            return False
-        if current_mode == 'NoWork':
-            return is_work_related(tags_list)
-        if current_mode == 'WFH':
-            return has_tag(tags_list, '#WorkRelatedTask/WorkFromOfficeDayTask')
-        if current_mode == 'WFO':
-            return has_tag(tags_list, '#WorkRelatedTask/WorkFromHomeDayTask')
-        return False
-
-    if mode in ('WFH', 'NoWork', 'WFO'):
-        filtered_tasks = [t for t in filtered_tasks if not should_hide_by_mode(t.get('tags', []), mode)]
-
-    # Apply time overrides (keep order by start time after override)
-    def parse_hhmm(hhmm: str):
-        try:
-            hours, minutes = map(int, hhmm.split(':'))
-            return datetime.datetime(1, 1, 1, hours, minutes)
-        except Exception:
-            return None
-
-    for task in filtered_tasks:
-        oid = task.get('id')
-        if not oid:
-            continue
-        ov = overrides.get(oid)
-        if not ov:
-            continue
-        start_obj = parse_hhmm(ov.get('start_time', ''))
-        end_obj = parse_hhmm(ov.get('end_time', ''))
-        if start_obj and end_obj:
-            task['start_time'] = start_obj
-            task['end_time'] = end_obj
-            task['time'] = f"{start_obj.strftime('%H:%M')} - {end_obj.strftime('%H:%M')}"
-
-    # Re-sort by start_time
-    filtered_tasks.sort(key=lambda x: x.get('start_time') if x.get('start_time') else datetime.datetime.max)
+    # No filtering/overrides. We'll only remove the selected (red) blocks from the provided Planned Final Note (C) content.
 
     config = load_config()
     journal_folder = config.get("journal_folder", "")
@@ -824,12 +859,12 @@ def create_note_route():
     daily_note_path = os.path.join(journal_folder, daily_note_filename)
     os.makedirs(journal_folder, exist_ok=True)
 
-    # Remove excluded tasks (and their subtasks) from the original content first
-    excluded_by_filter = set(t.get('id') for t in all_tasks) - set(t.get('id') for t in filtered_tasks)
-    cleaned_original_content = remove_excluded_tasks_from_content(original_content, all_tasks, excluded_by_filter)
+    # Expose removed defaults for UI highlighting in A table (optional)
+    results['removed_default_ids'] = list(removed_ids)
 
-    # Generate the new markdown content from filtered and overridden tasks
-    final_note_content_str = generate_markdown_from_tasks(filtered_tasks, cleaned_original_content)
+    # Remove only the selected (red) tasks and their subtasks from the provided Planned Final Note (C)
+    cleaned_original_content = remove_excluded_tasks_from_content(original_content, all_tasks, removed_ids)
+    final_note_content_str = cleaned_original_content
 
     try:
         with open(daily_note_path, 'w') as f:

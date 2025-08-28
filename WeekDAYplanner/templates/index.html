@@ -338,6 +338,9 @@
             color: #777;
             text-decoration: line-through;
         }
+        /* Entire row highlight for removed items */
+        .row-removed { background: #ffe6e6 !important; }
+        body.dark-mode .row-removed { background: #5b2b2b !important; }
         .item-badge {
             font-size: 0.75em;
             padding: 2px 4px;
@@ -446,6 +449,40 @@
             background-color: #fdfdfd;
         }
         body.dark-mode .calendar-view.fullscreen { background-color: #3a404a; }
+
+        /* Fullscreen for content preview */
+        .preview-fs-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            z-index: 3;
+            border: 1px solid #bbb;
+            background: #fff;
+            color: #333;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        body.dark-mode .preview-fs-btn {
+            background: #4b525d;
+            color: #fff;
+            border-color: #5c6370;
+        }
+        .content-preview-container { position: relative; }
+        .content-preview-container.fullscreen {
+            position: fixed !important;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 1000;
+            background: #fff;
+            padding: 10px;
+            overflow: auto;
+        }
+        body.dark-mode .content-preview-container.fullscreen { background: #3a404a; }
+        .content-preview-container.fullscreen pre {
+            max-height: none !important;
+            height: calc(100vh - 40px);
+        }
 
         @keyframes highlight-blink-dark {
             0% { background-color: #ffd700; }
@@ -591,6 +628,7 @@
                             <thead>
                                 <tr>
                                     <th class="col-num">#</th>
+                                    <th class="col-num">Ln</th>
                                     <th class="col-toggle">+/−</th>
                                     <th class="col-tz">Timezone</th>
                                     <th>Task Name</th>
@@ -599,8 +637,10 @@
                             </thead>
                             <tbody>
                                 {% for task in results.default_template_details.ScheduledTasks %}
-                                <tr id="task-{{ task.id | e }}" data-task-id="{{ task.id | e }}" data-task-name="{{ task.name | e }}" data-task-time="{{ task.time | e }}" data-tags='{{ task.tags | default([]) | tojson }}' class="preset-row">
+                                {% set is_removed = (task.id in (results.removed_default_ids or [])) %}
+                                <tr id="task-{{ task.id | e }}" data-task-id="{{ task.id | e }}" data-task-name="{{ task.name | e }}" data-task-time="{{ task.time | e }}" data-tags='{{ task.tags | default([]) | tojson }}' class="preset-row{% if is_removed %} row-removed{% endif %}">
                                     <td style="text-align:center;">{{ loop.index }}</td>
+                                    <td style="text-align:center;">{{ task.line_number or '—' }}</td>
                                     <td style="text-align:center;">
                                         <button type="button" class="toggle-btn add" data-role="toggle">+</button>
                                     </td>
@@ -650,6 +690,12 @@
                                 <p style="font-size: 12px; color: #666;">Day-Specific content could not be matched within Template A; it has been appended to the bottom of the final note.</p>
                             {% endif %}
                         </div>
+                        {% if results.insertion_report['Context Snippet'] %}
+                        <div class="box box-info" style="margin-top:10px;">
+                            <h3>Insertion Context:</h3>
+                            <pre>{{ results.insertion_report['Context Snippet'] }}</pre>
+                        </div>
+                        {% endif %}
                     {% endif %}
                     {% if results.day_specific_details.ScheduledTasks %}
                         <h4>Scheduled Tasks:</h4>
@@ -705,17 +751,27 @@
                     <p><strong>File Name:</strong> {{ results.final_note_details['File Name'] }}</p>
                     <p><strong>Path:</strong> {{ results.final_note_details.Path }}</p>
 
-                    
-
-                                        {% if results.insertion_report and results.insertion_report['Context Snippet'] %}
-                    <div class="box box-info">
-                        <h3>Insertion Context:</h3>
-                        <pre>{{ results.insertion_report['Context Snippet'] }}</pre>
-                    </div>
-                    {% endif %}
-
                     <p><strong>Content Preview:</strong></p>
-                    <pre>{{ results.final_note_content_str }}</pre>
+                    <style>
+                        .preview-line { display: block; }
+                        .preview-lnum { color: #888; display: inline-block; min-width: 3em; text-align: right; margin-right: 8px; }
+                        /* Inserted lines highlighted with deep blue background */
+                        .preview-insert { background: #0b3d91; color: #fff; }
+                        /* Removed blocks (from A) highlighted with red background */
+                        .preview-removed { background: #c62828; color: #fff; }
+                        body.dark-mode .preview-lnum { color: #999; }
+                        body.dark-mode .preview-insert { background: #1565c0; color: #fff; }
+                        body.dark-mode .preview-removed { background: #8e0000; color: #fff; }
+                    </style>
+                    {% set inserted = results.final_note_inserted_line_numbers or [] %}
+                    <div class="content-preview-container" id="content-preview-container">
+                        <button type="button" class="preview-fs-btn" id="previewFsBtn" title="Toggle fullscreen">⤢ Fullscreen</button>
+                        <pre id="content-preview-pre">
+{% for line in results.final_note_content_str.split('\n') %}
+<span class="preview-line{% if (loop.index in inserted) %} preview-insert{% endif %}"><span class="preview-lnum">{{ loop.index }}</span>{{ line | e }}</span>
+{% endfor %}
+                        </pre>
+                    </div>
                 </div>
             </div>
 
@@ -740,7 +796,7 @@
         <!-- Final Planned List and Create Note (only after planning) -->
         {% if results.status == 'success' %}
         <div class="create-section">
-            <h2>Final Planned List</h2>
+            <h2>Planned Final Note C (only time‑ranged tasks from Planned Final Note C)</h2>
             <div id="final-list" class="box box-info"></div>
 
             <h2>Removed Content</h2>
@@ -749,6 +805,9 @@
             </div>
 
             <h2>Create Daily Note</h2>
+            <p style="font-size:12px;color:#666;margin-top:-8px;margin-bottom:8px;">
+                Tip: no new section will be created in your note. Add <code>## Schedule</code> to your template to control exact placement.
+            </p>
             <form id="create-note-form" action="/create_note" method="post">
                 <button type="submit">Create Daily Note</button>
             </form>
@@ -1101,6 +1160,21 @@
             zoomInBtn.addEventListener('click', () => updateZoom(zoomFactor + 0.1));
             zoomOutBtn.addEventListener('click', () => updateZoom(zoomFactor - 0.1));
 
+            // Fullscreen toggle for Planned Final Note (C) content preview
+            const contentPreviewContainer = document.getElementById('content-preview-container');
+            const previewFsBtn = document.getElementById('previewFsBtn');
+            if (contentPreviewContainer && previewFsBtn) {
+                function togglePreviewFullscreen() {
+                    contentPreviewContainer.classList.toggle('fullscreen');
+                }
+                previewFsBtn.addEventListener('click', togglePreviewFullscreen);
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && contentPreviewContainer.classList.contains('fullscreen')) {
+                        togglePreviewFullscreen();
+                    }
+                });
+            }
+
             // Track removals directly from Default A list UI
             const removedSet = new Set();
 
@@ -1203,24 +1277,32 @@
                 let html = '';
                 html += '<ol style="margin:0; padding-left: 20px;">';
 
-                // Default tasks first, mark removed (no color indicators)
-                defaultTasks.forEach(t => {
-                    const isRemoved = removedIds.has(t.id);
-                    const marker = isRemoved ? '− ' : '';
-                    const badge = '<span class="item-badge">A</span>';
-                    const cls = isRemoved ? 'removed-item' : '';
-                    const tags = (t.tags && t.tags.length) ? ` ${t.tags.map(x => `<span class=\"item-badge\">${x}</span>`).join(' ')}` : '';
-                    html += `<li class="${cls}">${marker}(${t.time}) ${t.name} ${badge}${tags}</li>`;
-                });
+                function hasTimeRangeStr(s) {
+                    try { return typeof s === 'string' && /\b\d{1,2}:\d{2}\s*-\s*\d{1,2}:\d{2}\b/.test(s); } catch (_) { return false; }
+                }
+                function timeStrForTask(t) {
+                    // Prefer explicit .time; fallback to computed minutes if available
+                    if (t && hasTimeRangeStr(t.time || '')) return t.time;
+                    if (t && typeof minutesToTime === 'function' && Number.isFinite(t.startMinutes) && Number.isFinite(t.endMinutes)) {
+                        return `${minutesToTime(t.startMinutes)} - ${minutesToTime(t.endMinutes)}`;
+                    }
+                    return '';
+                }
 
-                // Day-specific tasks as additions (skip if removed)
+                // Mirror C only: derive solely from calendarTasks (avoids duplicates)
+
+                // Tasks present in C (from calendarTasks) including day-specific insertions; show removed as struck-through
                 calendarTasks
-                    .filter(t => t.source === 'day_specific' && !removedIds.has(t.id))
+                    .map(t => ({...t, time: timeStrForTask(t)}))
+                    .filter(t => hasTimeRangeStr(t.time || ''))
                     .forEach(t => {
-                        const badge = '<span class="item-badge">B</span>';
+                        const badge = t.source === 'day_specific' ? '<span class="item-badge">B</span>' : '<span class="item-badge">A</span>';
                         const timeStr = t.time || '';
+                        const isRemoved = removedIds.has(t.id);
+                        const cls = isRemoved ? 'removed-item' : '';
+                        const green = t.source === 'day_specific' ? ' <span class="item-badge" style="background:#e6f0ff;border:1px solid #1e88e5;color:#0b3d91;">inserted</span>' : '';
                         const tags = (t.tags && t.tags.length) ? ` ${t.tags.map(x => `<span class=\"item-badge\">${x}</span>`).join(' ')}` : '';
-                        html += `<li>+ (${timeStr}) ${t.name} ${badge}${tags}</li>`;
+                        html += `<li class="${cls}">(${timeStr}) ${t.name} ${badge}${green}${tags}</li>`;
                     });
 
                 html += '</ol>';
@@ -1231,6 +1313,79 @@
 
                 // Update Removed Content preview
                 buildRemovedContentPreview();
+
+                // Also rebuild the Planned Final Note (C) Content Preview dynamically
+                try {
+                    const pre = document.getElementById('content-preview-pre');
+                    if (pre) {
+                        // Start from server-provided base note C
+                        const lines = (originalContent || '').split(/\r?\n/);
+                        const removed = window.removedIds || new Set();
+
+                        // Recompute a marked copy by tagging crossed tasks (and their indented subtasks)
+                        function leadingSpaces(s) { let n=0; for (let ch of s) { if (ch===' ') n++; else if (ch==='\t') n+=4; else break; } return n; }
+                        // Fast lookup of id -> {name,time}
+                        const allTasks = [];
+                        try { (defaultTasks || []).forEach(t => allTasks.push(t)); } catch(_) {}
+                        try {
+                            (calendarTasks || []).forEach(t => {
+                                if (!t) return;
+                                const timeStr = t.time || `${minutesToTime(t.startMinutes)} - ${minutesToTime(t.endMinutes)}`;
+                                allTasks.push({ id: t.id, name: t.name, time: timeStr });
+                            });
+                        } catch(_) {}
+                        const byId = new Map(allTasks.filter(t => t && t.id).map(t => [String(t.id), t]));
+                        function isMainTaskLineFor(task, text) {
+                            if (!task || !text) return false; if (text.indexOf('- [ ]') === -1) return false;
+                            const name = task.name || ''; const time = task.time || ''; if (!name || !time) return false;
+                            const parts = time.split('-'); if (parts.length < 2) return false;
+                            const s = parts[0].trim(), e = parts[1].trim();
+                            return text.includes(name) && text.includes(s) && text.includes(e);
+                        }
+
+                        const marked = [];
+                        let i = 0;
+                        while (i < lines.length) {
+                            const line = lines[i];
+                            // Try to match against any removed id
+                            let matchedTask = null;
+                            for (const id of removed) {
+                                const t = byId.get(String(id));
+                                if (isMainTaskLineFor(t, line)) { matchedTask = { id, task: t }; break; }
+                            }
+                            if (matchedTask) {
+                                const baseIndent = leadingSpaces(line);
+                                // Add the main task line as removed
+                                marked.push({ text: line, removed: true });
+                                i += 1;
+                                // Add all following more-indented lines (subtasks) as removed
+                                while (i < lines.length) {
+                                    const nxt = lines[i];
+                                    if (nxt.trim() === '') { marked.push({ text: nxt, removed: true }); i += 1; continue; }
+                                    if (leadingSpaces(nxt) > baseIndent) { marked.push({ text: nxt, removed: true }); i += 1; continue; }
+                                    break;
+                                }
+                            } else {
+                                marked.push({ text: line, removed: false });
+                                i += 1;
+                            }
+                        }
+
+                        // Rebuild HTML with line numbers and inserted highlighting preserved
+                        const inserted = new Set({{ (results.final_note_inserted_line_numbers or []) | tojson }});
+                        pre.innerHTML = '';
+                        marked.forEach((item, idx) => {
+                            const lineNum = idx + 1;
+                            const span = document.createElement('span');
+                            span.className = 'preview-line' + (inserted.has(lineNum) ? ' preview-insert' : '') + (item.removed ? ' preview-removed' : '');
+                            const ln = document.createElement('span'); ln.className = 'preview-lnum'; ln.textContent = String(lineNum).padStart(1,' ');
+                            span.appendChild(ln);
+                            span.insertAdjacentText('beforeend', item.text);
+                            pre.appendChild(span);
+                            pre.appendChild(document.createTextNode('\n'));
+                        });
+                    }
+                } catch(e) { /* non-fatal preview refresh error */ }
             }
 
             buildFinalList();
@@ -1273,10 +1428,12 @@
                         removedSet.add(id);
                         if (toggleBtn) { toggleBtn.classList.remove('add'); toggleBtn.classList.add('remove'); toggleBtn.textContent = '−'; }
                         if (labelCell) labelCell.classList.add('excluded-item');
+                        tr.classList.add('row-removed');
                     } else {
                         removedSet.delete(id);
                         if (toggleBtn) { toggleBtn.classList.remove('remove'); toggleBtn.classList.add('add'); toggleBtn.textContent = '+'; }
                         if (labelCell) labelCell.classList.remove('excluded-item');
+                        tr.classList.remove('row-removed');
                     }
                 });
 
@@ -1286,8 +1443,25 @@
                         if (!t || !t.id) return;
                         if (shouldHideByMode(t.tags || [], mode)) {
                             removedSet.add(t.id);
+                            // Reflect row styling in B table if present
+                            const trB = document.getElementById(`taskB-${t.id}`);
+                            if (trB) {
+                                trB.classList.add('row-removed');
+                                const btn = trB.querySelector('[data-role="toggle"]');
+                                if (btn) { btn.classList.remove('add'); btn.classList.add('remove'); btn.textContent = '−'; }
+                                const labelCellB = trB.querySelector('.label');
+                                if (labelCellB) labelCellB.classList.add('excluded-item');
+                            }
                         } else {
                             removedSet.delete(t.id);
+                            const trB = document.getElementById(`taskB-${t.id}`);
+                            if (trB) {
+                                trB.classList.remove('row-removed');
+                                const btn = trB.querySelector('[data-role="toggle"]');
+                                if (btn) { btn.classList.remove('remove'); btn.classList.add('add'); btn.textContent = '+'; }
+                                const labelCellB = trB.querySelector('.label');
+                                if (labelCellB) labelCellB.classList.remove('excluded-item');
+                            }
                         }
                     });
                 }
@@ -1319,12 +1493,14 @@
                             btn.textContent = '−';
                             if (labelCell) labelCell.classList.add('excluded-item');
                             removedSet.add(id);
+                            tr.classList.add('row-removed');
                         } else {
                             btn.classList.remove('remove');
                             btn.classList.add('add');
                             btn.textContent = '+';
                             if (labelCell) labelCell.classList.remove('excluded-item');
                             removedSet.delete(id);
+                            tr.classList.remove('row-removed');
                         }
                         buildFinalList();
                     });
