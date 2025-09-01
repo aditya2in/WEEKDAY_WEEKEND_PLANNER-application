@@ -834,39 +834,39 @@ def remove_excluded_tasks_from_content(original_content: str, all_tasks: list, e
 
 @app.route('/create_note', methods=['POST'])
 def create_note_route():
-    # Re-plan to get full tasks (including subtasks) then honor client plan
-    results = plan_note(debug_mode=False)
-    all_tasks = results.get('parsed_calendar_tasks', [])
-
-    data = request.get_json(silent=True) or {}
-    original_content = data.get('original_content')
-    removed_ids = set(data.get('removed_ids') or [])
-    # Simplified flow per user intent: ignore overrides and mode; just delete red (removed) blocks
-    overrides = {}
-    mode = None
-
-    if not all_tasks or not original_content:
-        return jsonify({"status": "error", "message": "Missing tasks or original content."}), 400
-
-    # No filtering/overrides. We'll only remove the selected (red) blocks from the provided Planned Final Note (C) content.
-
-    config = load_config()
-    journal_folder = config.get("journal_folder", "")
-    daily_note_filename_format = config.get("daily_note_filename_format", "%Y-%m-%d_TEST.md")
-
-    today = datetime.date.today()
-    daily_note_filename = today.strftime(daily_note_filename_format)
-    daily_note_path = os.path.join(journal_folder, daily_note_filename)
-    os.makedirs(journal_folder, exist_ok=True)
-
-    # Expose removed defaults for UI highlighting in A table (optional)
-    results['removed_default_ids'] = list(removed_ids)
-
-    # Remove only the selected (red) tasks and their subtasks from the provided Planned Final Note (C)
-    cleaned_original_content = remove_excluded_tasks_from_content(original_content, all_tasks, removed_ids)
-    final_note_content_str = cleaned_original_content
-
     try:
+        # Re-plan to get full tasks (including subtasks) then honor client plan
+        results = plan_note(debug_mode=False)
+        all_tasks = results.get('parsed_calendar_tasks', [])
+
+        data = request.get_json(silent=True) or {}
+        original_content = data.get('original_content')
+        removed_ids = set(data.get('removed_ids') or [])
+        # Simplified flow per user intent: ignore overrides and mode; just delete red (removed) blocks
+        overrides = {}
+        mode = None
+
+        if not all_tasks or not original_content:
+            return jsonify({"status": "error", "message": "Missing tasks or original content."}), 400
+
+        # No filtering/overrides. We'll only remove the selected (red) blocks from the provided Planned Final Note (C) content.
+
+        config = load_config()
+        journal_folder = config.get("journal_folder", "")
+        daily_note_filename_format = config.get("daily_note_filename_format", "%Y-%m-%d_TEST.md")
+
+        today = datetime.date.today()
+        daily_note_filename = today.strftime(daily_note_filename_format)
+        daily_note_path = os.path.join(journal_folder, daily_note_filename)
+        os.makedirs(journal_folder, exist_ok=True)
+
+        # Expose removed defaults for UI highlighting in A table (optional)
+        results['removed_default_ids'] = list(removed_ids)
+
+        # Remove only the selected (red) tasks and their subtasks from the provided Planned Final Note (C)
+        cleaned_original_content = remove_excluded_tasks_from_content(original_content, all_tasks, removed_ids)
+        final_note_content_str = cleaned_original_content
+
         with open(daily_note_path, 'w') as f:
             f.write(final_note_content_str)
 
@@ -880,7 +880,8 @@ def create_note_route():
 
         return jsonify({"status": "success", "message": f"Daily note created at {daily_note_path}"})
     except Exception as e:
-        return jsonify({"status": "error", "message": f"Error creating daily note: {e}"}), 500
+        # Ensure JSON error is always returned so the UI can display details
+        return jsonify({"status": "error", "message": f"Internal error: {e}"}), 500
 
 @app.route('/save_config', methods=['POST'])
 def save_config_route():
